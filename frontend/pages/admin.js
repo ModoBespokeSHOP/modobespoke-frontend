@@ -14,16 +14,28 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  // Функция для нормализации данных в массив
+  function normalize(data) {
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.products)) return data.products;
+    return [];
+  }
+
   // Load existing products via API
   useEffect(() => {
     fetch("/api/products")
       .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch(console.error);
+      .then((data) => {
+        setProducts(normalize(data));
+      })
+      .catch((err) => {
+        console.error("Failed to fetch products:", err);
+        setProducts([]);
+      });
   }, []);
 
   const onDrop = useCallback(async (acceptedFiles) => {
-    if (acceptedFiles.length === 0) return;
+    if (!acceptedFiles.length) return;
     const file = acceptedFiles[0];
     const formData = new FormData();
     formData.append("file", file);
@@ -32,13 +44,18 @@ export default function AdminPage() {
       process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
     );
     setLoading(true);
-    const res = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_URL, {
-      method: "POST",
-      body: formData,
-    });
-    const json = await res.json();
-    setForm((f) => ({ ...f, image: json.secure_url }));
-    setLoading(false);
+    try {
+      const res = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_URL, {
+        method: "POST",
+        body: formData,
+      });
+      const json = await res.json();
+      setForm((f) => ({ ...f, image: json.secure_url || "" }));
+    } catch (err) {
+      console.error("Upload error:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -53,37 +70,56 @@ export default function AdminPage() {
 
   const handlePublish = async () => {
     setLoading(true);
+    setMessage("");
+    // Собираем обновлённый массив
     const updated = [...products];
     if (form.id) {
-      // edit existing
       const idx = updated.findIndex((p) => p.id === form.id);
-      updated[idx] = { ...updated[idx], ...form };
+      if (idx !== -1) updated[idx] = { ...updated[idx], ...form };
     } else {
       updated.push({ ...form, id: Date.now() });
     }
-    const res = await fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-    const result = await res.json();
-    setMessage(result.message);
-    if (res.ok) setProducts(updated);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        setProducts(updated);
+        setForm({ title: "", description: "", price: "", image: "" });
+      }
+      setMessage(result.message);
+    } catch (err) {
+      console.error("Publish error:", err);
+      setMessage("Ошибка при публикации товара");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = async (id) => {
     setLoading(true);
+    setMessage("");
     const updated = products.filter((p) => p.id !== id);
-    const res = await fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-    const result = await res.json();
-    setMessage(result.message);
-    if (res.ok) setProducts(updated);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        setProducts(updated);
+      }
+      setMessage(result.message);
+    } catch (err) {
+      console.error("Delete error:", err);
+      setMessage("Ошибка при удалении товара");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEdit = (p) => setForm(p);
