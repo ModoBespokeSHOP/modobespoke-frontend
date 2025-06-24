@@ -1,62 +1,76 @@
-import { useEffect, useState, useContext } from "react";
-import { CartContext } from "../context/CartContext";
+// frontend/pages/index.js
 
-export default function Home() {
-  const [products, setProducts] = useState([]);
-  const { addToCart } = useContext(CartContext);
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import fs from "fs";
+import path from "path";
 
-  useEffect(() => {
-    fetch("http://localhost:1337/api/products?populate=image")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Ответ от API:", data); // ← смотри в F12 → Console
-        // если ты получаешь объект вида { data: [ {...}, ... ] }
-        setProducts(data.data || []);
-      })
-      .catch((err) => console.error("Ошибка при загрузке товаров:", err));
-  }, []);
+export async function getStaticProps() {
+  const filePath = path.join(process.cwd(), "public", "data", "products.json");
+  let raw = "[]";
+  try {
+    raw = fs.readFileSync(filePath, "utf-8");
+  } catch {}
+  let parsed = [];
+  try {
+    parsed = JSON.parse(raw);
+  } catch {}
+  const products = Array.isArray(parsed)
+    ? parsed
+    : Array.isArray(parsed.products)
+    ? parsed.products
+    : [];
+  return { props: { products } };
+}
 
+export default function Home({ products }) {
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold mb-6">Магазин платьев</h1>
+    <>
+      <Head>
+        <title>Магазин платьев</title>
+        <meta name="description" content="Выбор летних платьев" />
+      </Head>
 
-      {products.length === 0 ? (
-        <p className="text-gray-600">Товары не найдены.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product) => {
-            // Теперь поля — прямо в product
-            const { id, title, price, image } = product;
-            // image.url — путь к картинке, как в твоём JSON
-            const imageUrl = image?.url
-              ? `http://localhost:1337${image.url}`
-              : "https://via.placeholder.com/400x600?text=Нет+фото";
+      <main className="container mx-auto px-4">
+        {products.length === 0 ? (
+          <p className="text-center text-gray-600">Товары отсутствуют.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {products.map((prod) => (
+              <div
+                key={prod.id}
+                className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition flex flex-col"
+              >
+                <div className="p-4 flex items-center justify-center">
+                  <Image
+                    src={prod.image}
+                    alt={prod.title}
+                    width={80}
+                    height={80}
+                    className="object-contain"
+                  />
+                </div>
 
-            return (
-              <div key={id} className="bg-white rounded-xl shadow p-4">
-                <img
-                  src={imageUrl}
-                  alt={title}
-                  className="w-full h-auto object-cover rounded-md mb-4"
-                />
-                <h2 className="text-xl font-semibold">{title}</h2>
-                <p className="text-gray-700 mt-2">{price} ₽</p>
-                <button
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  onClick={() =>
-                    addToCart({ id, title, price, image: imageUrl })
-                  }
-                >
-                  В корзину
-                </button>
+                <div className="p-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold mb-1">{prod.title}</h2>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {prod.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-lg font-bold">{prod.price}₽</span>
+                    <button className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm">
+                      Добавить в корзину
+                    </button>
+                  </div>
+                </div>
               </div>
-            );
-          })}
-        </div>
-      )}
-    </main>
+            ))}
+          </div>
+        )}
+      </main>
+    </>
   );
 }
