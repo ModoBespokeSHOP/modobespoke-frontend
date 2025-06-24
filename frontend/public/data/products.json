@@ -19,5 +19,12 @@
     "price": "23323",
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750768949/jbezl55zftfohkcku2nr.jpg",
     "id": 1750768955449
+  },
+  {
+    "title": "новое платье",
+    "description": "",
+    "price": "3000",
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750792805/x9zmldolzliovmhgztqf.jpg",
+    "id": 1750792832807
   }
 ]
