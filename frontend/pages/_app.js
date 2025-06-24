@@ -1,6 +1,9 @@
+// frontend/pages/_app.js
+
 import "../styles/globals.css";
-import { CartProvider } from "../context/CartContext";
+import Script from "next/script";
 import Link from "next/link";
+import { CartProvider } from "../context/CartContext";
 
 function Header() {
   return (
@@ -20,11 +23,16 @@ function Header() {
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <CartProvider>
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <Component {...pageProps} />
-      </div>
-    </CartProvider>
+    <>
+      {/* Асинхронная загрузка YooKassa SDK */}
+      <Script src="https://js.yookassa.ru/v3" strategy="afterInteractive" />
+
+      <CartProvider>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <Component {...pageProps} />
+        </div>
+      </CartProvider>
+    </>
   );
 }
