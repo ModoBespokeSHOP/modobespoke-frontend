@@ -1,50 +1,67 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).end();
+  if (req.method !== "POST") {
+    return res.status(405).end("Method not allowed");
+  }
 
-  const { orderId, amount, description } = req.body;
+  const { cart, customerName, customerPhone } = req.body;
+
+  if (
+    !Array.isArray(cart) ||
+    cart.length === 0 ||
+    !customerName ||
+    !customerPhone
+  ) {
+    return res.status(400).json({ message: "Missing cart, name or phone" });
+  }
+
+  // Сумма в копейках
+  const totalCents = cart.reduce(
+    (sum, item) => sum + item.price * item.qty * 100,
+    0
+  );
+  const amountValue = (totalCents / 100).toFixed(2);
+
+  const description = `Заказ от ${customerName}, тел: ${customerPhone}`;
 
   const shopId = process.env.YOOKASSA_SHOP_ID;
   const secretKey = process.env.YOOKASSA_SECRET_KEY;
-
-  const auth = Buffer.from(`${shopId}:${secretKey}`).toString("base64");
+  if (!shopId || !secretKey) {
+    return res.status(500).json({ message: "Missing YooKassa credentials" });
+  }
 
   try {
-    const response = await fetch("https://api.yookassa.ru/v3/payments", {
+    const paymentRes = await fetch("https://api.yookassa.ru/v3/payments", {
       method: "POST",
       headers: {
-        Authorization: `Basic ${auth}`,
         "Content-Type": "application/json",
-        "Idempotence-Key": `${orderId}-${Date.now()}`, // уникальный ключ для повторных запросов
+        Authorization: `Basic ${Buffer.from(`${shopId}:${secretKey}`).toString(
+          "base64"
+        )}`,
+        "Idempotence-Key": `${Date.now()}`,
       },
       body: JSON.stringify({
-        amount: {
-          value: amount.toFixed(2),
-          currency: "RUB",
-        },
+        amount: { value: amountValue, currency: "RUB" },
         confirmation: {
           type: "redirect",
-          return_url: `http://localhost:3000/order/${orderId}`,
+          return_url:
+            process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
         },
         capture: true,
         description,
-        metadata: {
-          orderId,
-        },
       }),
     });
 
-    const payment = await response.json();
-
-    if (!response.ok) {
-      console.error("YooKassa error:", payment);
-      return res.status(response.status).json(payment);
+    const data = await paymentRes.json();
+    if (!paymentRes.ok) {
+      console.error("YooKassa error:", data);
+      return res.status(paymentRes.status).json(data);
     }
 
-    res
-      .status(200)
-      .json({ confirmation_url: payment.confirmation.confirmation_url });
+    return res.status(200).json({
+      confirmation_url: data.confirmation.confirmation_url,
+    });
   } catch (err) {
-    console.error("Unexpected error:", err);
-    res.status(500).json({ error: "Ошибка создания платежа" });
+    console.error("Create-payment error:", err);
+    return res.status(500).json({ message: "Payment request failed" });
   }
 }
