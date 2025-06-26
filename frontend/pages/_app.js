@@ -1,37 +1,26 @@
 // frontend/pages/_app.js
 
 import "../styles/globals.css";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import Script from "next/script";
 import { CartProvider } from "../context/CartContext";
+import Script from "next/script";
+import dynamic from "next/dynamic";
 
-function Header() {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <header className={`header ${scrolled ? "with-shadow" : ""}`}>
-      <Link href="/" className="logo-link">
-        <img src="/images/logo.png" alt="Логотип" className="logo-img" />
-      </Link>
-      <Link href="/cart" className="cart-link">
-        Корзина
-      </Link>
-    </header>
-  );
-}
+// Загружаем Header только на клиенте, чтобы он не участвовал в SSR
+const Header = dynamic(() => import("../components/Header"), {
+  ssr: false,
+});
 
 export default function MyApp({ Component, pageProps }) {
   return (
     <>
+      {/* YooKassa SDK */}
       <Script src="https://js.yookassa.ru/v3" strategy="afterInteractive" />
+
+      {/* Весь сайт в провайдере корзины */}
       <CartProvider>
+        {/* Клиентский Header */}
         <Header />
+        {/* Основной контент страницы */}
         <Component {...pageProps} />
       </CartProvider>
     </>
