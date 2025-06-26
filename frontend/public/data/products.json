@@ -26,5 +26,11 @@
     "price": "2323",
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg",
     "id": 1750867771865
+  },
+  {
+    "id": 1750981249779,
+    "title": "Witch girl",
+    "description": "2323",
+    "price": 4000
   }
 ]
