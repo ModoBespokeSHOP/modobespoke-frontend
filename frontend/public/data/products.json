@@ -1,12 +1,5 @@
 [
   {
-    "id": 1,
-    "title": "Летнее платье",
-    "description": "Легкое хлопковое платье на лето",
-    "price": 4999,
-    "image": "/images/dress1.jpg"
-  },
-  {
     "title": "Платье",
     "description": "",
     "price": "2333",
