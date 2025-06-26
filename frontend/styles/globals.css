@@ -1,3 +1,29 @@
+/* frontend/styles/globals.css */
+
+/* === CSS-переменные === */
+:root {
+  /* Высота шапки и максимальная высота логотипа */
+  --logo-max-h: 120px;
+
+  /* Отступ между контентом и шапкой */
+  --section-offset: calc(var(--logo-max-h) + 10px);
+
+  /* Отступ «Корзины» от правого края */
+  --cart-offset: 20px;
+
+  /* Ширина одной карточки товара */
+  --card-width: 620px;
+
+  /* Зазор между карточками */
+  --card-gap: 10px;
+
+  /* Отступ внутри карточки для цены/названия */
+  --info-offset: 10px;
+
+  /* Отступ кнопки «В корзину» от блока с ценой/названием */
+  --button-offset: 12px;
+}
+
 /* === Сброс базовых стилей === */
 * {
   margin: 0;
@@ -5,23 +31,18 @@
   box-sizing: border-box;
 }
 
-/* === Цвета по умолчанию === */
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* === Базовые стили страницы === */
 body {
-  background-color: #ffffff; /* убедись, что фон белый */
-  margin: 0;
-  padding: 0;
+  background: #ffffff;
+  color: #171717;
+  font-family: "Montserrat", Arial, sans-serif;
+  line-height: 1.6;
+}
+
+a,
+a:visited {
+  color: inherit;
+  text-decoration: none;
 }
 
 /* === Шапка (Header) === */
@@ -29,25 +50,46 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  right: 0;
+  height: var(--logo-max-h);
   background: #ffffff;
-  box-shadow: none;
-  z-index: 1000;
-  padding: 15px 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+  padding: 0 20px;
+  padding-right: calc(20px + var(--cart-offset));
   transition: box-shadow 0.3s ease;
+  z-index: 1000;
 }
 
-/* Тень появляется только при прокрутке */
 .header.with-shadow {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* === Основной контент под шапкой === */
+/* Логотип по центру */
+.logo-link {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logo-img {
+  display: block;
+  max-height: var(--logo-max-h);
+  width: auto;
+  height: auto;
+}
+
+/* Ссылка «Корзина» справа */
+.cart-link {
+  margin-right: var(--cart-offset);
+  font-weight: 300;
+  font-size: 16px;
+}
+
+/* === Контент под шапкой === */
 .section {
-  margin-top: 80px; /* Высота шапки + небольшой отступ */
+  margin-top: var(--section-offset);
   padding: 35px 20px;
   background: #ffffff;
 }
@@ -55,24 +97,38 @@ body {
 /* === Сетка товаров === */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, var(--card-width));
+  column-gap: var(--card-gap);
+  row-gap: 32px;
   justify-content: center;
-  max-width: 1200px;
+  max-width: calc(3 * var(--card-width) + 2 * var(--card-gap));
   margin: 0 auto;
+}
+
+@media (max-width: calc(2 * var(--card-width) + var(--card-gap))) {
+  .grid {
+    grid-template-columns: repeat(2, var(--card-width));
+    max-width: calc(2 * var(--card-width) + var(--card-gap));
+  }
+}
+
+@media (max-width: var(--card-width)) {
+  .grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
 }
 
 /* === Карточка товара === */
 .card {
-  width: 100%;
-  background: #fff;
-  text-align: center;
+  background: #ffffff;
+  width: var(--card-width);
   padding: 10px;
-  border: none;
-  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 }
 
-/* === Картинка товара === */
 .card img {
   width: 100%;
   height: auto;
@@ -80,26 +136,29 @@ body {
   display: block;
 }
 
-/* === Название и цена === */
-.card .product-info {
+/* Блок с ценой и названием */
+.product-info {
   margin-top: 10px;
+  padding-left: var(--info-offset);
+  text-align: left;
 }
 
-.card .product-price {
-  font-weight: bold;
+.product-price {
+  font-weight: 600;
   font-size: 18px;
-  display: block;
-  margin-bottom: 4px;
+  margin: 0 0 4px 0;
 }
 
-.card .product-title {
+.product-title {
+  font-weight: 400;
   font-size: 16px;
   color: #555;
+  margin: 0;
 }
 
-/* === Кнопка корзины === */
-.card button.add-to-cart {
-  margin-top: 10px;
+/* Кнопка «В корзину» */
+.add-to-cart {
+  margin-top: var(--button-offset);
   padding: 8px 12px;
   background-color: #000;
   color: #fff;
@@ -109,15 +168,6 @@ body {
   transition: background 0.3s ease;
 }
 
-.card button.add-to-cart:hover {
+.add-to-cart:hover {
   background-color: #333;
-}
-
-a {
-  color: #000000; /* черный текст */
-  text-decoration: none; /* убираем подчёркивание */
-}
-
-a:visited {
-  color: #000000; /* не фиолетовый, а такой же как обычный */
 }

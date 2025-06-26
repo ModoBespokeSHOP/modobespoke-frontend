@@ -1,6 +1,6 @@
 // frontend/pages/_app.js
 
-import "../styles/globals.css"; // подключен global
+import "../styles/globals.css";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
@@ -8,24 +8,18 @@ import { CartProvider } from "../context/CartContext";
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
-
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <header className={`header ${scrolled ? "with-shadow" : ""}`}>
-      <Link href="/" className="text-xl font-bold">
-        Магазин платьев
+      <Link href="/" className="logo-link">
+        <img src="/images/logo.png" alt="Логотип" className="logo-img" />
       </Link>
-      <Link
-        href="/cart"
-        className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
-      >
+      <Link href="/cart" className="cart-link">
         Корзина
       </Link>
     </header>

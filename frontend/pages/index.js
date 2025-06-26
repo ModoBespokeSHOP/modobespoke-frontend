@@ -3,7 +3,6 @@
 import { useState, useEffect, useContext } from "react";
 import Head from "next/head";
 import { CartContext } from "../context/CartContext";
-import styles from "../styles/Home.module.css"; // <- подключаем CSS Module
 
 export default function Home() {
   const [products, setProducts] = useState(null);
@@ -13,15 +12,26 @@ export default function Home() {
     fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) setProducts(data);
-        else if (Array.isArray(data.data)) setProducts(data.data);
-        else setProducts([]);
+        // если API отдаёт либо чистый массив, либо { data: [...] }
+        const arr = Array.isArray(data)
+          ? data
+          : Array.isArray(data.data)
+          ? data.data
+          : [];
+        setProducts(arr);
       })
-      .catch(() => setProducts([]));
+      .catch((err) => {
+        console.error("Fetch products error:", err);
+        setProducts([]);
+      });
   }, []);
 
   if (products === null) {
-    return <p className={styles.message}>Загрузка...</p>;
+    return (
+      <main className="section">
+        <p>Загрузка товаров…</p>
+      </main>
+    );
   }
 
   return (
@@ -31,24 +41,21 @@ export default function Home() {
         <meta name="description" content="Выбор летних платьев" />
       </Head>
 
-      <main className={styles.section}>
+      <main className="section">
         {products.length === 0 ? (
-          <p className={styles.message}>Товары отсутствуют.</p>
+          <p>Товары отсутствуют.</p>
         ) : (
-          <div className={styles.grid}>
+          <div className="grid">
             {products.map((prod) => (
-              <div key={prod.id} className={styles.card}>
-                <div className={styles.imageWrapper}>
-                  <img src={prod.image} alt={prod.title} />
+              <div key={prod.id} className="card">
+                <img src={prod.image} alt={prod.title} />
+
+                <div className="product-info">
+                  <div className="product-price">{prod.price} ₽</div>
+                  <div className="product-title">{prod.title}</div>
                 </div>
-                <div className={styles.info}>
-                  <span className={styles.price}>{prod.price}₽</span>
-                  <span className={styles.title}>{prod.title}</span>
-                </div>
-                <button
-                  className={styles.button}
-                  onClick={() => addToCart(prod)}
-                >
+
+                <button className="add-to-cart" onClick={() => addToCart(prod)}>
                   В корзину
                 </button>
               </div>
