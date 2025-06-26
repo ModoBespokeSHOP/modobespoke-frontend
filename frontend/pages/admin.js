@@ -1,224 +1,220 @@
 // frontend/pages/admin.js
 
-import { useState, useEffect, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import styles from "../styles/admin.module.css";
 
 export default function AdminPage() {
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState({
+    id: null,
     title: "",
     description: "",
     price: "",
     image: "",
+    _file: null, // временно хранит выбранный файл
   });
+  const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Функция для нормализации данных в массив
-  function normalize(data) {
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.products)) return data.products;
-    return [];
-  }
-
-  // Load existing products via API
+  // Загрузка существующих товаров
   useEffect(() => {
     fetch("/api/products")
-      .then((res) => res.json())
+      .then((r) => r.json())
       .then((data) => {
-        setProducts(normalize(data));
+        const arr = Array.isArray(data) ? data : data.data || [];
+        setProducts(arr);
       })
-      .catch((err) => {
-        console.error("Failed to fetch products:", err);
-        setProducts([]);
-      });
+      .catch(console.error);
   }, []);
 
-  const onDrop = useCallback(async (acceptedFiles) => {
-    if (!acceptedFiles.length) return;
-    const file = acceptedFiles[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
-    );
-    setLoading(true);
-    try {
-      const res = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_URL, {
-        method: "POST",
-        body: formData,
-      });
-      const json = await res.json();
-      setForm((f) => ({ ...f, image: json.secure_url || "" }));
-    } catch (err) {
-      console.error("Upload error:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: "image/*",
-  });
-
-  const handleChange = (e) => {
+  // Обработчик изменения текстовых полей
+  function handleChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
-  };
+  }
 
-  const handlePublish = async () => {
+  // Обработчик выбора файла
+  function handleFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setForm((f) => ({ ...f, _file: file }));
+    setPreview(URL.createObjectURL(file));
+  }
+
+  // Публикация или обновление товара
+  async function handlePublish(e) {
+    e.preventDefault();
     setLoading(true);
     setMessage("");
-    // Собираем обновлённый массив
-    const updated = [...products];
-    if (form.id) {
-      const idx = updated.findIndex((p) => p.id === form.id);
-      if (idx !== -1) updated[idx] = { ...updated[idx], ...form };
-    } else {
-      updated.push({ ...form, id: Date.now() });
-    }
     try {
-      const res = await fetch("/api/products", {
+      let imageUrl = form.image;
+
+      // Если выбран новый файл, загружаем его на Cloudinary
+      if (form._file) {
+        const fd = new FormData();
+        fd.append("file", form._file);
+        fd.append(
+          "upload_preset",
+          process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+        );
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          { method: "POST", body: fd }
+        );
+        const json = await res.json();
+        imageUrl = json.secure_url;
+      }
+
+      const newProduct = {
+        id: form.id ?? Date.now(),
+        title: form.title,
+        description: form.description,
+        price: Number(form.price),
+        image: imageUrl,
+      };
+
+      const updated = form.id
+        ? products.map((p) => (p.id === form.id ? newProduct : p))
+        : [...products, newProduct];
+
+      const save = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updated),
       });
-      const result = await res.json();
-      if (res.ok) {
-        setProducts(updated);
-        setForm({ title: "", description: "", price: "", image: "" });
+      if (!save.ok) {
+        const err = await save.json();
+        throw new Error(err.message || "Ошибка сохранения");
       }
-      setMessage(result.message);
+
+      setProducts(updated);
+      setForm({
+        id: null,
+        title: "",
+        description: "",
+        price: "",
+        image: "",
+        _file: null,
+      });
+      setPreview("");
+      setMessage("Товар сохранён");
     } catch (err) {
-      console.error("Publish error:", err);
-      setMessage("Ошибка при публикации товара");
+      console.error(err);
+      setMessage("Ошибка: " + err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleDelete = async (id) => {
-    setLoading(true);
-    setMessage("");
+  // Удаление товара
+  async function handleDelete(id) {
     const updated = products.filter((p) => p.id !== id);
-    try {
-      const res = await fetch("/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
-      });
-      const result = await res.json();
-      if (res.ok) {
-        setProducts(updated);
-      }
-      setMessage(result.message);
-    } catch (err) {
-      console.error("Delete error:", err);
-      setMessage("Ошибка при удалении товара");
-    } finally {
-      setLoading(false);
+    const res = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+    if (res.ok) {
+      setProducts(updated);
+      setMessage("Товар удалён");
     }
-  };
+  }
 
-  const handleEdit = (p) => setForm(p);
+  // Заполнение формы для редактирования
+  function handleEdit(p) {
+    setForm({ ...p, _file: null });
+    setPreview(p.image);
+    setMessage("");
+  }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Админка магазина</h1>
+    <>
+      <Head>
+        <title>Админка — Магазин платьев</title>
+      </Head>
+      <div className={styles.container}>
+        <h1 className={styles.heading}>Панель администратора</h1>
 
-      <div className="border p-4 rounded">
-        <h2 className="text-xl mb-2">Загрузка изображения</h2>
-        <div
-          {...getRootProps()}
-          className="border-dashed border-2 border-gray-400 p-4 text-center cursor-pointer"
-        >
-          <input {...getInputProps()} />
-          {isDragActive ? (
-            <p>Отпустите файл...</p>
-          ) : (
-            <p>Перетащите или кликните для загрузки</p>
-          )}
-        </div>
-        {loading && <p>Загрузка...</p>}
-        {form.image && (
-          <img
-            src={form.image}
-            alt="preview"
-            className="mt-4 w-32 h-32 object-contain"
-          />
-        )}
-      </div>
+        <div className={styles.panel}>
+          {/* Форма */}
+          <form className={styles.form} onSubmit={handlePublish}>
+            {message && <div className={styles.error}>{message}</div>}
 
-      <div className="space-y-4">
-        <input
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          placeholder="Название"
-          className="w-full p-2 border rounded"
-        />
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Описание"
-          className="w-full p-2 border rounded"
-        />
-        <input
-          name="price"
-          type="number"
-          value={form.price}
-          onChange={handleChange}
-          placeholder="Цена"
-          className="w-full p-2 border rounded"
-        />
-        <button
-          onClick={handlePublish}
-          disabled={loading}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Опубликовать товар
-        </button>
-      </div>
-
-      {message && <p className="text-green-600">{message}</p>}
-
-      <h2 className="text-xl">Список товаров</h2>
-      <ul className="space-y-2">
-        {products.map((p) => (
-          <li
-            key={p.id}
-            className="flex justify-between items-center border p-2"
-          >
-            <div className="flex items-center gap-4">
-              <img
-                src={p.image}
-                alt={p.title}
-                className="w-12 h-12 object-cover"
+            <label>
+              Заголовок
+              <input
+                type="text"
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                required
               />
-              <span>
-                {p.title} — {p.price}₽
-              </span>
-            </div>
-            <div>
-              <button
-                onClick={() => handleEdit(p)}
-                className="mr-2 text-blue-500"
-              >
-                Редактировать
-              </button>
-              <button
-                onClick={() => handleDelete(p.id)}
-                className="text-red-500"
-              >
-                Удалить
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+            </label>
+
+            <label>
+              Описание
+              <textarea
+                name="description"
+                rows={3}
+                value={form.description}
+                onChange={handleChange}
+              />
+            </label>
+
+            <label>
+              Цена, ₽
+              <input
+                type="number"
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                required
+              />
+            </label>
+
+            <label>
+              Изображение
+              <input type="file" accept="image/*" onChange={handleFile} />
+            </label>
+
+            {preview && (
+              <div className={styles.previewWrapper}>
+                <img src={preview} alt="preview" className={styles.preview} />
+              </div>
+            )}
+
+            <button type="submit" disabled={loading}>
+              {loading
+                ? "Сохраняем…"
+                : form.id
+                ? "Обновить товар"
+                : "Добавить товар"}
+            </button>
+          </form>
+
+          {/* Список товаров */}
+          <div className={styles.list}>
+            <h2>Список товаров</h2>
+            {products.length === 0 ? (
+              <p>Ничего нет</p>
+            ) : (
+              products.map((p) => (
+                <div key={p.id} className={styles.listItem}>
+                  <img src={p.image} alt={p.title} />
+                  <div>
+                    <strong>{p.title}</strong>
+                    <div>{p.price}₽</div>
+                  </div>
+                  <button onClick={() => handleEdit(p)}>Ред.</button>
+                  <button onClick={() => handleDelete(p.id)}>Удал.</button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
