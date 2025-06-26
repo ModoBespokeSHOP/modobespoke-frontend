@@ -1,0 +1,101 @@
+/* базовые приёмы */
+body {
+  margin: 0;
+  background: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+/* центруем всю секцию и растягиваем на 100% */
+.products-section {
+  width: 100%;
+  padding: 20px;
+}
+
+/* центруем текст загрузки и пустой список */
+.loading,
+.empty {
+  text-align: center;
+  padding: 40px 0;
+  font-size: 18px;
+}
+
+/* сетка товаров: минимум 300px на колонку, адаптивно */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  justify-items: center;
+}
+
+/* карточка */
+.product-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0; /* строго прямоугольник */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 320px;
+  transition: box-shadow 0.2s;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* изображение: квадрат 300×300px */
+.image-wrapper {
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%; /* 1:1 */
+  position: relative;
+  background: #f0f0f0;
+}
+
+.product-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* инфо-блок */
+.product-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* цена крупнее */
+.product-price {
+  font-size: 22px;
+  font-weight: bold;
+  color: #222;
+}
+
+/* название тоньше */
+.product-title {
+  font-size: 16px;
+  font-weight: 300;
+  color: #555;
+}
+
+/* кнопка по ширине карточки, внизу */
+.add-to-cart {
+  margin: 0;
+  padding: 12px 0;
+  background-color: #0070f3;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.add-to-cart:hover {
+  background-color: #005bb5;
+}

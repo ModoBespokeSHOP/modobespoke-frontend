@@ -1,0 +1,101 @@
+/* frontend/styles/Home.module.css */
+
+/* === Вся секция товаров === */
+.section {
+  width: 100%;
+  padding-top: 20px; /* отступ сверху */
+  padding-left: 50px; /* отступ слева */
+  padding-right: 50px; /* отступ справа */
+  margin-top: 80px;
+  background: #ffffff;
+}
+
+/* === Сообщения (загрузка/пусто) === */
+.message {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
+
+/* === Основная сетка: по 3 карточки в ряд === */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 10px; /* расстояние между столбцами */
+  row-gap: 32px; /* расстояние между строками */
+  justify-items: center;
+}
+
+/* адаптив: 2 колонки на планшете */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* адаптив: 1 колонка на мобилке */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Карточка товара === */
+.card {
+  background: #fff;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px; /* задаёт ширину карточки */
+  transition: box-shadow 0.2s;
+}
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* === Изображение === */
+.imageWrapper {
+  width: 100%;
+  background: #f0f0f0;
+}
+.imageWrapper img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* === Информация под картинкой === */
+.info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.price {
+  font-size: 22px;
+  font-weight: bold;
+  color: #222;
+}
+.title {
+  font-size: 16px;
+  font-weight: 300;
+  color: #555;
+}
+
+/* === Кнопка === */
+.button {
+  margin: 0;
+  padding: 12px 0;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+.button:hover {
+  background-color: #005bb5;
+}

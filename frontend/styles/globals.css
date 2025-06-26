@@ -1,15 +1,14 @@
-@import "tailwindcss";
+/* === Сброс базовых стилей === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+/* === Цвета по умолчанию === */
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +19,105 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #ffffff; /* убедись, что фон белый */
+  margin: 0;
+  padding: 0;
+}
+
+/* === Шапка (Header) === */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: none;
+  z-index: 1000;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Тень появляется только при прокрутке */
+.header.with-shadow {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* === Основной контент под шапкой === */
+.section {
+  margin-top: 80px; /* Высота шапки + небольшой отступ */
+  padding: 35px 20px;
+  background: #ffffff;
+}
+
+/* === Сетка товаров === */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* === Карточка товара === */
+.card {
+  width: 100%;
+  background: #fff;
+  text-align: center;
+  padding: 10px;
+  border: none;
+  border-radius: 0;
+}
+
+/* === Картинка товара === */
+.card img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+/* === Название и цена === */
+.card .product-info {
+  margin-top: 10px;
+}
+
+.card .product-price {
+  font-weight: bold;
+  font-size: 18px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.card .product-title {
+  font-size: 16px;
+  color: #555;
+}
+
+/* === Кнопка корзины === */
+.card button.add-to-cart {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.card button.add-to-cart:hover {
+  background-color: #333;
+}
+
+a {
+  color: #000000; /* черный текст */
+  text-decoration: none; /* убираем подчёркивание */
+}
+
+a:visited {
+  color: #000000; /* не фиолетовый, а такой же как обычный */
 }

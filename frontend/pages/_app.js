@@ -1,19 +1,30 @@
 // frontend/pages/_app.js
 
-import "../styles/globals.css";
-import Script from "next/script";
+import "../styles/globals.css"; // подключен global
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { CartProvider } from "../context/CartContext";
 
 function Header() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="p-4 bg-white shadow flex justify-between items-center mb-6">
+    <header className={`header ${scrolled ? "with-shadow" : ""}`}>
       <Link href="/" className="text-xl font-bold">
         Магазин платьев
       </Link>
       <Link
         href="/cart"
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
       >
         Корзина
       </Link>
@@ -24,14 +35,10 @@ function Header() {
 export default function MyApp({ Component, pageProps }) {
   return (
     <>
-      {/* Асинхронная загрузка YooKassa SDK */}
       <Script src="https://js.yookassa.ru/v3" strategy="afterInteractive" />
-
       <CartProvider>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <Component {...pageProps} />
-        </div>
+        <Header />
+        <Component {...pageProps} />
       </CartProvider>
     </>
   );
