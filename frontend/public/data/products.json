@@ -21,17 +21,10 @@
     "id": 1750792832807
   },
   {
+    "id": 1750867771865,
     "title": "Шляпа",
     "description": "модная шляпа",
-    "price": "2323",
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg",
-    "id": 1750867771865
-  },
-  {
-    "id": 1750981249779,
-    "title": "Witch girl",
-    "description": "2323",
-    "price": 4000,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750981643/pihgi6hrspjvac9c0ybu.jpg"
+    "price": 2323,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg"
   }
 ]

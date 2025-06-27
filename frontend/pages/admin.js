@@ -1,10 +1,16 @@
-// frontend/pages/admin.js
-
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import styles from "../styles/admin.module.css";
 
 export default function AdminPage() {
+  // === аутентификация ===
+  const [authorized, setAuthorized] = useState(false);
+  const [loadingAuth, setLoadingAuth] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+
+  // === данные товаров ===
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState({
     id: null,
@@ -12,14 +18,15 @@ export default function AdminPage() {
     description: "",
     price: "",
     image: "",
-    _file: null, // временно хранит выбранный файл
+    _file: null,
   });
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Загрузка существующих товаров
+  // Загружаем товары при авторизации
   useEffect(() => {
+    if (!authorized) return;
     fetch("/api/products")
       .then((r) => r.json())
       .then((data) => {
@@ -27,15 +34,13 @@ export default function AdminPage() {
         setProducts(arr);
       })
       .catch(console.error);
-  }, []);
+  }, [authorized]);
 
-  // Обработчик изменения текстовых полей
+  // Обработчики формы товара
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   }
-
-  // Обработчик выбора файла
   function handleFile(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -50,8 +55,6 @@ export default function AdminPage() {
     setMessage("");
     try {
       let imageUrl = form.image;
-
-      // Если выбран новый файл, загружаем его на Cloudinary
       if (form._file) {
         const fd = new FormData();
         fd.append("file", form._file);
@@ -64,9 +67,9 @@ export default function AdminPage() {
           { method: "POST", body: fd }
         );
         const json = await res.json();
+        if (!res.ok) throw new Error(json.error?.message || "Upload failed");
         imageUrl = json.secure_url;
       }
-
       const newProduct = {
         id: form.id ?? Date.now(),
         title: form.title,
@@ -74,11 +77,9 @@ export default function AdminPage() {
         price: Number(form.price),
         image: imageUrl,
       };
-
       const updated = form.id
         ? products.map((p) => (p.id === form.id ? newProduct : p))
         : [...products, newProduct];
-
       const save = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -86,9 +87,8 @@ export default function AdminPage() {
       });
       if (!save.ok) {
         const err = await save.json();
-        throw new Error(err.message || "Ошибка сохранения");
+        throw new Error(err.message || "Save failed");
       }
-
       setProducts(updated);
       setForm({
         id: null,
@@ -119,16 +119,75 @@ export default function AdminPage() {
     if (res.ok) {
       setProducts(updated);
       setMessage("Товар удалён");
+    } else {
+      setMessage("Ошибка удаления");
     }
   }
 
-  // Заполнение формы для редактирования
+  // Редактирование товара
   function handleEdit(p) {
     setForm({ ...p, _file: null });
     setPreview(p.image);
     setMessage("");
   }
 
+  // Авторизация
+  async function handleAuth(e) {
+    e.preventDefault();
+    setLoadingAuth(true);
+    setAuthError("");
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (!res.ok) throw new Error();
+      setAuthorized(true);
+    } catch {
+      setAuthError("Неверный пароль");
+    } finally {
+      setLoadingAuth(false);
+    }
+  }
+
+  // Если не авторизованы — показываем форму
+  if (!authorized) {
+    return (
+      <>
+        <Head>
+          <title>Вход в админку</title>
+        </Head>
+        <div className={styles.loginWrapper}>
+          <form onSubmit={handleAuth} className={styles.loginForm}>
+            <h2>Пароль админки</h2>
+            <div className={styles.inputWrapper}>
+              <input
+                type={showPwd ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Введите пароль"
+                required
+              />
+              <button
+                type="button"
+                className={styles.showBtn}
+                onClick={() => setShowPwd((s) => !s)}
+              >
+                {showPwd ? "Скрыть" : "Показать"}
+              </button>
+            </div>
+            <button type="submit" disabled={loadingAuth}>
+              {loadingAuth ? "Проверка…" : "Войти"}
+            </button>
+            {authError && <p className={styles.error}>{authError}</p>}
+          </form>
+        </div>
+      </>
+    );
+  }
+
+  // Иначе — UI админки
   return (
     <>
       <Head>
@@ -136,12 +195,10 @@ export default function AdminPage() {
       </Head>
       <div className={styles.container}>
         <h1 className={styles.heading}>Панель администратора</h1>
-
         <div className={styles.panel}>
-          {/* Форма */}
+          {/* Форма добавления/редактирования */}
           <form className={styles.form} onSubmit={handlePublish}>
             {message && <div className={styles.error}>{message}</div>}
-
             <label>
               Заголовок
               <input
@@ -152,7 +209,6 @@ export default function AdminPage() {
                 required
               />
             </label>
-
             <label>
               Описание
               <textarea
@@ -162,7 +218,6 @@ export default function AdminPage() {
                 onChange={handleChange}
               />
             </label>
-
             <label>
               Цена, ₽
               <input
@@ -173,18 +228,15 @@ export default function AdminPage() {
                 required
               />
             </label>
-
             <label>
               Изображение
               <input type="file" accept="image/*" onChange={handleFile} />
             </label>
-
             {preview && (
               <div className={styles.previewWrapper}>
                 <img src={preview} alt="preview" className={styles.preview} />
               </div>
             )}
-
             <button type="submit" disabled={loading}>
               {loading
                 ? "Сохраняем…"

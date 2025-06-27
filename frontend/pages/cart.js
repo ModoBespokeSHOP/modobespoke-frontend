@@ -1,3 +1,4 @@
+// frontend/pages/cart.js
 import { useContext, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
@@ -11,7 +12,6 @@ export default function CartPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Итоговая сумма
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   async function handleOrder() {
@@ -56,7 +56,7 @@ export default function CartPage() {
           </p>
         ) : (
           <div className={styles.cartContainer}>
-            {/* Слева: список товаров */}
+            {/* Слева товары */}
             <div className={styles.cartItems}>
               {cart.map((item) => (
                 <div key={item.id} className={styles.cartItem}>
@@ -82,7 +82,7 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* Справа: форма + разбивка + итог */}
+            {/* Справа форма+разбивка+итог */}
             <div className={styles.cartSummary}>
               <h2 className={styles.summaryTitle}>Ваш заказ</h2>
 
@@ -108,7 +108,6 @@ export default function CartPage() {
                 />
               </div>
 
-              {/* Разбивка сумм, выравнена вправо */}
               <div className={styles.breakdown}>
                 {cart.map((item) => (
                   <div key={item.id} className={styles.breakdownLine}>
@@ -117,7 +116,6 @@ export default function CartPage() {
                 ))}
               </div>
 
-              {/* Итоговая строка */}
               <div className={styles.summaryTotal}>
                 <span className={styles.summaryLabel}>Итого к оплате</span>
                 <span className={styles.totalAmount}>{total}₽</span>

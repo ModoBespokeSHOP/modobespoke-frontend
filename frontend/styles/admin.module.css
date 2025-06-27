@@ -1,94 +1,160 @@
+/* общий контейнер админки */
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
+  margin-top: 140px;
+  padding: 20px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
+/* Заголовок */
 .heading {
+  font-size: 24px;
+  margin-bottom: 16px;
   text-align: center;
-  margin-bottom: 24px;
 }
+/* Панель: форма + список */
 .panel {
   display: flex;
-  gap: 32px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
-/* === Форма === */
+/* Форма товара */
 .form {
-  flex: 1;
+  flex: 1 1 300px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: #fff;
-  padding: 16px;
-  border: 1px solid #eee;
-  border-radius: 8px;
 }
 .form label {
   display: flex;
   flex-direction: column;
   font-size: 14px;
-  color: #333;
 }
-.form input,
+.form input[type="text"],
+.form input[type="number"],
 .form textarea {
-  margin-top: 4px;
   padding: 8px;
-  font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 14px;
+}
+.form input[type="file"] {
+  margin-top: 4px;
 }
 .form button {
-  margin-top: 12px;
   padding: 10px;
-  background: #000;
+  background: #0070f3;
   color: #fff;
   border: none;
-  cursor: pointer;
   border-radius: 4px;
+  cursor: pointer;
 }
-.error {
-  color: #c00;
+.form button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
-/* Превью */
+/* Превью изображения */
 .previewWrapper {
   text-align: center;
-  margin: 8px 0;
 }
 .preview {
   max-width: 100%;
-  max-height: 200px;
+  max-height: 150px;
   object-fit: contain;
+  margin-top: 8px;
 }
-/* === Список === */
+/* Список товаров */
 .list {
-  flex: 1;
-  background: #fff;
-  padding: 16px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  overflow-y: auto;
-  max-height: calc(100vh - 200px);
+  flex: 2 1 400px;
 }
 .list h2 {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 .listItem {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
 }
 .listItem img {
-  width: 100px;
-  height: 100px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 4px;
 }
 .listItem button {
   margin-left: auto;
-  padding: 6px 10px;
-  background: #c00;
-  color: #fff;
+  background: none;
+  border: none;
+  color: #0070f3;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+.listItem button:last-child {
+  color: #e00;
+}
+/* Сообщения об ошибке/успехе */
+.error {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+}
+/* --- стили для экрана логина --- */
+.loginWrapper {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #fafafa;
+}
+.loginForm {
+  background: #fff;
+  padding: 24px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.loginForm h2 {
+  margin: 0;
+  text-align: center;
+}
+.inputWrapper {
+  position: relative;
+}
+.inputWrapper input {
+  width: 100%;
+  padding: 8px 40px 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.showBtn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: none;
   border: none;
   cursor: pointer;
+  color: #555;
+}
+.loginForm button[type="submit"] {
+  padding: 10px;
+  background: #000;
+  color: #fff;
+  font-size: 16px;
+  border: none;
   border-radius: 4px;
+  cursor: pointer;
+}
+.loginForm button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

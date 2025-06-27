@@ -1,11 +1,18 @@
+// frontend/context/CartContext.js
+
 import { createContext, useState, useEffect } from "react";
 
-export const CartContext = createContext();
+// тут сразу задаём безопасные «заглушки»
+export const CartContext = createContext({
+  cart: [],
+  addToCart: () => {},
+  removeFromCart: () => {},
+  clearCart: () => {},
+});
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
 
-  // Загрузить из localStorage при старте
   useEffect(() => {
     if (typeof window === "undefined") return;
     const saved = localStorage.getItem("cart");
@@ -16,14 +23,12 @@ export function CartProvider({ children }) {
     }
   }, []);
 
-  // Сохранять в localStorage при каждом изменении
   useEffect(() => {
     if (typeof window === "undefined") return;
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (product) => {
-    console.log("Adding to cart:", product);
     setCart((prev) => {
       const idx = prev.findIndex((p) => p.id === product.id);
       if (idx !== -1) {
@@ -37,7 +42,6 @@ export function CartProvider({ children }) {
 
   const removeFromCart = (productId) =>
     setCart((prev) => prev.filter((p) => p.id !== productId));
-
   const clearCart = () => setCart([]);
 
   return (

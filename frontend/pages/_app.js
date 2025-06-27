@@ -1,28 +1,32 @@
-// frontend/pages/_app.js
-
 import "../styles/globals.css";
-import { CartProvider } from "../context/CartContext";
 import Script from "next/script";
-import dynamic from "next/dynamic";
+import Link from "next/link";
+import Footer from "../components/Footer";
+import { CartProvider } from "../context/CartContext";
+import { ToastProvider } from "../context/ToastContext";
 
-// Загружаем Header только на клиенте, чтобы он не участвовал в SSR
-const Header = dynamic(() => import("../components/Header"), {
-  ssr: false,
-});
+function Header() {
+  return (
+    <header className="header">
+      <Link href="/" className="logo-link">
+        <img src="/images/logo.png" alt="Логотип" className="logo-img" />
+      </Link>
+      <Link href="/cart" className="cart-link">
+        Корзина
+      </Link>
+    </header>
+  );
+}
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <>
-      {/* YooKassa SDK */}
-      <Script src="https://js.yookassa.ru/v3" strategy="afterInteractive" />
-
-      {/* Весь сайт в провайдере корзины */}
+    <ToastProvider>
       <CartProvider>
-        {/* Клиентский Header */}
+        <Script src="https://js.yookassa.ru/v3" strategy="afterInteractive" />
         <Header />
-        {/* Основной контент страницы */}
         <Component {...pageProps} />
+        <Footer />
       </CartProvider>
-    </>
+    </ToastProvider>
   );
 }

@@ -171,3 +171,74 @@ a:visited {
 .add-to-cart:hover {
   background-color: #333;
 }
+
+/* контейнер для всех тоастов */
+.toasts-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column-reverse; /* новейший сверху */
+  gap: 8px;
+  z-index: 10000;
+}
+
+/* каждый тоаст */
+.toast {
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  animation: fadein 0.2s ease-out, fadeout 0.2s ease-in 2.8s forwards;
+}
+
+/* появление */
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* исчезновение */
+@keyframes fadeout {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.site-footer {
+  background: #f9f9f9;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  border-top: 1px solid #e5e5e5;
+  margin-top: 40px; /* отступ сверху от основного контента */
+}
+
+.site-footer a {
+  color: #333;
+  margin-right: 16px;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-left a:last-child,
+.footer-right a:last-child {
+  margin-right: 0;
+}
