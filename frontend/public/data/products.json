@@ -26,5 +26,12 @@
     "description": "модная шляпа",
     "price": 2323,
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg"
+  },
+  {
+    "id": 1751055501325,
+    "title": "платье",
+    "description": "невоврава",
+    "price": 23232323,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1751055497/cksubevvv93vn7likto1.jpg"
   }
 ]
