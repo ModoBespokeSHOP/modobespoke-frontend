@@ -26,5 +26,12 @@
     "description": "модная шляпа",
     "price": 2323,
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg"
+  },
+  {
+    "id": 1751054709286,
+    "title": "Негр",
+    "description": "пидор",
+    "price": 123123,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1751054706/ogli54jiuvyvy0asrd6p.jpg"
   }
 ]
