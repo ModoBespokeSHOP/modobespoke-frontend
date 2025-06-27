@@ -33,12 +33,5 @@
     "description": "2323",
     "price": 4000,
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750981643/pihgi6hrspjvac9c0ybu.jpg"
-  },
-  {
-    "id": 1750983231461,
-    "title": "1",
-    "description": "2",
-    "price": 2,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750983229/fjspxkxj2o3cgcqmar2o.jpg"
   }
 ]
