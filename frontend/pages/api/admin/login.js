@@ -5,7 +5,7 @@ export default function handler(req, res) {
     return res.status(405).end("Method Not Allowed");
   }
   const { password } = req.body;
-  if (password !== process.env.ADMIN_PASSWORD) {
+  if (password !== process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
     return res.status(401).json({ message: "Неверный пароль" });
   }
   // Успешно
