@@ -49,19 +49,16 @@ a:visited {
 
 /* === Шапка (Header) === */
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 20px;
+  background: #fff;
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
-  height: var(--logo-max-h);
-  background: #ffffff;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 20px;
-  padding-right: calc(20px + var(--cart-offset));
-  transition: box-shadow 0.3s ease;
+  width: 100%;
   z-index: 1000;
+  transition: box-shadow 0.3s;
 }
 
 .header.with-shadow {
@@ -76,17 +73,17 @@ a:visited {
 }
 
 .logo-img {
-  display: block;
-  max-height: var(--logo-max-h);
-  width: auto;
-  height: auto;
+  max-height: 120px;
 }
 
 /* Ссылка «Корзина» справа */
 .cart-link {
-  margin-right: var(--cart-offset);
-  font-weight: 300;
   font-size: 16px;
+  padding: 8px 12px;
+  background: #fff;
+  color: #000;
+  border-radius: 4px;
+  text-decoration: none;
 }
 
 /* === Контент под шапкой === */
@@ -99,12 +96,12 @@ a:visited {
 /* === Сетка товаров === */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, var(--card-width));
-  column-gap: var(--card-gap);
-  row-gap: 32px;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 16px;
+  row-gap: 24px;
   justify-content: center;
-  max-width: calc(3 * var(--card-width) + 2 * var(--card-gap));
   margin: 0 auto;
+  max-width: 1200px;
 }
 
 @media (max-width: calc(2 * var(--card-width) + var(--card-gap))) {
@@ -220,27 +217,67 @@ a:visited {
 }
 
 .site-footer {
-  background: #f9f9f9;
-  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px;
+  background: #f9f9f9;
   font-size: 14px;
-  border-top: 1px solid #e5e5e5;
-  margin-top: 40px; /* отступ сверху от основного контента */
 }
 
 .site-footer a {
-  color: #333;
   margin-right: 16px;
+  color: #333;
   text-decoration: none;
 }
 
-.site-footer a:hover {
-  text-decoration: underline;
+.site-footer .footer-right a {
+  margin-right: 0;
+}
+.site-footer .footer-left,
+.site-footer .footer-right {
+  display: flex;
+  align-items: center;
 }
 
-.footer-left a:last-child,
-.footer-right a:last-child {
-  margin-right: 0;
+/* === Адаптив для мобильных устройств === */
+@media (max-width: 640px) {
+  /* Товары — 2 колонки */
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 12px;
+    row-gap: 16px;
+    padding: 0 16px;
+  }
+
+  /* Шапка — вертикальная */
+  .header {
+    flex-direction: column;
+    padding: 10px 16px;
+  }
+  .logo-img {
+    max-height: 32px;
+    margin-bottom: 8px;
+  }
+  .cart-link {
+    font-size: 18px;
+    padding: 10px 16px;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Футер — вертикальный стэк */
+  .site-footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  .site-footer .footer-left,
+  .site-footer .footer-right {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .site-footer a {
+    margin: 4px 8px;
+  }
 }
