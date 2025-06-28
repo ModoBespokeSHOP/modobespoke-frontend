@@ -1,23 +1,26 @@
 // frontend/pages/cart.js
+
 import { useContext, useState } from "react";
 import Head from "next/head";
-import Link from "next/link";
-import styles from "../styles/cart.module.css";
+import Image from "next/image";
 import { CartContext } from "../context/CartContext";
+import styles from "../styles/cart.module.css";
 
 export default function CartPage() {
-  const { cart, removeFromCart, clearCart } = useContext(CartContext);
+  const { cart, addToCart, decreaseQty, removeFromCart, clearCart } =
+    useContext(CartContext);
+
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  async function handleOrder() {
+  const handlePay = async () => {
     setError("");
     if (!name.trim() || !phone.trim()) {
-      setError("Пожалуйста, заполните имя и телефон");
+      setError("Пожалуйста, введите имя и телефон");
       return;
     }
     setLoading(true);
@@ -32,114 +35,113 @@ export default function CartPage() {
         }),
       });
       const data = await res.json();
-      if (res.ok && data.confirmation_url) {
-        window.location.href = data.confirmation_url;
-      } else {
-        throw new Error(data.message || "Не удалось создать платёж");
-      }
-    } catch (e) {
-      console.error(e);
-      setError("Ошибка при создании платежа. Попробуйте позже.");
+      if (!res.ok) throw new Error(data.message || "Ошибка оплаты");
+      window.location.href = data.confirmation_url;
+    } catch (err) {
+      setError(err.message);
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <>
       <Head>
         <title>Корзина — Магазин платьев</title>
       </Head>
-      <main className="section">
-        {cart.length === 0 ? (
-          <p>
-            Ваша корзина пуста. <Link href="/">Вернуться в магазин</Link>
-          </p>
-        ) : (
-          <div className={styles.cartContainer}>
-            {/* Слева товары */}
-            <div className={styles.cartItems}>
-              {cart.map((item) => (
-                <div key={item.id} className={styles.cartItem}>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className={styles.itemImage}
-                  />
-                  <div className={styles.itemDetails}>
-                    <h3 className={styles.itemTitle}>{item.title}</h3>
-                    <p className={styles.itemQty}>Кол-во: {item.qty}</p>
-                    <p className={styles.itemPrice}>
-                      {item.price}₽ × {item.qty} = {item.price * item.qty}₽
-                    </p>
+      <main className={styles.cartContainer}>
+        {/* Слева: товары */}
+        <div className={styles.cartItems}>
+          {cart.length === 0 ? (
+            <p>Ваша корзина пуста.</p>
+          ) : (
+            cart.map((item) => (
+              <div key={item.id} className={styles.cartItem}>
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={80}
+                  height={80}
+                  className={styles.itemImage}
+                />
+                <div className={styles.itemDetails}>
+                  <div className={styles.itemTitle}>{item.title}</div>
+                  <div className={styles.itemQty}>
+                    <button onClick={() => decreaseQty(item.id)}>−</button>
+                    <span>{item.qty}</span>
+                    <button onClick={() => addToCart(item)}>+</button>
                   </div>
-                  <button
-                    className={styles.removeBtn}
-                    onClick={() => removeFromCart(item.id)}
-                  >
-                    ✕
-                  </button>
+                  <div className={styles.itemPrice}>
+                    {item.price * item.qty}₽
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Справа форма+разбивка+итог */}
-            <div className={styles.cartSummary}>
-              <h2 className={styles.summaryTitle}>Ваш заказ</h2>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Ваше имя</label>
-                <input
-                  type="text"
-                  className={styles.formInput}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Иван Иванов"
-                />
+                <button
+                  className={styles.removeBtn}
+                  onClick={() => removeFromCart(item.id)}
+                >
+                  ×
+                </button>
               </div>
+            ))
+          )}
+        </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Телефон</label>
-                <input
-                  type="tel"
-                  className={styles.formInput}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+7 (___) ___-__-__"
-                />
-              </div>
+        {/* Справа: форма и итоги */}
+        <div className={styles.cartSummary}>
+          <h2 className={styles.summaryTitle}>Оформление заказа</h2>
 
-              <div className={styles.breakdown}>
-                {cart.map((item) => (
-                  <div key={item.id} className={styles.breakdownLine}>
-                    + {item.price * item.qty}₽
-                  </div>
-                ))}
-              </div>
+          {error && <div className={styles.error}>{error}</div>}
 
-              <div className={styles.summaryTotal}>
-                <span className={styles.summaryLabel}>Итого к оплате</span>
-                <span className={styles.totalAmount}>{total}₽</span>
-              </div>
-
-              {error && <p className={styles.error}>{error}</p>}
-
-              <button
-                className={styles.payBtn}
-                onClick={handleOrder}
-                disabled={loading}
-              >
-                {loading ? "Создание платежа..." : "Оплатить"}
-              </button>
-              <button
-                className={styles.clearBtn}
-                onClick={clearCart}
-                disabled={loading}
-              >
-                Очистить корзину
-              </button>
-            </div>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Ваше имя</label>
+            <input
+              className={styles.formInput}
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
-        )}
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Телефон</label>
+            <input
+              className={styles.formInput}
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
+
+          {/* Разбивка по товарам */}
+          <div className={styles.breakdown}>
+            {cart.map((item) => (
+              <div key={item.id} className={styles.breakdownLine}>
+                {item.qty} × {item.price}₽ = {item.price * item.qty}₽
+              </div>
+            ))}
+          </div>
+
+          {/* Итого */}
+          <div className={styles.summaryTotal}>
+            <span className={styles.summaryLabel}>Итого к оплате:</span>
+            <span className={styles.totalAmount}>{total}₽</span>
+          </div>
+
+          <button
+            className={styles.payBtn}
+            onClick={handlePay}
+            disabled={loading || cart.length === 0}
+          >
+            {loading ? "Пожалуйста, подождите…" : "Оплатить"}
+          </button>
+          <button
+            className={styles.clearBtn}
+            onClick={clearCart}
+            disabled={cart.length === 0}
+          >
+            Очистить корзину
+          </button>
+        </div>
       </main>
     </>
   );
