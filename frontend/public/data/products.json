@@ -26,5 +26,12 @@
     "description": "модная шляпа",
     "price": 2323,
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg"
+  },
+  {
+    "id": 1751124887268,
+    "title": "qweq",
+    "description": "qweqw",
+    "price": 2323,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1751124885/kefrt37dajwmii9f7j6k.jpg"
   }
 ]
