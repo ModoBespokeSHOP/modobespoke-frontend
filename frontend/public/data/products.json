@@ -26,5 +26,12 @@
     "description": "модная шляпа",
     "price": 2323,
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg"
+  },
+  {
+    "id": 1751117086572,
+    "title": "asdasd",
+    "description": "asdasd",
+    "price": 45454,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1751117085/vssjz82yltjcd018vfmy.jpg"
   }
 ]
