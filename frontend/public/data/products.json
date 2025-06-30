@@ -1,12 +1,10 @@
 [
   {
-    "title": "Платье",
-    "description": "",
-    "price": "2333",
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750767911/qdj45jporrmek0c9eeoe.jpg",
     "id": 1750767918081,
-    "sizes": ["S", "M", "L"],
-    "composition": "100% хлопок"
+    "title": "Платье",
+    "description": "21321312sdasd",
+    "price": 2333,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750767911/qdj45jporrmek0c9eeoe.jpg"
   },
   {
     "title": "Платье",
@@ -14,7 +12,11 @@
     "price": "23323",
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750768949/jbezl55zftfohkcku2nr.jpg",
     "id": 1750768955449,
-    "sizes": ["S", "M", "L"],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
     "composition": "100% хлопок"
   },
   {
@@ -23,7 +25,11 @@
     "price": "3000",
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750792805/x9zmldolzliovmhgztqf.jpg",
     "id": 1750792832807,
-    "sizes": ["S", "M", "L"],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
     "composition": "100% хлопок"
   },
   {
@@ -31,7 +37,11 @@
     "title": "Шляпа",
     "description": "модная шляпа",
     "price": 2323,
-    "sizes": ["S", "M", "L"],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
     "composition": "100% хлопок",
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg"
   }
