@@ -1,0 +1,61 @@
+.card {
+  position: relative;
+  cursor: pointer;
+}
+.imageWrapper {
+  width: 100%;
+  padding-top: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.info {
+  text-align: left;
+  margin-top: 8px;
+}
+.price {
+  font-weight: bold;
+}
+.title {
+  color: #555;
+}
+
+/* Модалка */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+}
+.closeBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.addBtn {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: #000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
