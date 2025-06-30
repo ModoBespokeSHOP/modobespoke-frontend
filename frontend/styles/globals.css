@@ -33,6 +33,13 @@
   box-sizing: border-box;
 }
 
+/* Сброс отступов для html и body */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 /* === Базовые стили страницы === */
 body {
   background: #ffffff;
@@ -50,13 +57,13 @@ a:visited {
 /* === Шапка (Header) === */
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 40px 20px;
-  background: #fff;
+  justify-content: center; /* логотип по центру */
   position: fixed;
   top: 0;
   width: 100%;
+  padding: 40px 20px;
+  background: #fff;
   z-index: 1000;
   transition: box-shadow 0.3s;
 }
@@ -73,10 +80,16 @@ a:visited {
 }
 
 .logo-img {
-  max-height: 120px;
+  max-height: var(--logo-max-h);
 }
 
-/* Ссылка «Корзина» справа */
+/* Контейнер для корзины справа */
+.header-right {
+  margin-left: auto;
+  padding-right: var(--cart-offset);
+}
+
+/* Ссылка «Корзина» */
 .cart-link {
   font-size: 16px;
   padding: 8px 12px;
@@ -135,7 +148,6 @@ a:visited {
   display: block;
 }
 
-/* Блок с ценой и названием */
 .product-info {
   margin-top: 10px;
   padding-left: var(--info-offset);
@@ -155,7 +167,6 @@ a:visited {
   margin: 0;
 }
 
-/* Кнопка «В корзину» */
 .add-to-cart {
   margin-top: var(--button-offset);
   padding: 8px 12px;
@@ -171,18 +182,16 @@ a:visited {
   background-color: #333;
 }
 
-/* контейнер для всех тоастов */
 .toasts-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
   display: flex;
-  flex-direction: column-reverse; /* новейший сверху */
+  flex-direction: column-reverse;
   gap: 8px;
   z-index: 10000;
 }
 
-/* каждый тоаст */
 .toast {
   background: rgba(0, 0, 0, 0.85);
   color: #fff;
@@ -192,7 +201,6 @@ a:visited {
   animation: fadein 0.2s ease-out, fadeout 0.2s ease-in 2.8s forwards;
 }
 
-/* появление */
 @keyframes fadein {
   from {
     opacity: 0;
@@ -204,7 +212,6 @@ a:visited {
   }
 }
 
-/* исчезновение */
 @keyframes fadeout {
   from {
     opacity: 1;
@@ -230,7 +237,6 @@ a:visited {
   color: #333;
   text-decoration: none;
 }
-
 .site-footer .footer-right a {
   margin-right: 0;
 }
@@ -240,17 +246,13 @@ a:visited {
   align-items: center;
 }
 
-/* === Адаптив для мобильных устройств === */
 @media (max-width: 640px) {
-  /* Товары — 2 колонки */
   .grid {
     grid-template-columns: repeat(2, 1fr);
     column-gap: 12px;
     row-gap: 16px;
     padding: 0 16px;
   }
-
-  /* Шапка — вертикальная */
   .header {
     flex-direction: column;
     padding: 10px 16px;
@@ -265,8 +267,6 @@ a:visited {
     width: 100%;
     text-align: center;
   }
-
-  /* Футер — вертикальный стэк */
   .site-footer {
     flex-direction: column;
     text-align: center;
