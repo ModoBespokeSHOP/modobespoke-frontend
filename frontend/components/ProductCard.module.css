@@ -1,22 +1,27 @@
 .card {
-  position: relative;
+  background: #fff;
+  overflow: hidden;
   cursor: pointer;
+  transition: transform 0.2s;
+}
+.card:hover {
+  transform: scale(1.02);
 }
 .imageWrapper {
   width: 100%;
-  padding-top: 100%;
-  position: relative;
-  overflow: hidden;
+  aspect-ratio: 1 / 1;
 }
 .info {
-  text-align: left;
-  margin-top: 8px;
+  padding: 12px;
 }
 .price {
+  font-size: 18px;
   font-weight: bold;
+  margin-bottom: 4px;
 }
 .title {
-  color: #555;
+  font-size: 16px;
+  color: #333;
 }
 
 /* Модалка */
@@ -24,38 +29,92 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: 9999;
 }
-.modal {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 90%;
-  max-height: 90%;
-  overflow-y: auto;
+.modalContent {
   position: relative;
+  background: #fff;
+  width: 95vw;
+  max-width: 900px;
+  height: 90vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  /* убрать скругления */
+  border-radius: 0;
 }
 .closeBtn {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 16px;
+  right: 16px;
   background: transparent;
   border: none;
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
+  z-index: 2;
+}
+.modalImage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #f9f9f9;
+}
+.modalDetails {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 16px;
+}
+.modalTitle {
+  font-size: 24px;
+  margin: 0;
+}
+.modalPrice {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+.modalDescription {
+  font-size: 14px;
+  color: #555;
+  margin-top: 8px;
+}
+.sizeSelector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sizeBtn {
+  padding: 8px 16px;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.sizeBtn:hover,
+.sizeBtn.active {
+  background: #000;
+  color: #fff;
 }
 .addBtn {
-  margin-top: 16px;
-  padding: 10px 20px;
+  margin-top: auto;
+  padding: 12px;
   background: #000;
   color: #fff;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+.addBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }

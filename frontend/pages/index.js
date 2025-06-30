@@ -4,6 +4,8 @@ import Head from "next/head";
 import { CartContext } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
 import ProductCard from "../components/ProductCard";
+import VideoBanner from "../components/VideoBanner";
+import gridStyles from "../components/ProductGrid.module.css";
 
 export default function Home() {
   const [products, setProducts] = useState(null);
@@ -19,7 +21,12 @@ export default function Home() {
           : Array.isArray(data.data)
           ? data.data
           : [];
-        setProducts(arr);
+        // Нормализуем массив и гарантируем массив sizes
+        const normalized = arr.map((item) => ({
+          ...item,
+          sizes: Array.isArray(item.sizes) ? item.sizes : [],
+        }));
+        setProducts(normalized);
       })
       .catch((err) => {
         console.error("Fetch error:", err);
@@ -41,25 +48,13 @@ export default function Home() {
       </Head>
 
       <main className="section">
-        {/* Видео-превью */}
-        <div className="promo-video" style={{ marginBottom: 24 }}>
-          <video
-            src="/video/promo.mp4" // или URL вида https://...
-            poster="/images/video-poster.jpg" // превью до старта
-            controls
-            style={{
-              width: "100%",
-              maxHeight: 400,
-              objectFit: "cover",
-              borderRadius: 8,
-            }}
-          />
-        </div>
+        {/* Видео между шапкой и товарами */}
+        <VideoBanner />
 
         {products.length === 0 ? (
           <p style={{ textAlign: "center" }}>Товары отсутствуют.</p>
         ) : (
-          <div className="grid">
+          <div className={gridStyles.grid}>
             {products.map((prod) => (
               <ProductCard
                 key={prod.id}

@@ -1,25 +1,30 @@
+// components/ProductCard.js
 import { useState } from "react";
 import Image from "next/image";
-import styles from "./ProductCard.module.css"; // ваши стили
+import styles from "./ProductCard.module.css";
 
-export default function ProductCard({ product, onAddToCart }) {
-  const [showModal, setShowModal] = useState(false);
-  const [size, setSize] = useState(product.sizes[0] || "");
+export default function ProductCard({ product = {}, onAddToCart }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
 
+  const handleOpen = () => setIsModalOpen(true);
+  const handleClose = () => setIsModalOpen(false);
   const handleAdd = () => {
-    onAddToCart({ ...product, selectedSize: size });
-    setShowModal(false);
+    onAddToCart({ ...product, selectedSize });
+    handleClose();
   };
 
   return (
     <>
-      <div className={styles.card}>
-        <div className={styles.imageWrapper} onClick={() => setShowModal(true)}>
+      <div className={styles.card} onClick={handleOpen}>
+        <div className={styles.imageWrapper}>
           <Image
             src={product.image}
             alt={product.title}
-            layout="fill"
-            objectFit="cover"
+            layout="responsive"
+            width={300}
+            height={300}
+            objectFit="contain"
           />
         </div>
         <div className={styles.info}>
@@ -28,48 +33,50 @@ export default function ProductCard({ product, onAddToCart }) {
         </div>
       </div>
 
-      {showModal && (
-        <div
-          className={styles.modalOverlay}
-          onClick={() => setShowModal(false)}
-        >
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button
-              className={styles.closeBtn}
-              onClick={() => setShowModal(false)}
-            >
+      {isModalOpen && (
+        <div className={styles.modalOverlay} onClick={handleClose}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className={styles.closeBtn} onClick={handleClose}>
               ✕
             </button>
-            <Image
-              src={product.image}
-              alt={product.title}
-              width={300}
-              height={300}
-            />
-            <h2>{product.title}</h2>
-            <p>{product.description}</p>
-            <p>
-              <strong>Состав:</strong> {product.composition}
-            </p>
 
-            <label htmlFor={`size-${product.id}`}>
-              Размер:
-              <select
-                id={`size-${product.id}`}
-                value={size}
-                onChange={(e) => setSize(e.target.value)}
-              >
-                {product.sizes.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
+            <div className={styles.modalImage}>
+              <Image
+                src={product.image}
+                alt={product.title}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+
+            <div className={styles.modalDetails}>
+              <h2 className={styles.modalTitle}>{product.title}</h2>
+              <p className={styles.modalPrice}>{product.price} ₽</p>
+              <p className={styles.modalDescription}>{product.description}</p>
+              <div className={styles.sizeSelector}>
+                {product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    className={`${styles.sizeBtn} ${
+                      selectedSize === size ? styles.active : ""
+                    }`}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                  </button>
                 ))}
-              </select>
-            </label>
-
-            <button className={styles.addBtn} onClick={handleAdd}>
-              В корзину
-            </button>
+              </div>
+              <button
+                className={styles.addBtn}
+                onClick={handleAdd}
+                disabled={!selectedSize}
+              >
+                Добавить в корзину
+              </button>
+            </div>
           </div>
         </div>
       )}
