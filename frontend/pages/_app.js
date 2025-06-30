@@ -1,3 +1,4 @@
+// pages/_app.js
 import "../styles/globals.css";
 import Script from "next/script";
 import Link from "next/link";
@@ -11,9 +12,11 @@ function Header() {
       <Link href="/" className="logo-link">
         <img src="/images/logo.png" alt="Логотип" className="logo-img" />
       </Link>
-      <Link href="/cart" className="cart-link">
-        Корзина
-      </Link>
+      <div className="header-right">
+        <Link href="/cart" className="cart-link">
+          Корзина
+        </Link>
+      </div>
     </header>
   );
 }

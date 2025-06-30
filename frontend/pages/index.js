@@ -1,4 +1,4 @@
-// frontend/pages/index.js
+// pages/index.js (обновлённый пример)
 import { useState, useEffect, useContext } from "react";
 import Head from "next/head";
 import { CartContext } from "../context/CartContext";
@@ -21,7 +21,6 @@ export default function Home() {
           : Array.isArray(data.data)
           ? data.data
           : [];
-        // Нормализуем массив и гарантируем массив sizes
         const normalized = arr.map((item) => ({
           ...item,
           sizes: Array.isArray(item.sizes) ? item.sizes : [],
@@ -49,7 +48,10 @@ export default function Home() {
 
       <main className="section">
         {/* Видео между шапкой и товарами */}
-        <VideoBanner />
+        <VideoBanner
+          bottomMargin="3rem" // настраиваемый отступ снизу
+          sloganText="УДОБНАЯ ЖЕНСТВЕННОСТЬ С ДУХОМ АВАНТЮРИЗМА"
+        />
 
         {products.length === 0 ? (
           <p style={{ textAlign: "center" }}>Товары отсутствуют.</p>
