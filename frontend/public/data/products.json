@@ -1,55 +1,102 @@
 [
   {
     "id": 1750767918081,
-    "title": "Платье",
-    "description": "32213sdasd",
-    "price": 2333,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750767911/qdj45jporrmek0c9eeoe.jpg"
+    "title": "Платье Ночное",
+    "shortSpecs": {
+      "color": "чёрный",
+      "material": "хлопок 80% ткань 20%"
+    },
+    "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
+    "price": 6999,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750767911/qdj45jporrmek0c9eeoe.jpg",
+    "sizes": [
+      "XS",
+      "L",
+      "XL"
+    ]
   },
   {
     "id": 1750768955449,
-    "title": "Платье",
-    "description": "adasdasdasdasdasdasdasdasd",
-    "price": 23323,
+    "title": "Платье Летнее",
+    "shortSpecs": {
+      "color": "белый",
+      "material": "штора",
+      "pattern": "-"
+    },
+    "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
+    "price": 18999,
     "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750768949/jbezl55zftfohkcku2nr.jpg",
     "sizes": [
       "S",
       "M",
       "L"
-    ],
-    "composition": "100% хлопок"
+    ]
   },
   {
-    "title": "новое платье",
-    "description": "",
-    "price": "3000",
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750792805/x9zmldolzliovmhgztqf.jpg",
     "id": 1750792832807,
+    "title": "Блузка Светлая",
+    "shortSpecs": {
+      "color": "белый",
+      "material": "ткань",
+      "pattern": "-"
+    },
+    "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
+    "price": 3999,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750792805/x9zmldolzliovmhgztqf.jpg",
     "sizes": [
       "S",
       "M",
       "L"
-    ],
-    "composition": "100% хлопок"
+    ]
   },
   {
     "id": 1750867771865,
     "title": "Шляпа",
-    "description": "модная шляпа",
-    "price": 2323,
+    "shortSpecs": {
+      "pattern": "-",
+      "material": "солома",
+      "color": "бежевый"
+    },
+    "description": "модная шляпа для вашего лета",
+    "price": 1999,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg",
     "sizes": [
-      "S",
-      "M",
-      "L"
-    ],
-    "composition": "100% хлопок",
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg"
+      "M"
+    ]
   },
   {
     "id": 1751300533811,
-    "title": "тест",
-    "description": "провкерка",
-    "price": 43434,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1751300532/e3wzr1c5ypyztzmdngq7.jpg"
+    "title": "Тест",
+    "shortSpecs": {
+      "color": "голубой",
+      "material": "ткань",
+      "pattern": "-"
+    },
+    "description": "провкерка в четверг четвёртого числа в четры на трово бла бла на хлопковых полях",
+    "price": 7999,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1751300532/e3wzr1c5ypyztzmdngq7.jpg",
+    "sizes": [
+      "S",
+      "M"
+    ]
+  },
+  {
+    "id": 1751372216229,
+    "title": "Платье Кармалье",
+    "shortSpecs": {
+      "pattern": "горошек",
+      "color": "бежевый",
+      "material": "100% хлопок"
+    },
+    "description": "Замысел эпопеи формировался задолго до начала Замысел эпопеи формировался задолго до началаЗамысел эпопеи формировался задолго до началаЗамысел эпопеи формировался задолго до началаЗамысел эпопеи формировался задолго до начала",
+    "price": 4999,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1751372214/jumsalr788ppjrmzxkrq.jpg",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XS",
+      "XL"
+    ]
   }
 ]

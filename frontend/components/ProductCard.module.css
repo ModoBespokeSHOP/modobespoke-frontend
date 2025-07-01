@@ -1,53 +1,59 @@
+/* === components/ProductCard.module.css === */
 .card {
   background: #fff;
-  overflow: hidden;
+  border: 1px solid #eee;
   cursor: pointer;
-  transition: transform 0.2s;
+  overflow: hidden;
+  border-radius: 4px;
+  transition: box-shadow 0.2s;
 }
 .card:hover {
-  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.imageWrapper {
+.cardImage {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  display: block;
 }
-.info {
+.cardInfo {
   padding: 12px;
+  border-top: 1px solid #eee;
 }
-.price {
+.cardTitle {
+  margin: 0;
   font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.title {
-  font-size: 16px;
   color: #333;
 }
+.cardPrice {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: bold;
+}
 
-/* Модалка */
+/* Modal */
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 10000;
 }
 .modalContent {
   position: relative;
   background: #fff;
-  width: 95vw;
-  max-width: 900px;
-  height: 90vh;
+  width: 80vw;
+  max-width: 800px;
+  height: auto;
+  max-height: 85vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
-  /* убрать скругления */
-  border-radius: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
 }
 .closeBtn {
   position: absolute;
@@ -57,64 +63,112 @@
   border: none;
   font-size: 24px;
   cursor: pointer;
-  z-index: 2;
+  color: #333;
 }
 .modalImage {
+  grid-row: 1 / span 2;
+  grid-column: 1;
   position: relative;
   width: 100%;
   height: 100%;
-  background: #f9f9f9;
+  background: #000;
 }
 .modalDetails {
+  grid-row: 2;
+  grid-column: 2;
   padding: 24px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   gap: 16px;
 }
 .modalTitle {
-  font-size: 24px;
   margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
 }
 .modalPrice {
-  font-size: 20px;
-  font-weight: bold;
   margin: 0;
+  font-size: 20px;
+  color: #444;
+  margin-bottom: 16px;
 }
-.modalDescription {
-  font-size: 14px;
-  color: #555;
-  margin-top: 8px;
-}
+
 .sizeSelector {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
 }
 .sizeBtn {
   padding: 8px 16px;
   border: 1px solid #000;
   background: #fff;
-  color: #000;
   cursor: pointer;
+  font-size: 14px;
   transition: background 0.2s, color 0.2s;
 }
-.sizeBtn:hover,
+.sizeBtn:hover {
+  background: #eee;
+}
 .sizeBtn.active {
   background: #000;
   color: #fff;
 }
+
 .addBtn {
-  margin-top: auto;
-  padding: 12px;
+  padding: 10px 20px;
   background: #000;
   color: #fff;
   border: none;
-  cursor: pointer;
   font-size: 16px;
-  transition: background 0.2s;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-width: 140px;
+  align-self: start;
+  margin-top: 8px;
 }
 .addBtn:disabled {
   background: #ccc;
   cursor: not-allowed;
+}
+
+.specsBlock,
+.descriptionBlock {
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+.blockHeader {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.specItem {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.specKey {
+  font-weight: bold;
+}
+.specValue {
+  font-weight: 300;
+}
+.descriptionBlock p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar */
+.modalDetails::-webkit-scrollbar {
+  width: 6px;
+}
+.modalDetails::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modalDetails::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
 }

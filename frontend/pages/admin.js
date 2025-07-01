@@ -1,45 +1,61 @@
+// pages/admin/index.js
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import styles from "../styles/admin.module.css";
 
+const DEFAULT_SPECS = [
+  { field: "color", label: "Цвет" },
+  { field: "material", label: "Материал" },
+  { field: "pattern", label: "Узор" },
+];
+const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL"];
+
 export default function AdminPage() {
-  // === аутентификация ===
   const [authorized, setAuthorized] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(false);
   const [authError, setAuthError] = useState("");
   const [password, setPassword] = useState("");
-  const [showPwd, setShowPwd] = useState(false);
+  const [showPwd, setShowPwd] = useState(false); // добавлен хук для показа пароля
 
-  // === данные товаров ===
   const [products, setProducts] = useState([]);
+
   const [form, setForm] = useState({
     id: null,
     title: "",
+    shortSpecs: {},
     description: "",
     price: "",
     image: "",
+    sizes: [],
     _file: null,
   });
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Загружаем товары при авторизации
   useEffect(() => {
     if (!authorized) return;
     fetch("/api/products")
       .then((r) => r.json())
-      .then((data) => {
-        const arr = Array.isArray(data) ? data : data.data || [];
-        setProducts(arr);
-      })
+      .then((data) => setProducts(Array.isArray(data) ? data : data.data || []))
       .catch(console.error);
   }, [authorized]);
 
-  // Обработчики формы товара
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
+  }
+  function handleSpecChange(field, value) {
+    setForm((f) => ({ ...f, shortSpecs: { ...f.shortSpecs, [field]: value } }));
+  }
+  function handleSizeToggle(size) {
+    setForm((f) => {
+      const has = f.sizes.includes(size);
+      return {
+        ...f,
+        sizes: has ? f.sizes.filter((s) => s !== size) : [...f.sizes, size],
+      };
+    });
   }
   function handleFile(e) {
     const file = e.target.files[0];
@@ -48,7 +64,6 @@ export default function AdminPage() {
     setPreview(URL.createObjectURL(file));
   }
 
-  // Публикация или обновление товара
   async function handlePublish(e) {
     e.preventDefault();
     setLoading(true);
@@ -73,9 +88,11 @@ export default function AdminPage() {
       const newProduct = {
         id: form.id ?? Date.now(),
         title: form.title,
+        shortSpecs: form.shortSpecs,
         description: form.description,
         price: Number(form.price),
         image: imageUrl,
+        sizes: form.sizes,
       };
       const updated = form.id
         ? products.map((p) => (p.id === form.id ? newProduct : p))
@@ -85,17 +102,17 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updated),
       });
-      if (!save.ok) {
-        const err = await save.json();
-        throw new Error(err.message || "Save failed");
-      }
+      if (!save.ok)
+        throw new Error((await save.json()).message || "Save failed");
       setProducts(updated);
       setForm({
         id: null,
         title: "",
+        shortSpecs: {},
         description: "",
         price: "",
         image: "",
+        sizes: [],
         _file: null,
       });
       setPreview("");
@@ -108,30 +125,31 @@ export default function AdminPage() {
     }
   }
 
-  // Удаление товара
+  function handleEdit(p) {
+    setForm({
+      id: p.id,
+      title: p.title,
+      shortSpecs: p.shortSpecs || {},
+      description: p.description,
+      price: p.price,
+      image: p.image,
+      sizes: p.sizes || [],
+      _file: null,
+    });
+    setPreview(p.image);
+    setMessage("");
+  }
   async function handleDelete(id) {
     const updated = products.filter((p) => p.id !== id);
-    const res = await fetch("/api/products", {
+    await fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updated),
     });
-    if (res.ok) {
-      setProducts(updated);
-      setMessage("Товар удалён");
-    } else {
-      setMessage("Ошибка удаления");
-    }
+    setProducts(updated);
+    setMessage("Товар удалён");
   }
 
-  // Редактирование товара
-  function handleEdit(p) {
-    setForm({ ...p, _file: null });
-    setPreview(p.image);
-    setMessage("");
-  }
-
-  // Авторизация
   async function handleAuth(e) {
     e.preventDefault();
     setLoadingAuth(true);
@@ -151,7 +169,6 @@ export default function AdminPage() {
     }
   }
 
-  // Если не авторизованы — показываем форму
   if (!authorized) {
     return (
       <>
@@ -187,7 +204,6 @@ export default function AdminPage() {
     );
   }
 
-  // Иначе — UI админки
   return (
     <>
       <Head>
@@ -196,7 +212,6 @@ export default function AdminPage() {
       <div className={styles.container}>
         <h1 className={styles.heading}>Панель администратора</h1>
         <div className={styles.panel}>
-          {/* Форма добавления/редактирования */}
           <form className={styles.form} onSubmit={handlePublish}>
             {message && <div className={styles.error}>{message}</div>}
             <label>
@@ -209,11 +224,21 @@ export default function AdminPage() {
                 required
               />
             </label>
+            {DEFAULT_SPECS.map((spec) => (
+              <label key={spec.field}>
+                {spec.label}
+                <input
+                  type="text"
+                  value={form.shortSpecs[spec.field] || ""}
+                  onChange={(e) => handleSpecChange(spec.field, e.target.value)}
+                />
+              </label>
+            ))}
             <label>
               Описание
               <textarea
                 name="description"
-                rows={3}
+                rows={4}
                 value={form.description}
                 onChange={handleChange}
               />
@@ -228,13 +253,30 @@ export default function AdminPage() {
                 required
               />
             </label>
+            <div className={styles.sizesField}>
+              <label className={styles.sizesLegend}>Доступные размеры</label>
+              <div className={styles.sizesButtons}>
+                {AVAILABLE_SIZES.map((sz) => (
+                  <button
+                    key={sz}
+                    type="button"
+                    className={`${styles.sizeBtn} ${
+                      form.sizes.includes(sz) ? styles.activeBtn : ""
+                    }`}
+                    onClick={() => handleSizeToggle(sz)}
+                  >
+                    {sz}
+                  </button>
+                ))}
+              </div>
+            </div>
             <label>
               Изображение
               <input type="file" accept="image/*" onChange={handleFile} />
             </label>
             {preview && (
               <div className={styles.previewWrapper}>
-                <img src={preview} alt="preview" className={styles.preview} />
+                <img src={preview} className={styles.preview} alt="preview" />
               </div>
             )}
             <button type="submit" disabled={loading}>
@@ -246,7 +288,6 @@ export default function AdminPage() {
             </button>
           </form>
 
-          {/* Список товаров */}
           <div className={styles.list}>
             <h2>Список товаров</h2>
             {products.length === 0 ? (
