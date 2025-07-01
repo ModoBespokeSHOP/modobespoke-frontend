@@ -225,25 +225,58 @@ a:visited {
 
 .site-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background: #f9f9f9;
+  flex-direction: column;
+  /* background removed for seamless footer */
+  padding: 20px 0;
   font-size: 14px;
 }
 
-.site-footer a {
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.footer-left a,
+.footer-right-links a {
   margin-right: 16px;
   color: #333;
   text-decoration: none;
+  transition: color 0.2s;
 }
-.site-footer .footer-right a {
-  margin-right: 0;
+
+.footer-left a:hover,
+.footer-right-links a:hover {
+  color: #000;
 }
-.site-footer .footer-left,
-.site-footer .footer-right {
+
+.footer-right-links {
   display: flex;
   align-items: center;
+  padding: 0 20px;
+}
+
+.footer-bottom {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+.footer-payments {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-payments img {
+  height: 20px; /* уменьшенная высота */
+  width: auto;
+  object-fit: contain;
 }
 
 @media (max-width: 640px) {
@@ -267,17 +300,17 @@ a:visited {
     width: 100%;
     text-align: center;
   }
-  .site-footer {
+  .footer-top,
+  .footer-bottom {
     flex-direction: column;
     text-align: center;
     gap: 12px;
+    padding: 0;
   }
-  .site-footer .footer-left,
-  .site-footer .footer-right {
-    flex-wrap: wrap;
+  .footer-left,
+  .footer-right-links,
+  .footer-payments {
     justify-content: center;
-  }
-  .site-footer a {
-    margin: 4px 8px;
+    padding: 0;
   }
 }
