@@ -1,7 +1,6 @@
+// pages/api/create-payment.js
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).end("Method not allowed");
-  }
+  if (req.method !== "POST") return res.status(405).end("Method not allowed");
 
   const { cart, customerName, customerPhone } = req.body;
 
@@ -14,14 +13,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: "Missing cart, name or phone" });
   }
 
-  // Сумма в копейках
+  // Рассчитываем сумму
   const totalCents = cart.reduce(
     (sum, item) => sum + item.price * item.qty * 100,
     0
   );
   const amountValue = (totalCents / 100).toFixed(2);
 
-  const description = `Заказ от ${customerName}, тел: ${customerPhone}`;
+  // Формируем описание с товарами и размерами
+  const itemsDesc = cart
+    .map(
+      (item) =>
+        `${item.title} (Размер: ${item.selectedSize || "—"}) x${item.qty}`
+    )
+    .join(", ");
+  const description = `Заказ от ${customerName}, тел: ${customerPhone}. Товары: ${itemsDesc}`;
 
   const shopId = process.env.YOOKASSA_SHOP_ID;
   const secretKey = process.env.YOOKASSA_SECRET_KEY;

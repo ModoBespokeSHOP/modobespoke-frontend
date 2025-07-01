@@ -56,7 +56,10 @@ export default function CartPage() {
             <p>Ваша корзина пуста.</p>
           ) : (
             cart.map((item) => (
-              <div key={item.id} className={styles.cartItem}>
+              <div
+                key={`${item.id}-${item.selectedSize}`}
+                className={styles.cartItem}
+              >
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -66,10 +69,17 @@ export default function CartPage() {
                 />
                 <div className={styles.itemDetails}>
                   <div className={styles.itemTitle}>{item.title}</div>
+                  <div className={styles.itemMeta}>
+                    Размер: {item.selectedSize}
+                  </div>
                   <div className={styles.itemQty}>
-                    <button onClick={() => decreaseQty(item.id)}>−</button>
+                    <button
+                      onClick={() => decreaseQty(item.id, item.selectedSize)}
+                    >
+                      −
+                    </button>
                     <span>{item.qty}</span>
-                    <button onClick={() => addToCart(item)}>+</button>
+                    <button onClick={() => addToCart(item, 1)}>+</button>
                   </div>
                   <div className={styles.itemPrice}>
                     {item.price * item.qty}₽
@@ -77,7 +87,7 @@ export default function CartPage() {
                 </div>
                 <button
                   className={styles.removeBtn}
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item.id, item.selectedSize)}
                 >
                   ×
                 </button>
@@ -115,8 +125,12 @@ export default function CartPage() {
           {/* Разбивка по товарам */}
           <div className={styles.breakdown}>
             {cart.map((item) => (
-              <div key={item.id} className={styles.breakdownLine}>
-                {item.qty} × {item.price}₽ = {item.price * item.qty}₽
+              <div
+                key={`${item.id}-${item.selectedSize}`}
+                className={styles.breakdownLine}
+              >
+                {item.qty} × {item.title} ({item.selectedSize}) ={" "}
+                {item.price * item.qty}₽
               </div>
             ))}
           </div>
