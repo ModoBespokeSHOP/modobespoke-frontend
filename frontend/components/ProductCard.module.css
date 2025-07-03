@@ -1,4 +1,4 @@
-/* === Карточка товара (Секция) === */
+/* === ProductCard.Module.css Карточка товара (Секция) === */
 .card {
   background: #fff;
   border: none;
@@ -216,5 +216,58 @@
   to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+/* Модалка для мобильных */
+@media (max-width: 768px) {
+  .modalOverlay {
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* выравнивание сверху */
+    padding-top: 60px; /* отступ сверху */
+  }
+
+  .modalContent {
+    width: 100%;
+    height: 100%;
+    max-width: none; /* убираем ограничение по ширине */
+    border-radius: 0;
+    padding: 16px;
+    grid-template-columns: 1fr; /* одна колонка */
+    grid-template-rows: auto auto auto; /* распределение контента */
+  }
+
+  .modalImage {
+    width: 100%;
+    height: 50%;
+    object-fit: cover; /* изображение заполняет весь блок */
+  }
+
+  .modalDetails {
+    padding: 16px;
+    flex-grow: 1; /* растягиваем блок */
+    overflow-y: auto;
+  }
+
+  .closeBtn {
+    font-size: 30px; /* увеличиваем кнопку закрытия */
+  }
+
+  .addBtn {
+    width: 100%; /* кнопка "Добавить в корзину" растягивается на весь экран */
+  }
+
+  .sizeSelector {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .sizeBtn {
+    width: 45%;
+    padding: 10px;
+    font-size: 16px;
   }
 }

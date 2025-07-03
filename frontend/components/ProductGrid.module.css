@@ -9,3 +9,16 @@
   max-width: var(--grid-max-width, 1200px);
   margin: 0 auto;
 }
+
+/* Сетка товаров для мобильных */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .card {
+    width: 100%; /* карточки занимают всю ширину */
+  }
+}

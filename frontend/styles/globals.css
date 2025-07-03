@@ -24,6 +24,8 @@
   --button-offset: 12px;
 
   --header-height: 60px; /* Укажи здесь свою реальную высоту шапки */
+
+  --video-margin-top: -100px; /* Настроить значение отступа сверху */
 }
 
 /* === Сброс базовых стилей === */
@@ -281,37 +283,72 @@ a:visited {
 }
 
 @media (max-width: 640px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 12px;
-    row-gap: 16px;
-    padding: 0 16px;
+  .site-footer {
+    display: flex;
+    flex-direction: column; /* Меняем футер на столбик для мобильных */
+    align-items: center; /* Центрируем футер */
+    padding: 20px 0;
+    font-size: 16px; /* Увеличиваем размер текста футера */
   }
-  .header {
-    flex-direction: column;
-    padding: 10px 16px;
+
+  .footer-top {
+    flex-direction: column; /* Ставим социальные ссылки в столбик */
+    align-items: center;
+    gap: 12px; /* Увеличиваем расстояние между ссылками */
   }
-  .logo-img {
-    max-height: 32px;
-    margin-bottom: 8px;
-  }
-  .cart-link {
-    font-size: 18px;
-    padding: 10px 16px;
-    width: 100%;
-    text-align: center;
-  }
-  .footer-top,
-  .footer-bottom {
-    flex-direction: column;
-    text-align: center;
-    gap: 12px;
-    padding: 0;
-  }
+
   .footer-left,
-  .footer-right-links,
+  .footer-right-links {
+    display: flex;
+    flex-direction: column; /* Ссылки будут располагаться в столбик */
+    gap: 12px;
+    align-items: center;
+  }
+
+  .footer-left a,
+  .footer-right-links a {
+    color: #333;
+    text-decoration: none;
+    font-size: 16px; /* Увеличиваем размер шрифта для ссылок */
+    transition: color 0.2s;
+  }
+
+  .footer-left a:hover,
+  .footer-right-links a:hover {
+    color: #000;
+  }
+
+  .footer-bottom {
+    flex-direction: column; /* Ряд с копирайтом и иконками будет в столбик */
+    gap: 12px; /* Увеличиваем расстояние */
+    align-items: center; /* Центрируем элементы */
+    width: 100%;
+  }
+
   .footer-payments {
+    gap: 10px; /* Увеличиваем расстояние между иконками */
+  }
+
+  .footer-bottom span {
+    font-size: 16px; /* Увеличиваем размер шрифта для копирайта */
+  }
+
+  /* Мобильная стилизация кнопок в футере */
+  .footer-left,
+  .footer-right-links {
+    width: 100%;
     justify-content: center;
-    padding: 0;
+  }
+
+  .header-right {
+    margin-left: 285px; /* Увеличиваем отступ между корзиной и логотипом */
+    padding-right: var(--cart-offset);
+  }
+
+  @media (max-width: 376px) {
+    .header-right {
+      margin-left: 255px; /* Увеличиваем отступ между корзиной и логотипом */
+      padding-right: var(--cart-offset);
+    }
   }
 }
