@@ -54,9 +54,9 @@
 .modalContent {
   position: relative;
   background: #fff;
-  width: 90vw;
+  width: 100dvw;
   max-width: 1200px;
-  height: 85vh;
+  height: 90vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
@@ -219,55 +219,78 @@
   }
 }
 
-/* Модалка для мобильных */
 @media (max-width: 768px) {
+  /* overlay: выравниваем сверху, без искусственного отступа */
   .modalOverlay {
+    align-items: flex-start;
+    padding-top: 0;
     background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* выравнивание сверху */
-    padding-top: 60px; /* отступ сверху */
   }
 
+  /* вся модалка — одна колонка, скроллится целиком */
   .modalContent {
-    width: 100%;
-    height: 100%;
-    max-width: none; /* убираем ограничение по ширине */
-    border-radius: 0;
-    padding: 16px;
-    grid-template-columns: 1fr; /* одна колонка */
-    grid-template-rows: auto auto auto; /* распределение контента */
-  }
-
-  .modalImage {
-    width: 100%;
-    height: 50%;
-    object-fit: cover; /* изображение заполняет весь блок */
-  }
-
-  .modalDetails {
-    padding: 16px;
-    flex-grow: 1; /* растягиваем блок */
-    overflow-y: auto;
-  }
-
-  .closeBtn {
-    font-size: 30px; /* увеличиваем кнопку закрытия */
-  }
-
-  .addBtn {
-    width: 100%; /* кнопка "Добавить в корзину" растягивается на весь экран */
-  }
-
-  .sizeSelector {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    overflow-y: auto;
+    padding: 0;
+    border-radius: 0;
   }
 
+  /* картинка сверху, адаптивная */
+  .modalImage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* квадрат, можно изменить */
+    grid-column: 1 / -1; /* на случай, если grid ещё активен */
+  }
+  .modalImage img {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block;
+  }
+
+  /* кнопка ✕ поверх картинки */
+  .closeBtn {
+    top: 8px;
+    right: 12px;
+    font-size: 26px;
+    color: #fff;
+    z-index: 5;
+  }
+
+  /* блок деталей */
+  .modalDetails {
+    padding: 16px 14px 24px;
+    gap: 12px;
+    overflow-y: visible;
+  }
+  .modalTitle {
+    font-size: 20px;
+    margin: 0 0 4px;
+  }
+  .modalPrice {
+    font-size: 18px;
+    margin: 0 0 8px;
+  }
+
+  /* размеры / кнопки */
+  .sizeSelector {
+    gap: 6px;
+  }
   .sizeBtn {
-    width: 45%;
-    padding: 10px;
+    width: 48%;
+    padding: 8px;
+    font-size: 15px;
+  }
+  .addBtn {
+    width: 100%;
+    padding: 12px;
     font-size: 16px;
+    margin-top: 6px;
   }
 }

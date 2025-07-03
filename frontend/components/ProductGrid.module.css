@@ -4,7 +4,7 @@
   /* три колонки равной ширины */
   grid-template-columns: repeat(3, 1fr);
   /* промежутки между карточками, можно переопределять */
-  gap: var(--grid-gap, 24px);
+  gap: var(--grid-gap, 12px);
   /* ограничиваем максимальную ширину и центрируем */
   max-width: var(--grid-max-width, 1200px);
   margin: 0 auto;
