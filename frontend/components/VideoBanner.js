@@ -1,4 +1,3 @@
-// components/VideoBanner.js
 import styles from "./VideoBanner.module.css";
 
 /**
@@ -18,12 +17,15 @@ export default function VideoBanner({
     >
       <video
         className={styles.videoBannerVideo}
-        src="/videos/banner.mp4"
         autoPlay
         muted
         loop
         playsInline
-      />
+        preload="auto"
+      >
+        <source src="/videos/banner.mp4" type="video/mp4" />
+        Ваш браузер не поддерживает видео.
+      </video>
       <div className={styles.overlay} />
       <div className={styles.slogan} aria-label={`Слоган: ${sloganText}`}>
         {sloganText.toUpperCase()}
