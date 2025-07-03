@@ -1,5 +1,3 @@
-// frontend/pages/cart.js
-
 import { useContext, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
@@ -50,8 +48,10 @@ export default function CartPage() {
         <title>Корзина — Магазин платьев</title>
       </Head>
       <main className={styles.cartContainer}>
-        {/* Слева: товары */}
+        {/* Секция товаров */}
         <div className={styles.cartItems}>
+          {/* Заголовок, видимый только на мобильных */}
+          <h2 className={styles.itemsTitle}>Ваш заказ</h2>
           {cart.length === 0 ? (
             <p>Ваша корзина пуста.</p>
           ) : (
@@ -65,6 +65,7 @@ export default function CartPage() {
                   alt={item.title}
                   width={80}
                   height={80}
+                  sizes="(max-width: 640px) 100vw, 80px"
                   className={styles.itemImage}
                 />
                 <div className={styles.itemDetails}>
@@ -96,7 +97,7 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* Справа: форма и итоги */}
+        {/* Блок оформления заказа */}
         <div className={styles.cartSummary}>
           <h2 className={styles.summaryTitle}>Оформление заказа</h2>
 

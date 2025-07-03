@@ -1,3 +1,4 @@
+/* frontend/components/Product.js */
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./ProductCard.module.css";

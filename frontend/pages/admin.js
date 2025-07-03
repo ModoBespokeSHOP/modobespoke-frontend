@@ -1,6 +1,7 @@
-// pages/admin/index.js
+// pages/admin.js
 import { useState, useEffect } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import styles from "../styles/admin.module.css";
 
 const DEFAULT_SPECS = [
@@ -11,14 +12,19 @@ const DEFAULT_SPECS = [
 const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL"];
 
 export default function AdminPage() {
+  const router = useRouter();
+
+  // --- Auth state ---
   const [authorized, setAuthorized] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(false);
   const [authError, setAuthError] = useState("");
   const [password, setPassword] = useState("");
-  const [showPwd, setShowPwd] = useState(false); // добавлен хук для показа пароля
+  const [showPwd, setShowPwd] = useState(false);
 
+  // --- Products state ---
   const [products, setProducts] = useState([]);
 
+  // --- Form state ---
   const [form, setForm] = useState({
     id: null,
     title: "",
@@ -33,6 +39,11 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  // --- Modal state for delete confirmation ---
+  const [toDeleteId, setToDeleteId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Fetch products once authorized
   useEffect(() => {
     if (!authorized) return;
     fetch("/api/products")
@@ -41,12 +52,35 @@ export default function AdminPage() {
       .catch(console.error);
   }, [authorized]);
 
+  // Handlers
+  async function handleAuth(e) {
+    e.preventDefault();
+    setLoadingAuth(true);
+    setAuthError("");
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (!res.ok) throw new Error();
+      setAuthorized(true);
+    } catch {
+      setAuthError("Неверный пароль");
+    } finally {
+      setLoadingAuth(false);
+    }
+  }
+
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   }
   function handleSpecChange(field, value) {
-    setForm((f) => ({ ...f, shortSpecs: { ...f.shortSpecs, [field]: value } }));
+    setForm((f) => ({
+      ...f,
+      shortSpecs: { ...f.shortSpecs, [field]: value },
+    }));
   }
   function handleSizeToggle(size) {
     setForm((f) => {
@@ -139,6 +173,7 @@ export default function AdminPage() {
     setPreview(p.image);
     setMessage("");
   }
+
   async function handleDelete(id) {
     const updated = products.filter((p) => p.id !== id);
     await fetch("/api/products", {
@@ -150,25 +185,21 @@ export default function AdminPage() {
     setMessage("Товар удалён");
   }
 
-  async function handleAuth(e) {
-    e.preventDefault();
-    setLoadingAuth(true);
-    setAuthError("");
-    try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      if (!res.ok) throw new Error();
-      setAuthorized(true);
-    } catch {
-      setAuthError("Неверный пароль");
-    } finally {
-      setLoadingAuth(false);
-    }
+  // Modal helpers
+  function openDeleteModal(id) {
+    setToDeleteId(id);
+    setIsModalOpen(true);
+  }
+  function closeDeleteModal() {
+    setToDeleteId(null);
+    setIsModalOpen(false);
+  }
+  async function confirmDelete() {
+    await handleDelete(toDeleteId);
+    closeDeleteModal();
   }
 
+  // --- Render login if not authorized ---
   if (!authorized) {
     return (
       <>
@@ -204,11 +235,36 @@ export default function AdminPage() {
     );
   }
 
+  // --- Main admin panel ---
   return (
     <>
       <Head>
         <title>Админка — Магазин платьев</title>
       </Head>
+
+      {/* Delete-confirmation modal */}
+      {isModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <p>Вы уверены, что хотите удалить этот товар?</p>
+            <div className={styles.modalButtons}>
+              <button
+                className={styles.modalBtnCancel}
+                onClick={closeDeleteModal}
+              >
+                Отмена
+              </button>
+              <button
+                className={styles.modalBtnConfirm}
+                onClick={confirmDelete}
+              >
+                Удалить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.container}>
         <h1 className={styles.heading}>Панель администратора</h1>
         <div className={styles.panel}>
@@ -301,7 +357,7 @@ export default function AdminPage() {
                     <div>{p.price}₽</div>
                   </div>
                   <button onClick={() => handleEdit(p)}>Ред.</button>
-                  <button onClick={() => handleDelete(p.id)}>Удал.</button>
+                  <button onClick={() => openDeleteModal(p.id)}>Удал.</button>
                 </div>
               ))
             )}

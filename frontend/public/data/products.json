@@ -1,21 +1,5 @@
 [
   {
-    "id": 1750767918081,
-    "title": "Платье Ночное",
-    "shortSpecs": {
-      "color": "чёрный",
-      "material": "хлопок 80% ткань 20%"
-    },
-    "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
-    "price": 6999,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750767911/qdj45jporrmek0c9eeoe.jpg",
-    "sizes": [
-      "XS",
-      "L",
-      "XL"
-    ]
-  },
-  {
     "id": 1750768955449,
     "title": "Платье Летнее",
     "shortSpecs": {

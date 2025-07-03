@@ -22,6 +22,14 @@
   border-radius: 8px;
 }
 
+/* Заголовок секции товаров (по умолчанию скрыт) */
+.itemsTitle {
+  display: none;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
 /* Одна карточка товара */
 .cartItem {
   display: flex;
@@ -192,4 +200,90 @@
 .payBtn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .cartContainer {
+    flex-direction: column;
+    gap: 24px;
+    padding: 16px;
+    margin-top: 70px;
+  }
+  /* Показываем заголовок «Ваш заказ» только на мобильных */
+  .itemsTitle {
+    display: block;
+    margin-top: 16px;
+  }
+  /* Меняем порядок: сначала список товаров, потом блок оформления */
+  .cartItems {
+    order: 1;
+    padding: 16px;
+    padding-top: 32px;
+    border: 1px solid #e0e0e0; /* вернули полную рамку */
+    border-top: 1px solid #e0e0e0; /* добавили верхнюю границу */
+    border-radius: 8px;
+  }
+  .cartSummary {
+    order: 2;
+    width: 100%;
+    padding: 16px;
+  }
+
+  .cartItem {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee; /* вернули нижние границы у карточек */
+  }
+  .itemImage {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  .itemDetails {
+    margin-left: 0;
+    margin-top: 8px;
+    width: 100%;
+    gap: 8px;
+  }
+
+  /* Улучшаем позицию и читаемость цены */
+  .itemPrice {
+    align-self: flex-start;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .itemQty {
+    justify-content: flex-start;
+  }
+
+  .removeBtn {
+    align-self: flex-end;
+    margin-top: 8px;
+  }
+
+  .formInput {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .payBtn,
+  .clearBtn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .breakdownLine {
+    font-size: 16px;
+  }
+
+  .summaryTitle {
+    font-size: 22px;
+  }
+
+  .summaryTotal {
+    font-size: 20px;
+  }
 }

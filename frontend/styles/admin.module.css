@@ -111,7 +111,7 @@
 .listItem button {
   margin-left: 8px;
   padding: 6px 12px;
-  background: #0070f3;
+  background: #000;
   color: #fff;
   border: none;
   font-size: 12px;
@@ -185,4 +185,149 @@
   font-size: 16px;
   border: none;
   cursor: pointer;
+}
+
+/* Общий оверлей, затемнённый фон поверх всего окна */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+/* Сама «коробка» модалки */
+.modal {
+  background: #fff;
+  padding: 24px;
+  width: 90%;
+  max-width: 320px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Кнопки внизу модалки */
+.modalButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Отмена: нейтральный стиль */
+.modalBtnCancel {
+  flex: 1;
+  padding: 10px 0;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Подтвердить: красный фон */
+.modalBtnConfirm {
+  flex: 1;
+  padding: 10px 0;
+  background: #c00;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Мобильная адаптация админки */
+@media (max-width: 640px) {
+  /* Сбрасываем горизонтальный layout и делаем колонки по очереди */
+  .panel {
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  /* Форма и список товаров теперь во всю ширину */
+  .form,
+  .list {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  /* Подправляем отступы и размеры шрифтов */
+  .form label {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .form input,
+  .form textarea {
+    font-size: 16px;
+    padding: 12px;
+  }
+  .form button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  /* Кнопки выбора размеров */
+  .sizesButtons {
+    gap: 6px;
+  }
+  .sizeBtn {
+    flex: 1 1 30%;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  /* Список товаров */
+  .list h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .listItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+  }
+  .listItem img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    margin: 0 0 8px 0;
+  }
+  .listItem button {
+    width: 100%;
+    margin: 6px 0 0; /* небольшой отступ сверху между кнопками */
+    padding: 10px 0; /* увеличим клик-зону */
+  }
+
+  /* Центрируем заголовок */
+  .heading {
+    font-size: 24px;
+    margin: 16px 0;
+    margin-top: 50px;
+  }
+
+  /* Логин-форма */
+  .loginForm {
+    width: 100%;
+    max-width: 360px;
+    margin: 40px auto;
+    padding: 24px;
+  }
+  .loginForm h2 {
+    font-size: 18px;
+  }
+  .loginForm button[type="submit"] {
+    padding: 12px;
+    font-size: 16px;
+  }
 }
