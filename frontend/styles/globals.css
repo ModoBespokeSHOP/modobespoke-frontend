@@ -354,13 +354,14 @@ a:visited {
   }
 }
 
-/* Отключаем системный внешний вид кнопок и их подсветку */
-button, 
-.sizeBtn,            /* если используете класс sizeBtn */
-.itemQty button {
-  /* кнопки +/– */
-  -webkit-appearance: none;
-  appearance: none;
-  background: none; /* убираем синий фон при тапе */
-  color: #000 !important; /* принудительно чёрный текст */
+/* ==== iOS: чёрный текст только для кнопок размеров и +/– на мобилке ==== */
+@media (max-width: 640px) {
+  /* целевые кнопки в корзине */
+  .itemQty button,
+  .sizeBtn {
+    -webkit-appearance: none; /* сброс системного вида */
+    appearance: none;
+    background: none; /* нет синей подсветки */
+    color: #000; /* чёрный текст только здесь */
+  }
 }
