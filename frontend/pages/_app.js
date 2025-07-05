@@ -1,4 +1,5 @@
 // pages/_app.js
+import Head from "next/head"; // ← добавили Head
 import "../styles/globals.css";
 import Script from "next/script";
 import Link from "next/link";
@@ -25,6 +26,13 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <ToastProvider>
       <CartProvider>
+        <Head>
+          {/* Отключаем автодетектирование телефонов/адресов/email в iOS */}
+          <meta
+            name="format-detection"
+            content="telephone=no,address=no,email=no"
+          />
+        </Head>
         <Script src="https://js.yookassa.ru/v3" strategy="afterInteractive" />
         <Header />
         <Component {...pageProps} />
