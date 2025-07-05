@@ -1,33 +1,43 @@
 // pages/api/create-payment.js
-export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).end("Method not allowed");
 
-  const { cart, customerName, customerPhone } = req.body;
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
+
+  const { cart, customerName, customerPhone, customerEmail } = req.body;
 
   if (
     !Array.isArray(cart) ||
     cart.length === 0 ||
     !customerName ||
-    !customerPhone
+    !customerPhone ||
+    !customerEmail
   ) {
-    return res.status(400).json({ message: "Missing cart, name or phone" });
+    return res
+      .status(400)
+      .json({ message: "Missing cart, name, phone or email" });
   }
 
-  // Рассчитываем сумму
+  // Считаем сумму в копейках и форматируем
   const totalCents = cart.reduce(
     (sum, item) => sum + item.price * item.qty * 100,
     0
   );
   const amountValue = (totalCents / 100).toFixed(2);
 
-  // Формируем описание с товарами и размерами
-  const itemsDesc = cart
-    .map(
-      (item) =>
-        `${item.title} (Размер: ${item.selectedSize || "—"}) x${item.qty}`
-    )
-    .join(", ");
-  const description = `Заказ от ${customerName}, тел: ${customerPhone}. Товары: ${itemsDesc}`;
+  // Формируем массив позиций для чека
+  const receiptItems = cart.map((item) => ({
+    description: `${item.title} (${item.selectedSize})`,
+    quantity: item.qty,
+    amount: {
+      value: item.price.toFixed(2),
+      currency: "RUB",
+    },
+    vat_code: 1, // упрощёнка без НДС
+    payment_mode: "full_payment",
+    payment_subject: "commodity",
+  }));
 
   const shopId = process.env.YOOKASSA_SHOP_ID;
   const secretKey = process.env.YOOKASSA_SECRET_KEY;
@@ -36,7 +46,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const paymentRes = await fetch("https://api.yookassa.ru/v3/payments", {
+    const response = await fetch("https://api.yookassa.ru/v3/payments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -53,14 +63,24 @@ export default async function handler(req, res) {
             process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
         },
         capture: true,
-        description,
+        description: `Заказ от ${customerName}`,
+        receipt: {
+          customer: {
+            email: customerEmail,
+            phone: customerPhone,
+          },
+          items: receiptItems,
+        },
       }),
     });
 
-    const data = await paymentRes.json();
-    if (!paymentRes.ok) {
+    const data = await response.json();
+
+    if (!response.ok) {
       console.error("YooKassa error:", data);
-      return res.status(paymentRes.status).json(data);
+      return res.status(response.status).json({
+        message: data.message || JSON.stringify(data),
+      });
     }
 
     return res.status(200).json({

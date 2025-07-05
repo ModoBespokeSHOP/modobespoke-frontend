@@ -10,6 +10,7 @@ export default function CartPage() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -17,8 +18,8 @@ export default function CartPage() {
 
   const handlePay = async () => {
     setError("");
-    if (!name.trim() || !phone.trim()) {
-      setError("Пожалуйста, введите имя и телефон");
+    if (!name.trim() || !phone.trim() || !email.trim()) {
+      setError("Пожалуйста, введите имя, телефон и email");
       return;
     }
     setLoading(true);
@@ -30,13 +31,24 @@ export default function CartPage() {
           cart,
           customerName: name,
           customerPhone: phone,
+          customerEmail: email,
         }),
       });
+
+      if (!res.ok) {
+        // Если сервер вернул ошибку, читаем её как текст
+        const errText = await res.text();
+        throw new Error(errText || `Ошибка оплаты: статус ${res.status}`);
+      }
+
+      // Теперь точно JSON
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Ошибка оплаты");
+      console.log("Create-payment response:", data);
+
       window.location.href = data.confirmation_url;
     } catch (err) {
-      setError(err.message);
+      console.error("Payment failed:", err);
+      setError(err.message || "Неизвестная ошибка оплаты");
     } finally {
       setLoading(false);
     }
@@ -50,7 +62,6 @@ export default function CartPage() {
       <main className={styles.cartContainer}>
         {/* Секция товаров */}
         <div className={styles.cartItems}>
-          {/* Заголовок, видимый только на мобильных */}
           <h2 className={styles.itemsTitle}>Ваш заказ</h2>
           {cart.length === 0 ? (
             <p>Ваша корзина пуста.</p>
@@ -123,20 +134,28 @@ export default function CartPage() {
             />
           </div>
 
-          {/* Разбивка по товарам */}
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>E‑mail для чека</label>
+            <input
+              className={styles.formInput}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
           <div className={styles.breakdown}>
             {cart.map((item) => (
               <div
                 key={`${item.id}-${item.selectedSize}`}
                 className={styles.breakdownLine}
               >
-                {item.qty} × {item.title} ({item.selectedSize}) ={" "}
+                {item.qty} × {item.title} ({item.selectedSize}) = 
                 {item.price * item.qty}₽
               </div>
             ))}
           </div>
 
-          {/* Итого */}
           <div className={styles.summaryTotal}>
             <span className={styles.summaryLabel}>Итого к оплате:</span>
             <span className={styles.totalAmount}>{total}₽</span>
