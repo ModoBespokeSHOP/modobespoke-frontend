@@ -63,6 +63,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  color: #000; /* чёрный текст */
+  -webkit-text-fill-color: #000; /* для iOS Safari */
+  -webkit-appearance: none;
 }
 
 .itemQty button {

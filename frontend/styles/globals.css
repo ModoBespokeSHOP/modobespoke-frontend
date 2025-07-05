@@ -353,15 +353,3 @@ a:visited {
     }
   }
 }
-
-/* ==== iOS: чёрный текст только для кнопок размеров и +/– на мобилке ==== */
-@media (max-width: 640px) {
-  /* целевые кнопки в корзине */
-  .itemQty button,
-  .sizeBtn {
-    -webkit-appearance: none; /* сброс системного вида */
-    appearance: none;
-    background: none; /* нет синей подсветки */
-    color: #000; /* чёрный текст только здесь */
-  }
-}

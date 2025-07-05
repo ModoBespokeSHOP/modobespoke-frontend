@@ -126,6 +126,11 @@
   cursor: pointer;
   font-size: 14px;
   transition: background 0.2s, color 0.2s;
+  /* Сбрасываем системный look и задаём основной фон/текст */
+  -webkit-appearance: none;
+  appearance: none;
+  background: #fff; /* светлый фон */
+  color: #000; /* чёрный текст */
 }
 
 .sizeBtn:hover {
@@ -135,6 +140,12 @@
 .sizeBtn.active {
   background: #000;
   color: #fff;
+}
+
+.sizeBtn,
+.sizeBtn.active {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-fill-color: inherit;
 }
 
 /* Кнопка "добавить в корзину" */
