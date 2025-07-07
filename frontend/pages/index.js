@@ -50,7 +50,7 @@ export default function Home() {
         {/* Видео между шапкой и товарами */}
         <VideoBanner
           bottomMargin="3rem" // настраиваемый отступ снизу
-          sloganText="УДОБНАЯ ЖЕНСТВЕННОСТЬ С ДУХОМ АВАНТЮРИЗМА"
+          sloganText="Удобная женственность с духом авантюризма"
         />
 
         {products.length === 0 ? (

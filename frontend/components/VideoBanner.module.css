@@ -1,4 +1,5 @@
 /* components/VideoBanner.module.css */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@1,200&display=swap&subset=cyrillic");
 
 .videoBannerWrapper {
   position: relative;
@@ -37,30 +38,59 @@
 }
 
 .slogan {
+  /* существующие правила */
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: #fff;
-  font-size: 3.5rem;
+  font-size: 4.5rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 3px;
   text-align: center;
   padding: 0 2rem;
   max-width: 90%;
+
+  /* новые добавления для двух строк */
+  white-space: normal; /* разрешаем перенос */
+  word-break: break-word; /* перенос по словам */
+  width: 60%; /* слот шириной в 60% контейнера */
+  max-width: none; /* отключаем прежний max-width */
 }
 
 /* Мобильные стили */
 @media (max-width: 768px) {
   .videoBannerWrapper {
     /* уже на всю ширину родителя */
-    padding-top: 56.25%;
+    padding-top: 177.78%;
   }
   .slogan {
-    font-size: 2rem;
-    padding: 0 1rem;
-    letter-spacing: 1px;
+    /* Используем именно Thin 100 Italic */
+    font-family: "Noto Serif", serif;
+    font-style: italic;
+    font-variation-settings: "wght" 100;
+    font-weight: 200; /* для совместимости */
+
+    /* Размер и перенос */
+    font-size: 1.5rem;
+    line-height: 1.3;
+    white-space: normal;
+    word-break: break-word;
+
+    /* Жёсткая ширина, чтобы получилось 2 строки */
+    width: 80vw !important;
+    max-width: none !important;
+    padding: 0 1rem !important;
+
+    /* Позиционирование */
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -35%);
+
+    /* Сбрасываем трекинг и трансформ */
+    letter-spacing: normal !important;
+    text-transform: none !important;
   }
   .videoBannerVideo {
     filter: blur(0px);
