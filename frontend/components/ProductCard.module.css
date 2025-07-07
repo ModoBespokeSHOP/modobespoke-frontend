@@ -257,6 +257,17 @@
     aspect-ratio: 1 / 1; /* квадрат, можно изменить */
     grid-column: 1 / -1; /* на случай, если grid ещё активен */
   }
+
+  @supports not (aspect-ratio: 1 / 1) {
+    .modalImage {
+      /* отключаем aspect-ratio */
+      aspect-ratio: auto;
+      /* задаём разумную высоту, например 50vh */
+      height: 50vh;
+      /* ширина уже 100% */
+    }
+  }
+
   .modalImage img {
     position: relative !important;
     width: 100% !important;
