@@ -254,15 +254,16 @@
   .modalImage {
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1; /* квадрат, можно изменить */
-    grid-column: 1 / -1; /* на случай, если grid ещё активен */
+    height: auto; /* подстраивается под содержимое */
+    aspect-ratio: auto; /* отключаем */
+    padding: 0; /* убираем любые паддинги */
   }
 
   .modalImage img {
     position: relative !important;
     width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
+    height: auto !important; /* естественная высота */
+    object-fit: contain !important; /* без обрезания и без искажений */
     display: block;
   }
 
