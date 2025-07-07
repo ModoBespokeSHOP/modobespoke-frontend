@@ -258,21 +258,11 @@
     grid-column: 1 / -1; /* на случай, если grid ещё активен */
   }
 
-  @supports not (aspect-ratio: 1 / 1) {
-    .modalImage {
-      /* отключаем aspect-ratio */
-      aspect-ratio: auto;
-      /* задаём разумную высоту, например 50vh */
-      height: 50vh;
-      /* ширина уже 100% */
-    }
-  }
-
   .modalImage img {
     position: relative !important;
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
     display: block;
   }
 
