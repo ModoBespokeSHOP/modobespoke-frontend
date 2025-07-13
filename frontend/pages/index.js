@@ -42,7 +42,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Магазин платьев</title>
+        <title>Удобная Женственность с духом Авантюризма</title>
         <meta name="description" content="Выбор летних платьев" />
       </Head>
 
