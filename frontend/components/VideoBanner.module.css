@@ -1,5 +1,5 @@
 /* components/VideoBanner.module.css */
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@1,200&display=swap&subset=cyrillic");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@1,100;1,200&display=swap&subset=cyrillic");
 
 .videoBannerWrapper {
   position: relative;
@@ -70,7 +70,6 @@
     font-family: "Noto Serif", serif;
     font-style: italic;
     font-variation-settings: "wght" 100;
-    font-weight: 200; /* для совместимости */
 
     /* Размер и перенос */
     font-size: 1.5rem;
