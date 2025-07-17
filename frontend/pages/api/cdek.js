@@ -1,78 +1,67 @@
-// pages/api/cdek.js
-import fetch from "node-fetch";
-
-// Получение access_token из CDEK
-let cachedToken = null;
-let tokenExpires = 0;
-async function getToken() {
-  const now = Date.now();
-  if (cachedToken && now < tokenExpires) {
-    return cachedToken;
-  }
-  const res = await fetch("https://api.edu.cdek.ru/v2/oauth/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      grant_type: "client_credentials",
-      client_id: process.env.CDEK_CLIENT_ID,
-      client_secret: process.env.CDEK_CLIENT_SECRET,
-    }),
-  });
-  const json = await res.json();
-  cachedToken = json.access_token;
-  tokenExpires = now + (json.expires_in - 60) * 1000;
-  return cachedToken;
-}
-
 export default async function handler(req, res) {
-  const token = await getToken();
-  // Определяем action: getList, offices, calculate
-  const { action, ...params } = req.body || req.query;
-  let apiUrl = "";
-  let options = {
-    method: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-  };
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Метод не разрешён" });
+  }
 
-  switch (action) {
-    case "getList":
-      apiUrl = `https://api.edu.cdek.ru/v2/location/cities?name=${encodeURIComponent(
-        params.city_name
-      )}`;
-      break;
-    case "offices":
-      apiUrl = `https://api.edu.cdek.ru/v2/location/offices?city_code=${params.city_code}`;
-      break;
-    case "calculate":
-      apiUrl = "https://api.edu.cdek.ru/v2/orders/calculate";
-      options = {
+  try {
+    const { cityTo, tariff_code = 137 } = req.body;
+
+    const tokenResponse = await fetch(
+      "https://api.cdek.ru/v2/oauth/token?parameters",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          tariff_code: params.tariff_code,
-          sender_city_id: params.sender_city_id || 44, // ваш код отправки
-          receiver_city_id: params.receiver_city_id,
+          grant_type: "client_credentials",
+          client_id: process.env.CDEK_CLIENT_ID,
+          client_secret: process.env.CDEK_CLIENT_SECRET,
+        }),
+      }
+    );
+
+    const tokenData = await tokenResponse.json();
+
+    if (!tokenData.access_token) {
+      return res
+        .status(500)
+        .json({ error: "Не удалось получить токен авторизации" });
+    }
+
+    const deliveryResponse = await fetch(
+      "https://api.cdek.ru/v2/calculator/tariff",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenData.access_token}`,
+        },
+        body: JSON.stringify({
+          tariff_code: tariff_code,
+          from_location: { code: 137 }, // Москва
+          to_location: { code: cityTo },
           packages: [
-            { weight: +params.weight, length: 10, width: 10, height: 10 },
+            {
+              weight: 500,
+              length: 10,
+              width: 10,
+              height: 10,
+            },
           ],
         }),
-      };
-      break;
-    default:
-      return res.status(400).json({ error: "Не указан action" });
+      }
+    );
+
+    const deliveryData = await deliveryResponse.json();
+
+    if (deliveryData.errors) {
+      return res.status(400).json({ error: deliveryData.errors });
+    }
+
+    res.status(200).json(deliveryData);
+  } catch (error) {
+    console.error("Ошибка при расчёте доставки:", error);
+    res.status(500).json({ error: "Ошибка сервера при обращении к CDEK API" });
   }
-
-  const apiRes = await fetch(apiUrl, options);
-  const data = await apiRes.json();
-
-  // Проксируем заголовки пагинации (если нужны)
-  if (apiRes.headers.get("X-Total-Elements")) {
-    res.setHeader("X-Total-Elements", apiRes.headers.get("X-Total-Elements"));
-    res.setHeader("X-Current-Page", apiRes.headers.get("X-Current-Page"));
-  }
-
-  res.status(apiRes.status).json(data);
 }
