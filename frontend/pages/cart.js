@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { CartContext } from "../context/CartContext";
@@ -13,8 +13,29 @@ export default function CartPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [delivery, setDelivery] = useState({ office: null, price: 0 });
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const finalTotal = total + (delivery.price || 0);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://widget.cdek.ru/widget/scripts/widget.js";
+    script.async = true;
+    script.onload = () => {
+      window.CDEKWidget.init({
+        defaultCity: "Москва",
+        yandexMapsApiKey: process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY,
+        onChoose: (type, tariff, office) => {
+          setDelivery({
+            office: office.address,
+            price: tariff.delivery_sum,
+          });
+        },
+      });
+    };
+    document.body.appendChild(script);
+  }, []);
 
   const handlePay = async () => {
     setError("");
@@ -22,6 +43,11 @@ export default function CartPage() {
       setError("Пожалуйста, введите имя, телефон и email");
       return;
     }
+    if (!delivery.office) {
+      setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("/api/create-payment", {
@@ -32,19 +58,17 @@ export default function CartPage() {
           customerName: name,
           customerPhone: phone,
           customerEmail: email,
+          deliveryOffice: delivery.office,
+          deliveryPrice: delivery.price,
         }),
       });
 
       if (!res.ok) {
-        // Если сервер вернул ошибку, читаем её как текст
         const errText = await res.text();
         throw new Error(errText || `Ошибка оплаты: статус ${res.status}`);
       }
 
-      // Теперь точно JSON
       const data = await res.json();
-      console.log("Create-payment response:", data);
-
       window.location.href = data.confirmation_url;
     } catch (err) {
       console.error("Payment failed:", err);
@@ -60,7 +84,7 @@ export default function CartPage() {
         <title>Корзина — Магазин платьев</title>
       </Head>
       <main className={styles.cartContainer}>
-        {/* Секция товаров */}
+        {/* Товары */}
         <div className={styles.cartItems}>
           <h2 className={styles.itemsTitle}>Ваш заказ</h2>
           {cart.length === 0 ? (
@@ -76,7 +100,6 @@ export default function CartPage() {
                   alt={item.title}
                   width={80}
                   height={80}
-                  sizes="(max-width: 640px) 100vw, 80px"
                   className={styles.itemImage}
                 />
                 <div className={styles.itemDetails}>
@@ -108,7 +131,7 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* Блок оформления заказа */}
+        {/* Оформление заказа */}
         <div className={styles.cartSummary}>
           <h2 className={styles.summaryTitle}>Оформление заказа</h2>
 
@@ -144,21 +167,44 @@ export default function CartPage() {
             />
           </div>
 
+          {/* СДЭК виджет */}
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>
+              Выберите пункт выдачи (СДЭК):
+            </label>
+            <div
+              id="cdek-widget"
+              style={{ height: "400px", border: "1px solid #ccc" }}
+            ></div>
+            {delivery.office && (
+              <div className={styles.deliveryInfo}>
+                <p>ПВЗ: {delivery.office}</p>
+                <p>Стоимость доставки: {delivery.price}₽</p>
+              </div>
+            )}
+          </div>
+
+          {/* Сводка */}
           <div className={styles.breakdown}>
             {cart.map((item) => (
               <div
                 key={`${item.id}-${item.selectedSize}`}
                 className={styles.breakdownLine}
               >
-                {item.qty} × {item.title} ({item.selectedSize}) = 
+                {item.qty} × {item.title} ({item.selectedSize}) ={" "}
                 {item.price * item.qty}₽
               </div>
             ))}
+            {delivery.price > 0 && (
+              <div className={styles.breakdownLine}>
+                Доставка (СДЭК): {delivery.price}₽
+              </div>
+            )}
           </div>
 
           <div className={styles.summaryTotal}>
             <span className={styles.summaryLabel}>Итого к оплате:</span>
-            <span className={styles.totalAmount}>{total}₽</span>
+            <span className={styles.totalAmount}>{finalTotal}₽</span>
           </div>
 
           <button
@@ -168,6 +214,7 @@ export default function CartPage() {
           >
             {loading ? "Пожалуйста, подождите…" : "Оплатить"}
           </button>
+
           <button
             className={styles.clearBtn}
             onClick={clearCart}
