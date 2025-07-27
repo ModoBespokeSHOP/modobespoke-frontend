@@ -1,14 +1,8 @@
-import { useContext, useState } from "react";
-import dynamic from "next/dynamic";
+import { useContext, useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { CartContext } from "../context/CartContext";
 import styles from "../styles/cart.module.css";
-
-// Загружаем компонент CdekWidget только на клиенте, без SSR
-const CdekWidget = dynamic(() => import("../components/CdekWidget"), {
-  ssr: false,
-});
 
 export default function CartPage() {
   const { cart, addToCart, decreaseQty, removeFromCart, clearCart } =
@@ -23,6 +17,25 @@ export default function CartPage() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const finalTotal = total + (delivery.price || 0);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://widget.cdek.ru/widget/scripts/widget.js";
+    script.async = true;
+    script.onload = () => {
+      window.CDEKWidget.init({
+        defaultCity: "Москва",
+        yandexMapsApiKey: process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY,
+        onChoose: (type, tariff, office) => {
+          setDelivery({
+            office: office.address,
+            price: tariff.delivery_sum,
+          });
+        },
+      });
+    };
+    document.body.appendChild(script);
+  }, []);
 
   const handlePay = async () => {
     setError("");
@@ -68,7 +81,7 @@ export default function CartPage() {
   return (
     <>
       <Head>
-        <title>Корзина — Магазин платья</title>
+        <title>Корзина — Магазин платьев</title>
       </Head>
       <main className={styles.cartContainer}>
         {/* Товары */}
@@ -87,6 +100,7 @@ export default function CartPage() {
                   alt={item.title}
                   width={80}
                   height={80}
+                  className={styles.itemImage}
                 />
                 <div className={styles.itemDetails}>
                   <div className={styles.itemTitle}>{item.title}</div>
@@ -107,6 +121,7 @@ export default function CartPage() {
                   </div>
                 </div>
                 <button
+                  className={styles.removeBtn}
                   onClick={() => removeFromCart(item.id, item.selectedSize)}
                 >
                   ×
@@ -122,7 +137,6 @@ export default function CartPage() {
 
           {error && <div className={styles.error}>{error}</div>}
 
-          {/* Форма покупателя */}
           <div className={styles.formGroup}>
             <label className={styles.formLabel}>Ваше имя</label>
             <input
@@ -153,16 +167,15 @@ export default function CartPage() {
             />
           </div>
 
-          {/* Виджет СДЭК */}
+          {/* СДЭК виджет */}
           <div className={styles.formGroup}>
             <label className={styles.formLabel}>
               Выберите пункт выдачи (СДЭК):
             </label>
-            <CdekWidget
-              onChoose={(address, price) =>
-                setDelivery({ office: address, price })
-              }
-            />
+            <div
+              id="cdek-widget"
+              style={{ height: "400px", border: "1px solid #ccc" }}
+            ></div>
             {delivery.office && (
               <div className={styles.deliveryInfo}>
                 <p>ПВЗ: {delivery.office}</p>
@@ -171,7 +184,7 @@ export default function CartPage() {
             )}
           </div>
 
-          {/* Сводка и оплата */}
+          {/* Сводка */}
           <div className={styles.breakdown}>
             {cart.map((item) => (
               <div
@@ -201,6 +214,7 @@ export default function CartPage() {
           >
             {loading ? "Пожалуйста, подождите…" : "Оплатить"}
           </button>
+
           <button
             className={styles.clearBtn}
             onClick={clearCart}
