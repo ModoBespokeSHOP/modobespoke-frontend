@@ -1,32 +1,38 @@
-import fetch from "node-fetch";
+import fetch from "node-fetch"; // Убедитесь, что пакет node-fetch установлен
 
 export default async function handler(req, res) {
-  const { action, ...queryParams } = req.query;
-  const body = req.body;
+  const { action, ...queryParams } = req.query; // Параметры из URL
+  const body = req.body; // Тело запроса (для POST)
 
+  // Логируем тело запроса для диагностики
   console.log("Received request:", {
     method: req.method,
     query: req.query,
     body: JSON.stringify(body, null, 2),
   });
 
+  // Определяем действие: если action отсутствует в query, для POST предполагаем calculate
   const determinedAction =
     action || (req.method === "POST" ? "calculate" : null);
 
+  // Проверка наличия действия
   if (!determinedAction) {
     console.error("Missing action parameter in request");
     return res.status(400).json({ message: "Action is required" });
   }
 
+  // Базовые настройки из переменных окружения
   const baseUrl = process.env.CDEK_API_URL || "https://api.cdek.ru/v2";
-  const account = process.env.CDEK_ACCOUNT;
-  const securePassword = process.env.CDEK_SECURE_PASSWORD;
+  const account = process.env.CDEK_ACCOUNT; // Логин (client_id)
+  const securePassword = process.env.CDEK_SECURE_PASSWORD; // Пароль (client_secret)
 
+  // Проверка переменных окружения
   if (!account || !securePassword) {
     console.error("CDEK credentials missing in environment variables");
     return res.status(500).json({ message: "CDEK credentials not configured" });
   }
 
+  // Получение токена аутентификации
   const authResponse = await fetch(`${baseUrl}/oauth/token`, {
     method: "POST",
     headers: {
@@ -54,6 +60,7 @@ export default async function handler(req, res) {
   }
   const authToken = authData.access_token;
 
+  // Обработка действий
   let result;
   switch (determinedAction) {
     case "offices":
@@ -67,11 +74,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "Unknown action" });
   }
 
+  // Отправка ответа
   res.setHeader("Content-Type", "application/json");
   res.setHeader("X-Service-Version", "3.11.1");
   res.status(200).json(result);
 }
 
+// Функция для получения списка ПВЗ
 async function getOffices(baseUrl, authToken, queryParams) {
   const url = new URL(`${baseUrl}/deliverypoints`);
   Object.keys(queryParams).forEach((key) =>
@@ -95,29 +104,30 @@ async function getOffices(baseUrl, authToken, queryParams) {
   return result;
 }
 
+// Функция для расчета тарифов
 async function calculate(baseUrl, authToken, body) {
   console.log("Request body to CDEK API:", JSON.stringify(body, null, 2));
 
+  // Модифицируем тело запроса для соответствия API СДЭК
   const modifiedBody = {
     from_location: {
       code: Number(body.from_location?.code) || 270, // Кострома
     },
     to_location: {
-      code: Number(body.to_location?.code),
+      code: Number(body.to_location?.code), // Код ПВЗ (например, MSK223)
     },
     packages: body.packages || [
       {
-        weight: 250, // 0.25 кг в граммах
-        length: 25,
-        width: 7,
-        height: 25,
+        weight: 250, // 0.25 кг в граммах (реальный заказ)
+        length: 25, // Длина в см
+        width: 7, // Ширина в см
+        height: 25, // Высота в см
       },
     ],
-    tariff_codes: ["137"],
+    tariff_codes: ["137"], // Только "Посылка склад-склад"
   };
 
-  console.log("to_location.code:", modifiedBody.to_location.code); // Добавлено для диагностики
-
+  // Проверяем обязательные поля
   if (!modifiedBody.to_location.code) {
     console.error("Missing or invalid to_location.code in request body");
     return { error: "Missing or invalid to_location.code", status: 400 };
@@ -128,6 +138,7 @@ async function calculate(baseUrl, authToken, body) {
     return { error: "Missing or invalid from_location.code", status: 400 };
   }
 
+  // Проверяем параметры посылки
   const packageData = modifiedBody.packages[0];
   if (
     !packageData.weight ||
@@ -169,17 +180,6 @@ async function calculate(baseUrl, authToken, body) {
       JSON.stringify(result.errors || result, null, 2)
     );
     return { error: result.errors || result, status: response.status };
-  }
-
-  const tariff = result.tariffs?.find((t) => t.tariff_code === "137");
-  if (tariff) {
-    console.log("Cost for tariff 137 (Посылка склад-склад):", {
-      cost: tariff.total_amount,
-      currency: tariff.currency,
-      delivery_period: `${tariff.period_min}-${tariff.period_max} days`,
-    });
-  } else {
-    console.log("Tariff 137 not found in response");
   }
 
   return result;
