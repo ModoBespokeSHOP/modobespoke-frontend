@@ -1,12 +1,9 @@
-/* styles/cart.module.css */
-
 /* === Контейнер всей страницы корзины === */
 .cartContainer {
   display: flex;
   gap: 48px; /* пространство между колонками */
   padding: 32px; /* внутренние отступы */
-  /* вместо var(--header-height) просто пишем нужный отступ: */
-  margin-top: 90px; /* <-- здесь и меняйте на любое число (px) */
+  margin-top: 90px; /* отступ сверху */
   background: #f5f5f5;
 }
 
@@ -30,6 +27,7 @@
   margin-bottom: 12px;
   color: #333;
 }
+
 /* Одна карточка товара */
 .cartItem {
   display: flex;
@@ -63,9 +61,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #000; /* чёрный текст */
-  -webkit-text-fill-color: #000; /* для iOS Safari */
-  -webkit-appearance: none;
+  color: #000;
 }
 
 .itemQty button {
@@ -124,19 +120,24 @@
   background: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
+  position: relative;
+  z-index: 10;
 }
 
+/* Заголовок сводки */
 .summaryTitle {
   font-size: 20px;
   font-weight: 600;
   text-align: center;
 }
 
+/* Сообщение об ошибке */
 .error {
   color: #c00;
   text-align: center;
 }
 
+/* Формы ввода */
 .formGroup {
   display: flex;
   flex-direction: column;
@@ -166,6 +167,7 @@
   flex-direction: column;
   gap: 4px;
   text-align: right;
+  margin-top: 50px;
 }
 
 .breakdownLine {
@@ -173,12 +175,14 @@
   color: #555;
 }
 
+/* Сумма и итоговая стоимость */
 .summaryTotal {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 18px;
   font-weight: 600;
+  z-index: 2;
 }
 
 .summaryLabel {
@@ -212,20 +216,21 @@
     padding: 16px;
     margin-top: 70px;
   }
-  /* Показываем заголовок «Ваш заказ» только на мобильных */
+
   .itemsTitle {
     display: block;
     margin-top: 16px;
   }
-  /* Меняем порядок: сначала список товаров, потом блок оформления */
+
   .cartItems {
     order: 1;
     padding: 16px;
     padding-top: 32px;
-    border: 1px solid #e0e0e0; /* вернули полную рамку */
-    border-top: 1px solid #e0e0e0; /* добавили верхнюю границу */
+    border: 1px solid #e0e0e0;
+    border-top: 1px solid #e0e0e0;
     border-radius: 8px;
   }
+
   .cartSummary {
     order: 2;
     width: 100%;
@@ -236,13 +241,15 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 12px 0;
-    border-bottom: 1px solid #eee; /* вернули нижние границы у карточек */
+    border-bottom: 1px solid #eee;
   }
+
   .itemImage {
     width: 100%;
     height: auto;
     border-radius: 4px;
   }
+
   .itemDetails {
     margin-left: 0;
     margin-top: 8px;
@@ -250,7 +257,6 @@
     gap: 8px;
   }
 
-  /* Улучшаем позицию и читаемость цены */
   .itemPrice {
     align-self: flex-start;
     font-size: 16px;
@@ -289,4 +295,22 @@
   .summaryTotal {
     font-size: 20px;
   }
+}
+
+/* === Виджет СДЭК === */
+#cdek-widget {
+  position: relative;
+  z-index: 1; /* Убедимся, что виджет находится на заднем плане */
+  max-height: 400px; /* Ограничиваем высоту виджета */
+  overflow: hidden; /* Прячем лишнее содержимое, если оно выходит за пределы */
+  height: 100%; /* Устанавливаем высоту на 100% */
+  margin-bottom: 40px; /* Увеличиваем отступ снизу */
+  border: 1px solid #ccc; /* Рамка вокруг виджета для наглядности */
+}
+
+/* === Информация о доставке === */
+.deliveryInfo {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #333;
 }

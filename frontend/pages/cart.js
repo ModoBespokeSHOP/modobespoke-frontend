@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { CartContext } from "../context/CartContext";
 import styles from "../styles/cart.module.css";
+import CDEKWIDGET from "../components/CDEKWIDGET"; // Импортируем твой виджет
 
 export default function CartPage() {
   const { cart, addToCart, decreaseQty, removeFromCart, clearCart } =
@@ -17,25 +18,6 @@ export default function CartPage() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const finalTotal = total + (delivery.price || 0);
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://widget.cdek.ru/widget/scripts/widget.js";
-    script.async = true;
-    script.onload = () => {
-      window.CDEKWidget.init({
-        defaultCity: "Москва",
-        yandexMapsApiKey: process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY,
-        onChoose: (type, tariff, office) => {
-          setDelivery({
-            office: office.address,
-            price: tariff.delivery_sum,
-          });
-        },
-      });
-    };
-    document.body.appendChild(script);
-  }, []);
 
   const handlePay = async () => {
     setError("");
@@ -167,15 +149,12 @@ export default function CartPage() {
             />
           </div>
 
-          {/* СДЭК виджет */}
+          {/* Виджет СДЭК */}
           <div className={styles.formGroup}>
             <label className={styles.formLabel}>
               Выберите пункт выдачи (СДЭК):
             </label>
-            <div
-              id="cdek-widget"
-              style={{ height: "400px", border: "1px solid #ccc" }}
-            ></div>
+            <CDEKWIDGET /> {/* Вставляем виджет */}
             {delivery.office && (
               <div className={styles.deliveryInfo}>
                 <p>ПВЗ: {delivery.office}</p>
