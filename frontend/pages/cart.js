@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { CartContext } from "../context/CartContext";
 import styles from "../styles/cart.module.css";
-import CDEKWIDGET from "../components/CDEKWIDGET"; // Импортируем твой виджет
+import CDEKWIDGET from "../components/CdekWidget";
 
 export default function CartPage() {
   const { cart, addToCart, decreaseQty, removeFromCart, clearCart } =
