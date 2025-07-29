@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const CDEKWIDGET = () => {
+const CDEKWIDGET = ({ setDelivery }) => {
   useEffect(() => {
     // Проверяем, что скрипт CDEK загружен
     if (typeof window.CDEKWidget === "undefined") {
@@ -32,7 +32,10 @@ const CDEKWIDGET = () => {
         ], // Описание посылки
         onChoose: (data) => {
           console.log("Выбран ПВЗ:", JSON.stringify(data, null, 2));
-          alert("ПВЗ выбран: " + JSON.stringify(data));
+          setDelivery({
+            office: data.address, // Извлекаем адрес
+            price: data.delivery_sum, // Цена доставки
+          });
         },
         onError: (error) => {
           console.error("Ошибка виджета:", JSON.stringify(error, null, 2));
@@ -57,7 +60,7 @@ const CDEKWIDGET = () => {
           (error.message || "Неизвестная ошибка")
       );
     }
-  }, []);
+  }, [setDelivery]);
 
   return <div id="cdek-widget" style={{ height: "500px" }} />;
 };
