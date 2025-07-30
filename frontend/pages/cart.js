@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { CartContext } from "../context/CartContext";
 import styles from "../styles/cart.module.css";
-import CDEKWIDGET from "../components/CdekWidget";
+import CDEKWIDGET from "../components/CDEKWIDGET";
 
 export default function CartPage() {
   const { cart, addToCart, decreaseQty, removeFromCart, clearCart } =
@@ -14,46 +14,88 @@ export default function CartPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [delivery, setDelivery] = useState({ office: null, price: 0 });
+  const [delivery, setDelivery] = useState({
+    office: null,
+    price: 0,
+    method: "Неизвестный метод",
+  });
+
+  useEffect(() => {
+    console.log(
+      "Текущее состояние delivery:",
+      JSON.stringify(delivery, null, 2)
+    );
+  }, [delivery]);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const finalTotal = total + (delivery.price || 0);
+  const finalTotal =
+    total +
+    (delivery.office && delivery.office !== "Адрес не указан"
+      ? delivery.price
+      : 0);
 
   const handlePay = async () => {
     setError("");
+    console.log("handlePay вызван, данные:", {
+      name,
+      phone,
+      email,
+      cart,
+      deliveryOffice: delivery.office,
+      deliveryPrice: delivery.price,
+      deliveryMethod: delivery.method,
+    });
+
     if (!name.trim() || !phone.trim() || !email.trim()) {
       setError("Пожалуйста, введите имя, телефон и email");
+      console.error("Ошибка валидации: отсутствуют имя, телефон или email");
       return;
     }
-    if (!delivery.office) {
+    if (!delivery.office || delivery.office === "Адрес не указан") {
       setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
+      console.error("Ошибка валидации: ПВЗ не выбран");
       return;
     }
+
+    const orderData = {
+      cart,
+      customerName: name,
+      customerPhone: phone,
+      customerEmail: email,
+      deliveryOffice: delivery.office,
+      deliveryPrice: delivery.price,
+      deliveryMethod: delivery.method,
+    };
+    console.log(
+      "orderData перед отправкой:",
+      JSON.stringify(orderData, null, 2)
+    );
+    localStorage.setItem("lastOrder", JSON.stringify(orderData));
 
     setLoading(true);
     try {
       const res = await fetch("/api/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cart,
-          customerName: name,
-          customerPhone: phone,
-          customerEmail: email,
-          deliveryOffice: delivery.office,
-          deliveryPrice: delivery.price,
-        }),
+        body: JSON.stringify(orderData),
       });
 
+      const data = await res.json();
+      console.log(
+        "Ответ от /api/create-payment:",
+        JSON.stringify(data, null, 2)
+      );
+
       if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(errText || `Ошибка оплаты: статус ${res.status}`);
+        throw new Error(data.message || `Ошибка оплаты: статус ${res.status}`);
       }
 
-      const data = await res.json();
       window.location.href = data.confirmation_url;
     } catch (err) {
-      console.error("Payment failed:", err);
+      console.error("Ошибка в handlePay:", {
+        message: err.message,
+        stack: err.stack,
+      });
       setError(err.message || "Неизвестная ошибка оплаты");
     } finally {
       setLoading(false);
@@ -66,7 +108,6 @@ export default function CartPage() {
         <title>Корзина — Магазин платьев</title>
       </Head>
       <main className={styles.cartContainer}>
-        {/* Товары */}
         <div className={styles.cartItems}>
           <h2 className={styles.itemsTitle}>Ваш заказ</h2>
           {cart.length === 0 ? (
@@ -113,7 +154,6 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* Оформление заказа */}
         <div className={styles.cartSummary}>
           <h2 className={styles.summaryTitle}>Оформление заказа</h2>
 
@@ -149,21 +189,28 @@ export default function CartPage() {
             />
           </div>
 
-          {/* Виджет СДЭК */}
           <div className={styles.formGroup}>
             <label className={styles.formLabel}>
               Выберите пункт выдачи (СДЭК):
             </label>
-            <CDEKWIDGET /> {/* Вставляем виджет */}
-            {delivery.office && (
+            <CDEKWIDGET setDelivery={setDelivery} />
+            {delivery.office && delivery.office !== "Адрес не указан" ? (
               <div className={styles.deliveryInfo}>
-                <p>ПВЗ: {delivery.office}</p>
-                <p>Стоимость доставки: {delivery.price}₽</p>
+                <p>
+                  <strong>ПВЗ:</strong> {delivery.office}
+                </p>
+                <p>
+                  <strong>Метод доставки:</strong> {delivery.method}
+                </p>
+                <p>
+                  <strong>Стоимость доставки:</strong> {delivery.price}₽
+                </p>
               </div>
+            ) : (
+              <p className={styles.error}>Пункт выдачи не выбран</p>
             )}
           </div>
 
-          {/* Сводка */}
           <div className={styles.breakdown}>
             {cart.map((item) => (
               <div
@@ -174,9 +221,9 @@ export default function CartPage() {
                 {item.price * item.qty}₽
               </div>
             ))}
-            {delivery.price > 0 && (
+            {delivery.office && delivery.office !== "Адрес не указан" && (
               <div className={styles.breakdownLine}>
-                Доставка (СДЭК): {delivery.price}₽
+                Доставка (СДЭК, {delivery.method}): {delivery.price}₽
               </div>
             )}
           </div>
@@ -189,7 +236,12 @@ export default function CartPage() {
           <button
             className={styles.payBtn}
             onClick={handlePay}
-            disabled={loading || cart.length === 0}
+            disabled={
+              loading ||
+              cart.length === 0 ||
+              !delivery.office ||
+              delivery.office === "Адрес не указан"
+            }
           >
             {loading ? "Пожалуйста, подождите…" : "Оплатить"}
           </button>

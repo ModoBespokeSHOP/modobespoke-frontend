@@ -1,47 +1,88 @@
-// pages/api/create-payment.js
+import fetch from "node-fetch";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
+    console.error("Неподдерживаемый метод:", req.method);
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { cart, customerName, customerPhone, customerEmail } = req.body;
+  const {
+    cart,
+    customerName,
+    customerPhone,
+    customerEmail,
+    deliveryOffice,
+    deliveryPrice,
+    deliveryMethod,
+  } = req.body;
+  console.log(
+    "Полученные данные в /api/create-payment:",
+    JSON.stringify(req.body, null, 2)
+  );
 
   if (
     !Array.isArray(cart) ||
     cart.length === 0 ||
     !customerName ||
     !customerPhone ||
-    !customerEmail
+    !customerEmail ||
+    !deliveryOffice ||
+    !deliveryMethod
   ) {
-    return res
-      .status(400)
-      .json({ message: "Missing cart, name, phone or email" });
+    console.error("Ошибка валидации данных:", {
+      cart: Array.isArray(cart) && cart.length > 0,
+      customerName: !!customerName,
+      customerPhone: !!customerPhone,
+      customerEmail: !!customerEmail,
+      deliveryOffice: !!deliveryOffice,
+      deliveryMethod: !!deliveryMethod,
+    });
+    return res.status(400).json({ message: "Missing required fields" });
   }
 
-  // Считаем сумму в копейках и форматируем
   const totalCents = cart.reduce(
     (sum, item) => sum + item.price * item.qty * 100,
     0
   );
-  const amountValue = (totalCents / 100).toFixed(2);
+  const deliveryCents = Number.isFinite(deliveryPrice)
+    ? deliveryPrice * 100
+    : 0;
+  const finalTotalCents = totalCents + deliveryCents;
+  const amountValue = (finalTotalCents / 100).toFixed(2);
 
-  // Формируем массив позиций для чека
-  const receiptItems = cart.map((item) => ({
-    description: `${item.title} (${item.selectedSize})`,
-    quantity: item.qty,
-    amount: {
-      value: item.price.toFixed(2),
-      currency: "RUB",
-    },
-    vat_code: 1, // упрощёнка без НДС
-    payment_mode: "full_payment",
-    payment_subject: "commodity",
-  }));
+  const receiptItems = [
+    ...cart.map((item) => ({
+      description: `${item.title} (${item.selectedSize})`,
+      quantity: item.qty,
+      amount: {
+        value: item.price.toFixed(2),
+        currency: "RUB",
+      },
+      vat_code: 1,
+      payment_mode: "full_payment",
+      payment_subject: "commodity",
+    })),
+    ...(deliveryPrice > 0
+      ? [
+          {
+            description: `Доставка СДЭК (${deliveryMethod}, ${deliveryOffice})`,
+            quantity: 1,
+            amount: {
+              value: deliveryPrice.toFixed(2),
+              currency: "RUB",
+            },
+            vat_code: 1,
+            payment_mode: "full_payment",
+            payment_subject: "service",
+          },
+        ]
+      : []),
+  ];
 
   const shopId = process.env.YOOKASSA_SHOP_ID;
   const secretKey = process.env.YOOKASSA_SECRET_KEY;
   if (!shopId || !secretKey) {
+    console.error("Отсутствуют учетные данные ЮKassa:", { shopId, secretKey });
     return res.status(500).json({ message: "Missing YooKassa credentials" });
   }
 
@@ -60,10 +101,10 @@ export default async function handler(req, res) {
         confirmation: {
           type: "redirect",
           return_url:
-            process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+            process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000/success",
         },
         capture: true,
-        description: `Заказ от ${customerName}`,
+        description: `Заказ от ${customerName}, доставка: ${deliveryMethod}, ${deliveryOffice}`,
         receipt: {
           customer: {
             email: customerEmail,
@@ -71,15 +112,22 @@ export default async function handler(req, res) {
           },
           items: receiptItems,
         },
+        metadata: {
+          deliveryOffice,
+          deliveryPrice,
+          deliveryMethod,
+        },
       }),
     });
 
     const data = await response.json();
+    console.log("Ответ от ЮKassa:", JSON.stringify(data, null, 2));
 
     if (!response.ok) {
-      console.error("YooKassa error:", data);
+      console.error("Ошибка ЮKassa:", data);
       return res.status(response.status).json({
-        message: data.message || JSON.stringify(data),
+        message:
+          data.description || data.message || "Ошибка при создании платежа",
       });
     }
 
@@ -87,7 +135,10 @@ export default async function handler(req, res) {
       confirmation_url: data.confirmation.confirmation_url,
     });
   } catch (err) {
-    console.error("Create-payment error:", err);
+    console.error("Ошибка в запросе к ЮKassa:", {
+      message: err.message,
+      stack: err.stack,
+    });
     return res.status(500).json({ message: "Payment request failed" });
   }
 }

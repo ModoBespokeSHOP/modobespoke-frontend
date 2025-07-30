@@ -1,0 +1,38 @@
+.container {
+  padding: 32px;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.orderDetails {
+  text-align: left;
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.orderDetails h2 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+
+.orderDetails h3 {
+  font-size: 1.2rem;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.orderDetails p {
+  margin: 8px 0;
+}
+
+.orderDetails ul {
+  list-style: none;
+  padding: 0;
+}
+
+.orderDetails li {
+  margin: 8px 0;
+}
