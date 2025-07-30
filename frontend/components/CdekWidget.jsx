@@ -41,7 +41,7 @@ const CDEKWIDGET = ({ setDelivery }) => {
             setDelivery({
               office: data.address || "Адрес не указан",
               price: data.delivery_sum || 0,
-              method: data.method || "Неизвестный метод",
+              method: data.method || "не выбрано",
             });
           }
         },
@@ -62,7 +62,7 @@ const CDEKWIDGET = ({ setDelivery }) => {
           ".cdek-pog16f.cdek-18beit"
         );
         let selectedPrice = 0;
-        let selectedMethod = "Неизвестный метод";
+        let selectedMethod = "не выбрано";
         let selectedAddress = addressElement
           ? addressElement.textContent.trim()
           : "Адрес не указан";
@@ -78,7 +78,7 @@ const CDEKWIDGET = ({ setDelivery }) => {
 
             selectedMethod = methodElement
               ? methodElement.textContent.trim()
-              : "Неизвестный метод";
+              : "не выбрано";
             const priceText = priceElement
               ? priceElement.textContent.trim()
               : "0 RUB";
@@ -112,7 +112,6 @@ const CDEKWIDGET = ({ setDelivery }) => {
       } else {
         console.error("Контейнер cdek-widget не найден в DOM");
       }
-
       return () => {
         console.log("Размонтирование виджета CDEK");
         observer.disconnect();

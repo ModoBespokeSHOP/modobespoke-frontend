@@ -1,64 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { CartContext } from "../context/CartContext";
 import styles from "../styles/success.module.css";
 
 export default function SuccessPage() {
-  const [orderData, setOrderData] = useState(null);
+  const router = useRouter();
+  const { orderId } = router.query;
+  const { clearCart } = useContext(CartContext); // Добавляем clearCart из CartContext
+  const [message, setMessage] = useState("Проверка статуса платежа...");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("lastOrder"));
-    setOrderData(data);
-  }, []);
+    if (!orderId) {
+      setError("Отсутствует ID заказа");
+      setMessage("");
+      return;
+    }
+
+    const checkPaymentStatus = async () => {
+      try {
+        const res = await fetch("/api/confirm-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId }),
+        });
+        const data = await res.json();
+        console.log(
+          "Ответ от /api/confirm-payment:",
+          JSON.stringify(data, null, 2)
+        );
+        if (!res.ok) {
+          throw new Error(data.message || "Ошибка проверки платежа");
+        }
+        setMessage("Заказ успешно оплачен! Спасибо за покупку.");
+        // Очищаем корзину и localStorage
+        clearCart();
+        localStorage.removeItem("lastOrder");
+        localStorage.removeItem("payment_id");
+      } catch (err) {
+        console.error("Ошибка проверки платежа:", err);
+        setError(err.message);
+        setMessage("");
+      }
+    };
+
+    checkPaymentStatus();
+  }, [orderId, clearCart]);
 
   return (
-    <div className={styles.container}>
-      <h1>Спасибо за ваш заказ!</h1>
-      {orderData ? (
-        <div className={styles.orderDetails}>
-          <h2>Детали заказа</h2>
-          {orderData.customerName && (
-            <p>
-              <strong>Имя клиента:</strong> {orderData.customerName}
-            </p>
-          )}
-          <p>
-            <strong>Телефон:</strong> {orderData.customerPhone}
-          </p>
-          {orderData.customerEmail && (
-            <p>
-              <strong>Email:</strong> {orderData.customerEmail}
-            </p>
-          )}
-          <p>
-            <strong>Адрес доставки (ПВЗ):</strong> {orderData.deliveryOffice}
-          </p>
-          <p>
-            <strong>Метод доставки:</strong> {orderData.deliveryMethod}
-          </p>
-          <p>
-            <strong>Стоимость доставки:</strong> {orderData.deliveryPrice}₽
-          </p>
-          <h3>Товары:</h3>
-          <ul>
-            {orderData.cart.map((item, index) => (
-              <li key={index}>
-                {item.title} (Размер: {item.selectedSize}, Кол-во: {item.qty},
-                Цена: {item.price * item.qty}₽)
-              </li>
-            ))}
-          </ul>
-          <p>
-            <strong>Итого:</strong>{" "}
-            {orderData.cart.reduce(
-              (sum, item) => sum + item.price * item.qty,
-              0
-            ) + Number(orderData.deliveryPrice)}
-            ₽
-          </p>
-          <p>Эти данные можно использовать для создания заказа в СДЭК.</p>
-        </div>
-      ) : (
-        <p>Данные заказа не найдены.</p>
-      )}
-    </div>
+    <>
+      <Head>
+        <title>Результат оплаты — Магазин платьев</title>
+      </Head>
+      <main className={styles.container}>
+        <h1>Результат оплаты</h1>
+        {message && <p>{message}</p>}
+        {error && <p className={styles.error}>{error}</p>}
+        <button className={styles.backBtn} onClick={() => router.push("/")}>
+          Вернуться на главную
+        </button>
+      </main>
+    </>
   );
 }

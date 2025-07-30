@@ -15,10 +15,11 @@ export default function CartPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [delivery, setDelivery] = useState({
-    office: null,
+    office: "Адрес не указан",
     price: 0,
-    method: "Неизвестный метод",
+    method: "не выбрано",
   });
+  const [isClearModalOpen, setIsClearModalOpen] = useState(false);
 
   useEffect(() => {
     console.log(
@@ -47,13 +48,18 @@ export default function CartPage() {
     });
 
     if (!name.trim() || !phone.trim() || !email.trim()) {
-      setError("Пожалуйста, введите имя, телефон и email");
-      console.error("Ошибка валидации: отсутствуют имя, телефон или email");
+      setError("Пожалуйста, введите ФИО, телефон и email");
+      console.error("Ошибка валидации: отсутствуют ФИО, телефон или email");
       return;
     }
-    if (!delivery.office || delivery.office === "Адрес не указан") {
+    if (
+      delivery.office === "Адрес не указан" ||
+      delivery.method === "не выбрано"
+    ) {
       setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
-      console.error("Ошибка валидации: ПВЗ не выбран");
+      console.error(
+        "Ошибка валидации: ПВЗ не выбран или метод доставки не указан"
+      );
       return;
     }
 
@@ -90,6 +96,7 @@ export default function CartPage() {
         throw new Error(data.message || `Ошибка оплаты: статус ${res.status}`);
       }
 
+      localStorage.setItem("payment_id", data.payment_id);
       window.location.href = data.confirmation_url;
     } catch (err) {
       console.error("Ошибка в handlePay:", {
@@ -100,6 +107,19 @@ export default function CartPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const openClearModal = () => {
+    setIsClearModalOpen(true);
+  };
+
+  const closeClearModal = () => {
+    setIsClearModalOpen(false);
+  };
+
+  const confirmClearCart = () => {
+    clearCart();
+    closeClearModal();
   };
 
   return (
@@ -113,46 +133,80 @@ export default function CartPage() {
           {cart.length === 0 ? (
             <p>Ваша корзина пуста.</p>
           ) : (
-            cart.map((item) => (
-              <div
-                key={`${item.id}-${item.selectedSize}`}
-                className={styles.cartItem}
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  width={80}
-                  height={80}
-                  className={styles.itemImage}
-                />
-                <div className={styles.itemDetails}>
-                  <div className={styles.itemTitle}>{item.title}</div>
-                  <div className={styles.itemMeta}>
-                    Размер: {item.selectedSize}
-                  </div>
-                  <div className={styles.itemQty}>
-                    <button
-                      onClick={() => decreaseQty(item.id, item.selectedSize)}
-                    >
-                      −
-                    </button>
-                    <span>{item.qty}</span>
-                    <button onClick={() => addToCart(item, 1)}>+</button>
-                  </div>
-                  <div className={styles.itemPrice}>
-                    {item.price * item.qty}₽
-                  </div>
-                </div>
-                <button
-                  className={styles.removeBtn}
-                  onClick={() => removeFromCart(item.id, item.selectedSize)}
+            <>
+              {cart.map((item) => (
+                <div
+                  key={`${item.id}-${item.selectedSize}`}
+                  className={styles.cartItem}
                 >
-                  ×
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={100}
+                    height={100}
+                    className={styles.itemImage}
+                    quality={85}
+                  />
+                  <div className={styles.itemDetails}>
+                    <div className={styles.itemTitle}>{item.title}</div>
+                    <div className={styles.itemMeta}>
+                      Размер: {item.selectedSize}
+                    </div>
+                    <div className={styles.itemQty}>
+                      <button
+                        onClick={() => decreaseQty(item.id, item.selectedSize)}
+                      >
+                        −
+                      </button>
+                      <span>{item.qty}</span>
+                      <button onClick={() => addToCart(item, 1)}>+</button>
+                    </div>
+                    <div className={styles.itemPrice}>
+                      {item.price * item.qty}₽
+                    </div>
+                  </div>
+                  <button
+                    className={styles.removeBtn}
+                    onClick={() => removeFromCart(item.id, item.selectedSize)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              <div className={styles.clearWrapper}>
+                <button
+                  className={styles.clearBtn}
+                  onClick={openClearModal}
+                  disabled={cart.length === 0}
+                >
+                  Очистить корзину
                 </button>
               </div>
-            ))
+            </>
           )}
         </div>
+
+        {isClearModalOpen && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modal}>
+              <p>Вы уверены, что хотите очистить корзину?</p>
+              <div className={styles.modalButtons}>
+                <button
+                  className={styles.modalBtnCancel}
+                  onClick={closeClearModal}
+                >
+                  Отмена
+                </button>
+                <button
+                  className={styles.modalBtnConfirm}
+                  onClick={confirmClearCart}
+                >
+                  Очистить
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className={styles.cartSummary}>
           <h2 className={styles.summaryTitle}>Оформление заказа</h2>
@@ -160,7 +214,7 @@ export default function CartPage() {
           {error && <div className={styles.error}>{error}</div>}
 
           <div className={styles.formGroup}>
-            <label className={styles.formLabel}>Ваше имя</label>
+            <label className={styles.formLabel}>ФИО</label>
             <input
               className={styles.formInput}
               type="text"
@@ -194,21 +248,6 @@ export default function CartPage() {
               Выберите пункт выдачи (СДЭК):
             </label>
             <CDEKWIDGET setDelivery={setDelivery} />
-            {delivery.office && delivery.office !== "Адрес не указан" ? (
-              <div className={styles.deliveryInfo}>
-                <p>
-                  <strong>ПВЗ:</strong> {delivery.office}
-                </p>
-                <p>
-                  <strong>Метод доставки:</strong> {delivery.method}
-                </p>
-                <p>
-                  <strong>Стоимость доставки:</strong> {delivery.price}₽
-                </p>
-              </div>
-            ) : (
-              <p className={styles.error}>Пункт выдачи не выбран</p>
-            )}
           </div>
 
           <div className={styles.breakdown}>
@@ -239,19 +278,11 @@ export default function CartPage() {
             disabled={
               loading ||
               cart.length === 0 ||
-              !delivery.office ||
-              delivery.office === "Адрес не указан"
+              delivery.office === "Адрес не указан" ||
+              delivery.method === "не выбрано"
             }
           >
             {loading ? "Пожалуйста, подождите…" : "Оплатить"}
-          </button>
-
-          <button
-            className={styles.clearBtn}
-            onClick={clearCart}
-            disabled={cart.length === 0}
-          >
-            Очистить корзину
           </button>
         </div>
       </main>
