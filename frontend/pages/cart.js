@@ -19,7 +19,13 @@ export default function CartPage() {
     price: 0,
     method: "не выбрано",
   });
-  const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+
+  useEffect(() => {
+    console.log(
+      "Текущее состояние delivery:",
+      JSON.stringify(delivery, null, 2)
+    );
+  }, [delivery]);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const finalTotal =
@@ -30,11 +36,11 @@ export default function CartPage() {
 
   const handlePay = async () => {
     setError("");
-    console.log("Данные для оплаты:", {
+    console.log("handlePay вызван, данные:", {
+      name,
+      phone,
+      email,
       cart,
-      customerName: name,
-      customerPhone: phone,
-      customerEmail: email,
       deliveryOffice: delivery.office,
       deliveryPrice: delivery.price,
       deliveryMethod: delivery.method,
@@ -42,6 +48,7 @@ export default function CartPage() {
 
     if (!name.trim() || !phone.trim() || !email.trim()) {
       setError("Пожалуйста, введите ФИО, телефон и email");
+      console.error("Ошибка валидации: отсутствуют ФИО, телефон или email");
       return;
     }
     if (
@@ -49,6 +56,9 @@ export default function CartPage() {
       delivery.method === "не выбрано"
     ) {
       setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
+      console.error(
+        "Ошибка валидации: ПВЗ не выбран или метод доставки не указан"
+      );
       return;
     }
 
@@ -61,7 +71,11 @@ export default function CartPage() {
       deliveryPrice: delivery.price,
       deliveryMethod: delivery.method,
     };
-    console.log("Отправка на /api/create-payment:", orderData);
+    console.log(
+      "orderData перед отправкой:",
+      JSON.stringify(orderData, null, 2)
+    );
+    localStorage.setItem("lastOrder", JSON.stringify(orderData));
 
     setLoading(true);
     try {
@@ -70,33 +84,29 @@ export default function CartPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       });
+
       const data = await res.json();
-      console.log("Ответ от /api/create-payment:", data);
+      console.log(
+        "Ответ от /api/create-payment:",
+        JSON.stringify(data, null, 2)
+      );
 
-      if (!res.ok)
+      if (!res.ok) {
         throw new Error(data.message || `Ошибка оплаты: статус ${res.status}`);
+      }
 
+      // Сохраняем payment_id в localStorage для последующей проверки
       localStorage.setItem("payment_id", data.payment_id);
       window.location.href = data.confirmation_url;
     } catch (err) {
-      console.error("Ошибка в handlePay:", err);
+      console.error("Ошибка в handlePay:", {
+        message: err.message,
+        stack: err.stack,
+      });
       setError(err.message || "Неизвестная ошибка оплаты");
     } finally {
       setLoading(false);
     }
-  };
-
-  const openClearModal = () => {
-    setIsClearModalOpen(true);
-  };
-
-  const closeClearModal = () => {
-    setIsClearModalOpen(false);
-  };
-
-  const confirmClearCart = () => {
-    clearCart();
-    closeClearModal();
   };
 
   return (
@@ -110,80 +120,46 @@ export default function CartPage() {
           {cart.length === 0 ? (
             <p>Ваша корзина пуста.</p>
           ) : (
-            <>
-              {cart.map((item) => (
-                <div
-                  key={`${item.id}-${item.selectedSize}`}
-                  className={styles.cartItem}
-                >
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    width={80}
-                    height={80}
-                    className={styles.itemImage}
-                    quality={90}
-                  />
-                  <div className={styles.itemDetails}>
-                    <div className={styles.itemTitle}>{item.title}</div>
-                    <div className={styles.itemMeta}>
-                      Размер: {item.selectedSize}
-                    </div>
-                    <div className={styles.itemQty}>
-                      <button
-                        onClick={() => decreaseQty(item.id, item.selectedSize)}
-                      >
-                        −
-                      </button>
-                      <span>{item.qty}</span>
-                      <button onClick={() => addToCart(item, 1)}>+</button>
-                    </div>
-                    <div className={styles.itemPrice}>
-                      {item.price * item.qty}₽
-                    </div>
+            cart.map((item) => (
+              <div
+                key={`${item.id}-${item.selectedSize}`}
+                className={styles.cartItem}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={80}
+                  height={80}
+                  className={styles.itemImage}
+                />
+                <div className={styles.itemDetails}>
+                  <div className={styles.itemTitle}>{item.title}</div>
+                  <div className={styles.itemMeta}>
+                    Размер: {item.selectedSize}
                   </div>
-                  <button
-                    className={styles.removeBtn}
-                    onClick={() => removeFromCart(item.id, item.selectedSize)}
-                  >
-                    ×
-                  </button>
+                  <div className={styles.itemQty}>
+                    <button
+                      onClick={() => decreaseQty(item.id, item.selectedSize)}
+                    >
+                      −
+                    </button>
+                    <span>{item.qty}</span>
+                    <button onClick={() => addToCart(item, 1)}>+</button>
+                  </div>
+                  <div className={styles.itemPrice}>
+                    {item.price * item.qty}₽
+                  </div>
                 </div>
-              ))}
-              <div className={styles.clearWrapper}>
                 <button
-                  className={styles.clearBtn}
-                  onClick={openClearModal}
-                  disabled={cart.length === 0}
+                  className={styles.removeBtn}
+                  onClick={() => removeFromCart(item.id, item.selectedSize)}
                 >
-                  Очистить корзину
+                  ×
                 </button>
               </div>
-            </>
+            ))
           )}
         </div>
-
-        {isClearModalOpen && (
-          <div className={styles.modalOverlay}>
-            <div className={styles.modal}>
-              <p>Вы уверены, что хотите очистить корзину?</p>
-              <div className={styles.modalButtons}>
-                <button
-                  className={styles.modalBtnCancel}
-                  onClick={closeClearModal}
-                >
-                  Отмена
-                </button>
-                <button
-                  className={styles.modalBtnConfirm}
-                  onClick={confirmClearCart}
-                >
-                  Очистить
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className={styles.cartSummary}>
           <h2 className={styles.summaryTitle}>Оформление заказа</h2>
@@ -220,11 +196,18 @@ export default function CartPage() {
             />
           </div>
 
-          <div className={styles.formGroup}>
+          <div
+            className={`${styles.formGroup} ${
+              delivery.office === "Адрес не указан" ? styles.error : ""
+            }`}
+          >
             <label className={styles.formLabel}>
               Выберите пункт выдачи (СДЭК):
             </label>
             <CDEKWIDGET setDelivery={setDelivery} />
+            {delivery.office === "Адрес не указан" ? (
+              <p className={styles.error}>Пункт выдачи не выбран</p>
+            ) : null}
           </div>
 
           <div className={styles.breakdown}>
@@ -260,6 +243,14 @@ export default function CartPage() {
             }
           >
             {loading ? "Пожалуйста, подождите…" : "Оплатить"}
+          </button>
+
+          <button
+            className={styles.clearBtn}
+            onClick={clearCart}
+            disabled={cart.length === 0}
+          >
+            Очистить корзину
           </button>
         </div>
       </main>

@@ -1,22 +1,16 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { CartContext } from "../context/CartContext";
 import styles from "../styles/success.module.css";
 
 export default function SuccessPage() {
   const router = useRouter();
   const { orderId } = router.query;
-  const { clearCart } = useContext(CartContext); // Добавляем clearCart из CartContext
   const [message, setMessage] = useState("Проверка статуса платежа...");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!orderId) {
-      setError("Отсутствует ID заказа");
-      setMessage("");
-      return;
-    }
+    if (!orderId) return;
 
     const checkPaymentStatus = async () => {
       try {
@@ -26,18 +20,10 @@ export default function SuccessPage() {
           body: JSON.stringify({ orderId }),
         });
         const data = await res.json();
-        console.log(
-          "Ответ от /api/confirm-payment:",
-          JSON.stringify(data, null, 2)
-        );
         if (!res.ok) {
           throw new Error(data.message || "Ошибка проверки платежа");
         }
         setMessage("Заказ успешно оплачен! Спасибо за покупку.");
-        // Очищаем корзину и localStorage
-        clearCart();
-        localStorage.removeItem("lastOrder");
-        localStorage.removeItem("payment_id");
       } catch (err) {
         console.error("Ошибка проверки платежа:", err);
         setError(err.message);
@@ -46,7 +32,7 @@ export default function SuccessPage() {
     };
 
     checkPaymentStatus();
-  }, [orderId, clearCart]);
+  }, [orderId]);
 
   return (
     <>
