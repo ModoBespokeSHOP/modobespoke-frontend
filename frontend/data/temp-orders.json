@@ -71,5 +71,59 @@
     "metadata": {
       "paymentId": "301c67d0-000f-5000-b000-18790e27bdcd"
     }
+  },
+  {
+    "id": 1753963627694,
+    "date": "2025-07-31T12:07:08.295Z",
+    "customerName": "Калимуллин Никита Ильдарович",
+    "customerPhone": "9108049034",
+    "customerEmail": "nikitasan65@gmail.com",
+    "cart": [
+      {
+        "id": 1750768955449,
+        "title": "Платье Летнее",
+        "shortSpecs": {
+          "color": "белый",
+          "material": "штора",
+          "pattern": "-"
+        },
+        "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
+        "price": 18999,
+        "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750768949/jbezl55zftfohkcku2nr.jpg",
+        "sizes": [
+          "S",
+          "M",
+          "L"
+        ],
+        "selectedSize": "M",
+        "qty": 1
+      },
+      {
+        "id": 1750768955449,
+        "title": "Платье Летнее",
+        "shortSpecs": {
+          "color": "белый",
+          "material": "штора",
+          "pattern": "-"
+        },
+        "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
+        "price": 18999,
+        "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750768949/jbezl55zftfohkcku2nr.jpg",
+        "sizes": [
+          "S",
+          "M",
+          "L"
+        ],
+        "selectedSize": "L",
+        "qty": 1
+      }
+    ],
+    "deliveryOffice": "Кострома, городской округ Кострома, ул. Ленина, 160А",
+    "deliveryPrice": 410,
+    "deliveryMethod": "Посылка склад-склад",
+    "total": 38408,
+    "metadata": {
+      "paymentId": "301d702b-000f-5001-9000-1c0db47b8c30"
+    }
   }
 ]

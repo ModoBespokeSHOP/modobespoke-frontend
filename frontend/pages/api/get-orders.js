@@ -1,7 +1,4 @@
-import fs from "fs/promises";
-import path from "path";
-
-const ordersFilePath = path.join(process.cwd(), "data", "orders.json");
+import { sql } from "@vercel/postgres";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -9,11 +6,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const fileContent = await fs.readFile(ordersFilePath, "utf-8");
-    const orders = JSON.parse(fileContent);
-    return res.status(200).json(orders);
+    const { rows } = await sql`SELECT * FROM orders`;
+    return res.status(200).json(rows);
   } catch (err) {
-    console.error("Ошибка чтения заказов:", err);
-    return res.status(500).json({ message: "Failed to load orders" });
+    console.error("Ошибка при загрузке заказов:", err);
+    return res.status(500).json({ error: "Не удалось загрузить заказы" });
   }
 }

@@ -38,7 +38,7 @@ export default function AdminPage() {
     _file: null,
   });
   const [preview, setPreview] = useState("");
-  const [loading, setLoading] = useState("");
+  const [loading, setLoading] = useState(false); // Исправлено: было "" вместо false
   const [message, setMessage] = useState("");
 
   // --- Modal state for delete confirmation ---
@@ -59,10 +59,16 @@ export default function AdminPage() {
       .then((data) => setProducts(Array.isArray(data) ? data : data.data || []))
       .catch(console.error);
 
-    // Fetch orders
+    // Fetch orders from the database
     fetch("/api/get-orders")
       .then((r) => r.json())
-      .then((data) => setOrders(Array.isArray(data) ? data : []))
+      .then((data) => {
+        if (data.error) {
+          setOrdersError(data.error);
+        } else {
+          setOrders(data);
+        }
+      })
       .catch((err) =>
         setOrdersError("Ошибка загрузки заказов: " + err.message)
       );
@@ -203,14 +209,20 @@ export default function AdminPage() {
   }
 
   async function handleDeleteOrder(id) {
-    const updated = orders.filter((o) => o.id !== id);
-    await fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-    setOrders(updated);
-    setMessage("Заказ удалён");
+    try {
+      const res = await fetch("/api/delete-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) throw new Error("Failed to delete order");
+      // Remove the deleted order from the state
+      setOrders(orders.filter((order) => order.id !== id));
+      setMessage("Заказ удалён");
+    } catch (err) {
+      console.error("Ошибка при удалении заказа:", err);
+      setMessage("Ошибка: " + err.message);
+    }
   }
 
   function openDeleteModal(id, type) {
