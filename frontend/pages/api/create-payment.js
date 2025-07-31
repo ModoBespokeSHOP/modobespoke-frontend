@@ -50,6 +50,12 @@ export default async function handler(req, res) {
   const total =
     cart.reduce((sum, item) => sum + item.price * item.qty, 0) + deliveryPrice;
 
+  // Валидация суммы
+  if (isNaN(total) || total <= 0) {
+    console.error("Некорректная сумма:", total);
+    return res.status(400).json({ message: "Invalid total amount" });
+  }
+
   try {
     const shopId = process.env.YOOKASSA_SHOP_ID;
     const secretKey = process.env.YOOKASSA_SECRET_KEY;
@@ -63,22 +69,30 @@ export default async function handler(req, res) {
 
     const amountValue = total.toFixed(2);
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    console.log("Отправка запроса ЮKassa:", {
-      amount: { value: amountValue, currency: "RUB" },
-      return_url: `${siteUrl}/success?orderId=${orderId}`,
+    if (!siteUrl.startsWith("http")) {
+      console.error("Некорректный siteUrl:", siteUrl);
+      return res.status(500).json({ message: "Invalid site URL" });
+    }
+
+    // Подготовка receipt.items
+    const receiptItems = cart.map((item) => {
+      const itemTotal = item.price * item.qty;
+      if (itemTotal <= 0 || isNaN(itemTotal)) {
+        console.error("Некорректная стоимость товара:", item);
+        throw new Error(`Invalid item price for ${item.title}`);
+      }
+      return {
+        description: `${item.title} (${item.selectedSize})`,
+        quantity: item.qty,
+        amount: { value: itemTotal.toFixed(2), currency: "RUB" },
+        vat_code: 1, // НДС 20%, уточните ваш тариф
+        payment_method: "full_payment",
+        payment_object: "commodity",
+      };
     });
 
-    const receiptItems = cart.map((item) => ({
-      description: `${item.title} (${item.selectedSize})`,
-      quantity: item.qty,
-      amount: { value: (item.price * item.qty).toFixed(2), currency: "RUB" },
-      vat_code: 1, // НДС 20% (по умолчанию), уточните ваш тариф
-      payment_method: "full_payment",
-      payment_object: "commodity",
-    }));
-
-    // Добавляем доставку как отдельный элемент чека
-    if (deliveryPrice > 0) {
+    // Добавление доставки в чек
+    if (deliveryPrice > 0 && !isNaN(deliveryPrice)) {
       receiptItems.push({
         description: `Доставка (${deliveryMethod})`,
         quantity: 1,
@@ -88,6 +102,39 @@ export default async function handler(req, res) {
         payment_object: "service",
       });
     }
+
+    // Валидация customer
+    const customer = {};
+    if (customerEmail && customerEmail.trim())
+      customer.email = customerEmail.trim();
+    if (customerPhone && customerPhone.trim()) {
+      const cleanedPhone = customerPhone.replace(/[^0-9+]/g, ""); // Оставляем только цифры и +
+      if (cleanedPhone.length > 6) customer.phone = cleanedPhone; // Минимальная длина для телефона
+    }
+    if (Object.keys(customer).length === 0) {
+      console.error("Отсутствуют контактные данные клиента:", {
+        customerEmail,
+        customerPhone,
+      });
+      return res.status(400).json({ message: "Missing customer contact info" });
+    }
+
+    const yooRequest = {
+      amount: { value: amountValue, currency: "RUB" },
+      confirmation: {
+        type: "redirect",
+        return_url: `${siteUrl}/success?orderId=${orderId}`,
+      },
+      capture: true,
+      description: `Заказ от ${customerName}`,
+      receipt: {
+        items: receiptItems,
+        tax_system_id: 1, // ОСН, уточните ваш тариф (1-6)
+        customer,
+      },
+    };
+
+    console.log("Отправка запроса ЮKassa:", yooRequest);
 
     const response = await fetch("https://api.yookassa.ru/v3/payments", {
       method: "POST",
@@ -100,23 +147,7 @@ export default async function handler(req, res) {
           .toString(36)
           .substring(2)}`,
       },
-      body: JSON.stringify({
-        amount: { value: amountValue, currency: "RUB" },
-        confirmation: {
-          type: "redirect",
-          return_url: `${siteUrl}/success?orderId=${orderId}`,
-        },
-        capture: true,
-        description: `Заказ от ${customerName}`,
-        receipt: {
-          items: receiptItems,
-          tax_system_id: 1, // ОСН (Общая система налогообложения), уточните ваш тариф
-          customer: {
-            email: customerEmail,
-            phone: customerPhone,
-          },
-        },
-      }),
+      body: JSON.stringify(yooRequest),
     });
 
     const data = await response.json();
@@ -138,6 +169,8 @@ export default async function handler(req, res) {
       message: err.message,
       stack: err.stack,
     });
-    return res.status(500).json({ message: "Failed to create payment" });
+    return res
+      .status(500)
+      .json({ message: "Failed to create payment", details: err.message });
   }
 }
