@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { CartContext } from "../context/CartContext";
 import styles from "../styles/cart.module.css";
-import CDEKWIDGET from "../components/CdekWidget";
+import CDEKWIDGET from "../components/CDEKWIDGET";
 
 export default function CartPage() {
   const { cart, addToCart, decreaseQty, removeFromCart, clearCart } =
@@ -15,9 +15,9 @@ export default function CartPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [delivery, setDelivery] = useState({
-    office: "Адрес не указан",
+    office: null,
     price: 0,
-    method: "не выбрано",
+    method: "Неизвестный метод",
   });
 
   useEffect(() => {
@@ -47,18 +47,13 @@ export default function CartPage() {
     });
 
     if (!name.trim() || !phone.trim() || !email.trim()) {
-      setError("Пожалуйста, введите ФИО, телефон и email");
-      console.error("Ошибка валидации: отсутствуют ФИО, телефон или email");
+      setError("Пожалуйста, введите имя, телефон и email");
+      console.error("Ошибка валидации: отсутствуют имя, телефон или email");
       return;
     }
-    if (
-      delivery.office === "Адрес не указан" ||
-      delivery.method === "не выбрано"
-    ) {
+    if (!delivery.office || delivery.office === "Адрес не указан") {
       setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
-      console.error(
-        "Ошибка валидации: ПВЗ не выбран или метод доставки не указан"
-      );
+      console.error("Ошибка валидации: ПВЗ не выбран");
       return;
     }
 
@@ -95,8 +90,6 @@ export default function CartPage() {
         throw new Error(data.message || `Ошибка оплаты: статус ${res.status}`);
       }
 
-      // Сохраняем payment_id в localStorage для последующей проверки
-      localStorage.setItem("payment_id", data.payment_id);
       window.location.href = data.confirmation_url;
     } catch (err) {
       console.error("Ошибка в handlePay:", {
@@ -167,7 +160,7 @@ export default function CartPage() {
           {error && <div className={styles.error}>{error}</div>}
 
           <div className={styles.formGroup}>
-            <label className={styles.formLabel}>ФИО</label>
+            <label className={styles.formLabel}>Ваше имя</label>
             <input
               className={styles.formInput}
               type="text"
@@ -196,18 +189,26 @@ export default function CartPage() {
             />
           </div>
 
-          <div
-            className={`${styles.formGroup} ${
-              delivery.office === "Адрес не указан" ? styles.error : ""
-            }`}
-          >
+          <div className={styles.formGroup}>
             <label className={styles.formLabel}>
               Выберите пункт выдачи (СДЭК):
             </label>
             <CDEKWIDGET setDelivery={setDelivery} />
-            {delivery.office === "Адрес не указан" ? (
+            {delivery.office && delivery.office !== "Адрес не указан" ? (
+              <div className={styles.deliveryInfo}>
+                <p>
+                  <strong>ПВЗ:</strong> {delivery.office}
+                </p>
+                <p>
+                  <strong>Метод доставки:</strong> {delivery.method}
+                </p>
+                <p>
+                  <strong>Стоимость доставки:</strong> {delivery.price}₽
+                </p>
+              </div>
+            ) : (
               <p className={styles.error}>Пункт выдачи не выбран</p>
-            ) : null}
+            )}
           </div>
 
           <div className={styles.breakdown}>
@@ -238,8 +239,8 @@ export default function CartPage() {
             disabled={
               loading ||
               cart.length === 0 ||
-              delivery.office === "Адрес не указан" ||
-              delivery.method === "не выбрано"
+              !delivery.office ||
+              delivery.office === "Адрес не указан"
             }
           >
             {loading ? "Пожалуйста, подождите…" : "Оплатить"}
