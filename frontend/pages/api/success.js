@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import styles from "../styles/success.module.css";
 
 export default function SuccessPage() {
   const router = useRouter();
