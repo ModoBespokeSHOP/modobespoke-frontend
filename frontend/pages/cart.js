@@ -34,6 +34,9 @@ export default function CartPage() {
       ? delivery.price
       : 0);
 
+  const isDeliveryValid =
+    delivery.office && delivery.office !== "Адрес не указан";
+
   const handlePay = async () => {
     setError("");
     console.log("handlePay вызван, данные:", {
@@ -47,11 +50,11 @@ export default function CartPage() {
     });
 
     if (!name.trim() || !phone.trim() || !email.trim()) {
-      setError("Пожалуйста, введите имя, телефон и email");
-      console.error("Ошибка валидации: отсутствуют имя, телефон или email");
+      setError("Пожалуйста, введите ФИО, телефон и email");
+      console.error("Ошибка валидации: отсутствуют ФИО, телефон или email");
       return;
     }
-    if (!delivery.office || delivery.office === "Адрес не указан") {
+    if (!isDeliveryValid) {
       setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
       console.error("Ошибка валидации: ПВЗ не выбран");
       return;
@@ -160,7 +163,7 @@ export default function CartPage() {
           {error && <div className={styles.error}>{error}</div>}
 
           <div className={styles.formGroup}>
-            <label className={styles.formLabel}>Ваше имя</label>
+            <label className={styles.formLabel}>ФИО</label>
             <input
               className={styles.formInput}
               type="text"
@@ -194,19 +197,7 @@ export default function CartPage() {
               Выберите пункт выдачи (СДЭК):
             </label>
             <CDEKWIDGET setDelivery={setDelivery} />
-            {delivery.office && delivery.office !== "Адрес не указан" ? (
-              <div className={styles.deliveryInfo}>
-                <p>
-                  <strong>ПВЗ:</strong> {delivery.office}
-                </p>
-                <p>
-                  <strong>Метод доставки:</strong> {delivery.method}
-                </p>
-                <p>
-                  <strong>Стоимость доставки:</strong> {delivery.price}₽
-                </p>
-              </div>
-            ) : (
+            {!isDeliveryValid && (
               <p className={styles.error}>Пункт выдачи не выбран</p>
             )}
           </div>
@@ -221,7 +212,7 @@ export default function CartPage() {
                 {item.price * item.qty}₽
               </div>
             ))}
-            {delivery.office && delivery.office !== "Адрес не указан" && (
+            {isDeliveryValid && (
               <div className={styles.breakdownLine}>
                 Доставка (СДЭК, {delivery.method}): {delivery.price}₽
               </div>
@@ -236,12 +227,7 @@ export default function CartPage() {
           <button
             className={styles.payBtn}
             onClick={handlePay}
-            disabled={
-              loading ||
-              cart.length === 0 ||
-              !delivery.office ||
-              delivery.office === "Адрес не указан"
-            }
+            disabled={loading || cart.length === 0 || !isDeliveryValid}
           >
             {loading ? "Пожалуйста, подождите…" : "Оплатить"}
           </button>

@@ -27,6 +27,7 @@ export default async function handler(req, res) {
     !customerPhone ||
     !customerEmail ||
     !deliveryOffice ||
+    deliveryOffice === "Адрес не указан" ||
     !deliveryMethod
   ) {
     console.error("Ошибка валидации данных:", {
@@ -34,7 +35,7 @@ export default async function handler(req, res) {
       customerName: !!customerName,
       customerPhone: !!customerPhone,
       customerEmail: !!customerEmail,
-      deliveryOffice: !!deliveryOffice,
+      deliveryOffice: !!deliveryOffice && deliveryOffice !== "Адрес не указан",
       deliveryMethod: !!deliveryMethod,
     });
     return res.status(400).json({ message: "Missing required fields" });
@@ -65,7 +66,7 @@ export default async function handler(req, res) {
     ...(deliveryPrice > 0
       ? [
           {
-            description: `Доставка СДЭК (${deliveryMethod}, ${deliveryOffice})`,
+            description: `Доставка СДЭК`,
             quantity: 1,
             amount: {
               value: deliveryPrice.toFixed(2),
@@ -104,11 +105,11 @@ export default async function handler(req, res) {
             process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000/success",
         },
         capture: true,
-        description: `Заказ от ${customerName}, доставка: ${deliveryMethod}, ${deliveryOffice}`,
+        description: `Заказ от ${customerName}`,
         receipt: {
           customer: {
+            full_name: customerName,
             email: customerEmail,
-            phone: customerPhone,
           },
           items: receiptItems,
         },
