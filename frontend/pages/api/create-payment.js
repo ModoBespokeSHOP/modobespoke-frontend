@@ -1,4 +1,3 @@
-import { sql } from "@vercel/postgres";
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
@@ -16,6 +15,16 @@ export default async function handler(req, res) {
     deliveryPrice,
     deliveryMethod,
   } = req.body;
+
+  console.log("Полученные данные от клиента:", {
+    cart,
+    customerName,
+    customerPhone,
+    customerEmail,
+    deliveryOffice,
+    deliveryPrice,
+    deliveryMethod,
+  });
 
   if (
     !Array.isArray(cart) ||
@@ -38,19 +47,10 @@ export default async function handler(req, res) {
   }
 
   const orderId = Date.now().toString();
-  const orderDate = new Date().toISOString();
   const total =
     cart.reduce((sum, item) => sum + item.price * item.qty, 0) + deliveryPrice;
 
   try {
-    await sql`
-      INSERT INTO temp_orders (id, date, customer_name, customer_phone, customer_email, cart, delivery_office, delivery_price, delivery_method, total)
-      VALUES (${orderId}, ${orderDate}, ${customerName}, ${customerPhone}, ${customerEmail}, ${JSON.stringify(
-      cart
-    )}, ${deliveryOffice}, ${deliveryPrice}, ${deliveryMethod}, ${total})
-    `;
-    console.log("Временный заказ сохранен:", { id: orderId });
-
     const shopId = process.env.YOOKASSA_SHOP_ID;
     const secretKey = process.env.YOOKASSA_SECRET_KEY;
     if (!shopId || !secretKey) {
@@ -62,6 +62,33 @@ export default async function handler(req, res) {
     }
 
     const amountValue = total.toFixed(2);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    console.log("Отправка запроса ЮKassa:", {
+      amount: { value: amountValue, currency: "RUB" },
+      return_url: `${siteUrl}/success?orderId=${orderId}`,
+    });
+
+    const receiptItems = cart.map((item) => ({
+      description: `${item.title} (${item.selectedSize})`,
+      quantity: item.qty,
+      amount: { value: (item.price * item.qty).toFixed(2), currency: "RUB" },
+      vat_code: 1, // НДС 20% (по умолчанию), уточните ваш тариф
+      payment_method: "full_payment",
+      payment_object: "commodity",
+    }));
+
+    // Добавляем доставку как отдельный элемент чека
+    if (deliveryPrice > 0) {
+      receiptItems.push({
+        description: `Доставка (${deliveryMethod})`,
+        quantity: 1,
+        amount: { value: deliveryPrice.toFixed(2), currency: "RUB" },
+        vat_code: 1,
+        payment_method: "full_payment",
+        payment_object: "service",
+      });
+    }
+
     const response = await fetch("https://api.yookassa.ru/v3/payments", {
       method: "POST",
       headers: {
@@ -77,20 +104,29 @@ export default async function handler(req, res) {
         amount: { value: amountValue, currency: "RUB" },
         confirmation: {
           type: "redirect",
-          return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success?orderId=${orderId}`,
+          return_url: `${siteUrl}/success?orderId=${orderId}`,
         },
         capture: true,
         description: `Заказ от ${customerName}`,
-        metadata: { orderId },
+        receipt: {
+          items: receiptItems,
+          tax_system_id: 1, // ОСН (Общая система налогообложения), уточните ваш тариф
+          customer: {
+            email: customerEmail,
+            phone: customerPhone,
+          },
+        },
       }),
     });
 
     const data = await response.json();
+    console.log("Ответ от ЮKassa:", { status: response.status, data });
+
     if (!response.ok) {
-      console.error("Ошибка ЮKassa:", data);
+      console.error("Ошибка от ЮKassa:", data);
       return res
         .status(response.status)
-        .json({ message: "Payment creation failed" });
+        .json({ message: data.description || "Payment creation failed" });
     }
 
     return res.status(200).json({
@@ -98,7 +134,10 @@ export default async function handler(req, res) {
       payment_id: data.id,
     });
   } catch (err) {
-    console.error("Ошибка в /api/create-payment:", err);
+    console.error("Общая ошибка в /api/create-payment:", {
+      message: err.message,
+      stack: err.stack,
+    });
     return res.status(500).json({ message: "Failed to create payment" });
   }
 }

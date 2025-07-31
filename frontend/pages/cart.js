@@ -21,13 +21,6 @@ export default function CartPage() {
   });
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
 
-  useEffect(() => {
-    console.log(
-      "Текущее состояние delivery:",
-      JSON.stringify(delivery, null, 2)
-    );
-  }, [delivery]);
-
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const finalTotal =
     total +
@@ -37,11 +30,11 @@ export default function CartPage() {
 
   const handlePay = async () => {
     setError("");
-    console.log("handlePay вызван, данные:", {
-      name,
-      phone,
-      email,
+    console.log("Данные для оплаты:", {
       cart,
+      customerName: name,
+      customerPhone: phone,
+      customerEmail: email,
       deliveryOffice: delivery.office,
       deliveryPrice: delivery.price,
       deliveryMethod: delivery.method,
@@ -49,7 +42,6 @@ export default function CartPage() {
 
     if (!name.trim() || !phone.trim() || !email.trim()) {
       setError("Пожалуйста, введите ФИО, телефон и email");
-      console.error("Ошибка валидации: отсутствуют ФИО, телефон или email");
       return;
     }
     if (
@@ -57,9 +49,6 @@ export default function CartPage() {
       delivery.method === "не выбрано"
     ) {
       setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
-      console.error(
-        "Ошибка валидации: ПВЗ не выбран или метод доставки не указан"
-      );
       return;
     }
 
@@ -72,11 +61,7 @@ export default function CartPage() {
       deliveryPrice: delivery.price,
       deliveryMethod: delivery.method,
     };
-    console.log(
-      "orderData перед отправкой:",
-      JSON.stringify(orderData, null, 2)
-    );
-    localStorage.setItem("lastOrder", JSON.stringify(orderData));
+    console.log("Отправка на /api/create-payment:", orderData);
 
     setLoading(true);
     try {
@@ -85,24 +70,16 @@ export default function CartPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       });
-
       const data = await res.json();
-      console.log(
-        "Ответ от /api/create-payment:",
-        JSON.stringify(data, null, 2)
-      );
+      console.log("Ответ от /api/create-payment:", data);
 
-      if (!res.ok) {
+      if (!res.ok)
         throw new Error(data.message || `Ошибка оплаты: статус ${res.status}`);
-      }
 
       localStorage.setItem("payment_id", data.payment_id);
       window.location.href = data.confirmation_url;
     } catch (err) {
-      console.error("Ошибка в handlePay:", {
-        message: err.message,
-        stack: err.stack,
-      });
+      console.error("Ошибка в handlePay:", err);
       setError(err.message || "Неизвестная ошибка оплаты");
     } finally {
       setLoading(false);
@@ -142,10 +119,10 @@ export default function CartPage() {
                   <Image
                     src={item.image}
                     alt={item.title}
-                    width={100}
-                    height={100}
+                    width={80}
+                    height={80}
                     className={styles.itemImage}
-                    quality={85}
+                    quality={90}
                   />
                   <div className={styles.itemDetails}>
                     <div className={styles.itemTitle}>{item.title}</div>

@@ -22,9 +22,7 @@ export default function AdminPage() {
 
   // --- Products state ---
   const [products, setProducts] = useState([]);
-  // --- Orders state ---
-  const [orders, setOrders] = useState([]);
-  const [ordersError, setOrdersError] = useState("");
+  const [message, setMessage] = useState("");
 
   // --- Form state ---
   const [form, setForm] = useState({
@@ -38,40 +36,20 @@ export default function AdminPage() {
     _file: null,
   });
   const [preview, setPreview] = useState("");
-  const [loading, setLoading] = useState(false); // Исправлено: было "" вместо false
-  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // --- Modal state for delete confirmation ---
   const [toDeleteId, setToDeleteId] = useState(null);
-  const [toDeleteType, setToDeleteType] = useState(null); // 'product' или 'order'
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // --- Tab state ---
-  const [activeTab, setActiveTab] = useState("products");
-
-  // Fetch products and orders once authorized
+  // Fetch products once authorized
   useEffect(() => {
     if (!authorized) return;
 
-    // Fetch products
     fetch("/api/products")
       .then((r) => r.json())
       .then((data) => setProducts(Array.isArray(data) ? data : data.data || []))
       .catch(console.error);
-
-    // Fetch orders from the database
-    fetch("/api/get-orders")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) {
-          setOrdersError(data.error);
-        } else {
-          setOrders(data);
-        }
-      })
-      .catch((err) =>
-        setOrdersError("Ошибка загрузки заказов: " + err.message)
-      );
   }, [authorized]);
 
   // Handlers for auth
@@ -208,41 +186,18 @@ export default function AdminPage() {
     setMessage("Товар удалён");
   }
 
-  async function handleDeleteOrder(id) {
-    try {
-      const res = await fetch("/api/delete-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-      if (!res.ok) throw new Error("Failed to delete order");
-      // Remove the deleted order from the state
-      setOrders(orders.filter((order) => order.id !== id));
-      setMessage("Заказ удалён");
-    } catch (err) {
-      console.error("Ошибка при удалении заказа:", err);
-      setMessage("Ошибка: " + err.message);
-    }
-  }
-
-  function openDeleteModal(id, type) {
+  function openDeleteModal(id) {
     setToDeleteId(id);
-    setToDeleteType(type);
     setIsModalOpen(true);
   }
 
   function closeDeleteModal() {
     setToDeleteId(null);
-    setToDeleteType(null);
     setIsModalOpen(false);
   }
 
   async function confirmDelete() {
-    if (toDeleteType === "product") {
-      await handleDeleteProduct(toDeleteId);
-    } else if (toDeleteType === "order") {
-      await handleDeleteOrder(toDeleteId);
-    }
+    await handleDeleteProduct(toDeleteId);
     closeDeleteModal();
   }
 
@@ -293,10 +248,7 @@ export default function AdminPage() {
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <p>
-              Вы уверены, что хотите удалить{" "}
-              {toDeleteType === "product" ? "этот товар" : "этот заказ"}?
-            </p>
+            <p>Вы уверены, что хотите удалить этот товар?</p>
             <div className={styles.modalButtons}>
               <button
                 className={styles.modalBtnCancel}
@@ -317,200 +269,112 @@ export default function AdminPage() {
 
       <div className={styles.container}>
         <h1 className={styles.heading}>Панель администратора</h1>
-        <div className={styles.tabs}>
-          <button
-            className={`${styles.tabBtn} ${
-              activeTab === "products" ? styles.activeTab : ""
-            }`}
-            onClick={() => setActiveTab("products")}
-          >
-            Товары
-          </button>
-          <button
-            className={`${styles.tabBtn} ${
-              activeTab === "orders" ? styles.activeTab : ""
-            }`}
-            onClick={() => setActiveTab("orders")}
-          >
-            Заказы
-          </button>
-        </div>
-
-        {activeTab === "products" && (
-          <div className={styles.panel}>
-            <form className={styles.form} onSubmit={handlePublish}>
-              {message && <div className={styles.error}>{message}</div>}
-              <label>
-                Заголовок
+        <div className={styles.panel}>
+          <form className={styles.form} onSubmit={handlePublish}>
+            {message && <div className={styles.error}>{message}</div>}
+            <label>
+              Заголовок
+              <input
+                type="text"
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            {DEFAULT_SPECS.map((spec) => (
+              <label key={spec.field}>
+                {spec.label}
                 <input
                   type="text"
-                  name="title"
-                  value={form.title}
-                  onChange={handleChange}
-                  required
+                  value={form.shortSpecs[spec.field] || ""}
+                  onChange={(e) => handleSpecChange(spec.field, e.target.value)}
                 />
               </label>
-              {DEFAULT_SPECS.map((spec) => (
-                <label key={spec.field}>
-                  {spec.label}
-                  <input
-                    type="text"
-                    value={form.shortSpecs[spec.field] || ""}
-                    onChange={(e) =>
-                      handleSpecChange(spec.field, e.target.value)
-                    }
-                  />
-                </label>
-              ))}
-              <label>
-                Описание
-                <textarea
-                  name="description"
-                  rows={4}
-                  value={form.description}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Цена, ₽
-                <input
-                  type="number"
-                  name="price"
-                  value={form.price}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-              <div className={styles.sizesField}>
-                <label className={styles.sizesLegend}>Доступные размеры</label>
-                <div className={styles.sizesButtons}>
-                  {AVAILABLE_SIZES.map((sz) => (
-                    <button
-                      key={sz}
-                      type="button"
-                      className={`${styles.sizeBtn} ${
-                        form.sizes.includes(sz) ? styles.activeBtn : ""
-                      }`}
-                      onClick={() => handleSizeToggle(sz)}
-                    >
-                      {sz}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <label>
-                Изображение
-                <input type="file" accept="image/*" onChange={handleFile} />
-              </label>
-              {preview && (
-                <div className={styles.previewWrapper}>
-                  <img src={preview} className={styles.preview} alt="preview" />
-                </div>
-              )}
-              <button type="submit" disabled={loading}>
-                {loading
-                  ? "Сохраняем…"
-                  : form.id
-                  ? "Обновить товар"
-                  : "Добавить товар"}
-              </button>
-            </form>
-
-            <div className={styles.list}>
-              <h2>Список товаров</h2>
-              {products.length === 0 ? (
-                <p>Ничего нет</p>
-              ) : (
-                products.map((p) => (
-                  <div key={p.id} className={styles.listItem}>
-                    <img src={p.image} alt={p.title} />
-                    <div>
-                      <strong>{p.title}</strong>
-                      <div>{p.price}₽</div>
-                    </div>
-                    <button
-                      className={styles.editBtn}
-                      onClick={() => handleEdit(p)}
-                    >
-                      Ред.
-                    </button>
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={() => openDeleteModal(p.id, "product")}
-                    >
-                      Удал.
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-        {activeTab === "orders" && (
-          <div className={styles.panel}>
-            <h2>Список заказов</h2>
-            {ordersError && <div className={styles.error}>{ordersError}</div>}
-            {orders.length === 0 ? (
-              <p>Заказов пока нет.</p>
-            ) : (
-              <div className={styles.ordersList}>
-                {orders.map((order) => (
-                  <div key={order.id} className={styles.orderCard}>
-                    <h3>Заказ #{order.id}</h3>
-                    <p>
-                      <strong>Дата:</strong>{" "}
-                      {new Date(order.date).toLocaleString("ru-RU")}
-                    </p>
-                    <p>
-                      <strong>Статус:</strong>{" "}
-                      {order.status === "succeeded"
-                        ? "Оплачен"
-                        : "Ожидает оплаты"}
-                    </p>
-                    <p>
-                      <strong>Клиент:</strong> {order.customerName}
-                    </p>
-                    <p>
-                      <strong>Телефон:</strong> {order.customerPhone}
-                    </p>
-                    <p>
-                      <strong>Email:</strong> {order.customerEmail}
-                    </p>
-                    <p>
-                      <strong>Пункт выдачи:</strong> {order.deliveryOffice}
-                    </p>
-                    <p>
-                      <strong>Способ доставки:</strong> {order.deliveryMethod}
-                    </p>
-                    <p>
-                      <strong>Стоимость доставки:</strong> {order.deliveryPrice}
-                      ₽
-                    </p>
-                    <h4>Товары:</h4>
-                    <ul>
-                      {order.cart.map((item, index) => (
-                        <li key={index}>
-                          {item.title} ({item.selectedSize}) × {item.qty} ={" "}
-                          {item.price * item.qty}₽
-                        </li>
-                      ))}
-                    </ul>
-                    <p>
-                      <strong>Итого:</strong> {order.total}₽
-                    </p>
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={() => openDeleteModal(order.id, "order")}
-                    >
-                      Удал.
-                    </button>
-                  </div>
+            ))}
+            <label>
+              Описание
+              <textarea
+                name="description"
+                rows={4}
+                value={form.description}
+                onChange={handleChange}
+              />
+            </label>
+            <label>
+              Цена, ₽
+              <input
+                type="number"
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <div className={styles.sizesField}>
+              <label className={styles.sizesLegend}>Доступные размеры</label>
+              <div className={styles.sizesButtons}>
+                {AVAILABLE_SIZES.map((sz) => (
+                  <button
+                    key={sz}
+                    type="button"
+                    className={`${styles.sizeBtn} ${
+                      form.sizes.includes(sz) ? styles.activeBtn : ""
+                    }`}
+                    onClick={() => handleSizeToggle(sz)}
+                  >
+                    {sz}
+                  </button>
                 ))}
               </div>
+            </div>
+            <label>
+              Изображение
+              <input type="file" accept="image/*" onChange={handleFile} />
+            </label>
+            {preview && (
+              <div className={styles.previewWrapper}>
+                <img src={preview} className={styles.preview} alt="preview" />
+              </div>
+            )}
+            <button type="submit" disabled={loading}>
+              {loading
+                ? "Сохраняем…"
+                : form.id
+                ? "Обновить товар"
+                : "Добавить товар"}
+            </button>
+          </form>
+
+          <div className={styles.list}>
+            <h2>Список товаров</h2>
+            {products.length === 0 ? (
+              <p>Ничего нет</p>
+            ) : (
+              products.map((p) => (
+                <div key={p.id} className={styles.listItem}>
+                  <img src={p.image} alt={p.title} />
+                  <div>
+                    <strong>{p.title}</strong>
+                    <div>{p.price}₽</div>
+                  </div>
+                  <button
+                    className={styles.editBtn}
+                    onClick={() => handleEdit(p)}
+                  >
+                    Ред.
+                  </button>
+                  <button
+                    className={styles.deleteBtn}
+                    onClick={() => openDeleteModal(p.id)}
+                  >
+                    Удал.
+                  </button>
+                </div>
+              ))
             )}
           </div>
-        )}
+        </div>
       </div>
     </>
   );
