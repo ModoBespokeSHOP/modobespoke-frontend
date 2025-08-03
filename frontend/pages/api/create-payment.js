@@ -132,6 +132,35 @@ export default async function handler(req, res) {
       });
     }
 
+    // Отправка уведомления владельцу
+    try {
+      const notifyRes = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+        }/api/notify-order`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cart,
+            customerName,
+            customerPhone,
+            customerEmail,
+            deliveryOffice,
+            deliveryPrice,
+            deliveryMethod,
+            total: amountValue,
+          }),
+        }
+      );
+
+      if (!notifyRes.ok) {
+        console.error("Ошибка отправки уведомления:", await notifyRes.text());
+      }
+    } catch (notifyErr) {
+      console.error("Ошибка при вызове /api/notify-order:", notifyErr);
+    }
+
     return res.status(200).json({
       confirmation_url: data.confirmation.confirmation_url,
     });
