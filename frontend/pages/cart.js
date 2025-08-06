@@ -74,9 +74,36 @@ export default function CartPage() {
       }
       const data = await res.json();
       console.log("Ответ от API:", data); // Для отладки
-      window.location.href = `/order-confirmed?orderId=${
-        data.orderId
-      }&telegramUrl=${encodeURIComponent(data.telegramUrl)}`;
+
+      // Генерация сообщения для отправки в Telegram
+      const message =
+        `Здравствуйте, я ${name}, телефон: ${phone}, email: ${email}\n` +
+        `Состав заказа:\n${cart
+          .map(
+            (item) =>
+              `${item.qty} × ${item.title} (${item.selectedSize}) = ${
+                item.price * item.qty
+              }₽`
+          )
+          .join("\n")}\n` +
+        `Пункт выдачи: ${delivery.office}, способ доставки: ${delivery.method}\n` +
+        `Итоговая сумма: ${finalTotal}₽\n` +
+        `Заказ #${data.orderId}. Пожалуйста, подтвердите заказ.`;
+
+      // Ссылка на Telegram с параметром text
+      const telegramUrl = `https://t.me/${
+        process.env.SELLER_TELEGRAM_USERNAME
+      }?text=${encodeURIComponent(message)}`;
+
+      // Проверяем, если пользователь на iPhone, и добавляем уведомление, если нужно
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        alert(
+          "Если форма не заполнилась, попробуйте вручную отправить сообщение."
+        );
+      }
+
+      // Переход по ссылке в Telegram
+      window.location.href = telegramUrl;
     } catch (err) {
       console.error("Ошибка при сохранении заказа:", err);
       setError(err.message || "Не удалось сохранить заказ. Попробуйте позже.");
