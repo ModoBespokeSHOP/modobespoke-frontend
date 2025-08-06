@@ -43,9 +43,10 @@ export default function OrderConfirmed() {
       .join("\n");
 
     return (
-      `Здравствуйте, я ${customerName}, телефон: ${customerPhone}, email: ${customerEmail}\n` +
+      `Здравствуйте, я ${customerName} \nтелефон: ${customerPhone}\nemail: ${customerEmail}\n` +
       `Состав заказа:\n${orderItems}\n` +
-      `Пункт выдачи: ${deliveryOffice}, способ доставки: ${deliveryMethod}\n` +
+      `Стоймость Доставки = ${deliveryPrice}₽\n` +
+      `Пункт выдачи: ${deliveryOffice}, \nСпособ доставки: ${deliveryMethod}\n` +
       `Итоговая сумма: ${finalTotal}₽\n` +
       `Заказ #${orderId}. Пожалуйста, подтвердите заказ.`
     );
