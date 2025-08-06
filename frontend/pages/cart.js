@@ -59,6 +59,7 @@ export default function CartPage() {
       deliveryOffice: delivery.office,
       deliveryPrice: delivery.price,
       deliveryMethod: delivery.method,
+      createdAt: new Date().toISOString(),
     };
 
     try {
@@ -68,15 +69,17 @@ export default function CartPage() {
         body: JSON.stringify(orderData),
       });
       if (!res.ok) {
-        throw new Error("Не удалось сохранить заказ");
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Не удалось сохранить заказ");
       }
       const data = await res.json();
-      const orderId = data.orderId;
-      const botUsername = "ModoBespokeBot";
-      window.location.href = `https://t.me/${botUsername}?start=${orderId}`;
+      console.log("Ответ от API:", data); // Для отладки
+      window.location.href = `/order-confirmed?orderId=${
+        data.orderId
+      }&telegramUrl=${encodeURIComponent(data.telegramUrl)}`;
     } catch (err) {
       console.error("Ошибка при сохранении заказа:", err);
-      setError("Не удалось сохранить заказ. Попробуйте позже.");
+      setError(err.message || "Не удалось сохранить заказ. Попробуйте позже.");
     } finally {
       setLoading(false);
     }

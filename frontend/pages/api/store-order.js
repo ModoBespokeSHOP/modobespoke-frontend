@@ -1,37 +1,93 @@
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { put } from "@vercel/blob";
+import { nanoid } from "nanoid";
 
 export default async function handler(req, res) {
-  if (req.method === "POST") {
-    const orderId = Date.now().toString();
-    const { error } = await supabase
-      .from("orders")
-      .insert([{ id: orderId, data: req.body }]);
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Метод не поддерживается" });
+  }
 
-    if (error) {
-      console.error("Ошибка при сохранении заказа:", error);
-      return res.status(500).json({ message: "Failed to save order" });
+  const {
+    cart,
+    customerName,
+    customerPhone,
+    customerEmail,
+    deliveryOffice,
+    deliveryPrice,
+    deliveryMethod,
+  } = req.body;
+
+  try {
+    // Генерируем уникальный orderId
+    const orderId = nanoid(10);
+
+    // Формируем данные заказа
+    const orderData = {
+      orderId,
+      cart,
+      customerName,
+      customerPhone,
+      customerEmail,
+      deliveryOffice,
+      deliveryPrice,
+      deliveryMethod,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Сохраняем в Vercel Blob
+    console.log("Сохранение заказа:", orderId, "Данные:", orderData);
+    const blob = await put(
+      `orders/${orderId}.json`,
+      JSON.stringify(orderData),
+      {
+        access: "public",
+      }
+    );
+    console.log("Заказ сохранен:", blob);
+
+    // Формируем состав заказа
+    const orderItems = cart
+      .map(
+        (item) =>
+          `${item.qty} × ${item.title} (${item.selectedSize}) = ${
+            item.price * item.qty
+          }₽`
+      )
+      .join("\n");
+
+    // Вычисляем итоговую сумму
+    const total =
+      cart.reduce((sum, item) => sum + item.price * item.qty, 0) +
+      deliveryPrice;
+
+    // Формируем подробное сообщение для Telegram
+    const message = encodeURIComponent(
+      `Здравствуйте, я ${customerName}, телефон: ${customerPhone}, email: ${customerEmail}\n` +
+        `Состав заказа:\n${orderItems}\n` +
+        `Пункт выдачи: ${deliveryOffice}, способ доставки: ${deliveryMethod}\n` +
+        `Итоговая сумма: ${total}₽\n` +
+        `Заказ #${orderId}. Пожалуйста, подтвердите заказ.`
+    );
+
+    // Проверяем длину URL
+    const sellerUsername = process.env.SELLER_TELEGRAM_USERNAME || "@Nikkkoris";
+    const cleanUsername = sellerUsername.startsWith("@")
+      ? sellerUsername.slice(1)
+      : sellerUsername;
+    let telegramUrl = `https://t.me/${cleanUsername}?text=${message}`;
+
+    if (telegramUrl.length > 2000) {
+      const shortMessage = encodeURIComponent(
+        `Здравствуйте, я ${customerName}, заказ #${orderId}. Подробности заказа на сайте.`
+      );
+      telegramUrl = `https://t.me/${cleanUsername}?text=${shortMessage}`;
     }
 
-    res.status(200).json({ orderId });
-  } else if (req.method === "GET") {
-    const orderId = req.query.id;
-    const { data, error } = await supabase
-      .from("orders")
-      .select("data")
-      .eq("id", orderId)
-      .single();
-
-    if (error || !data) {
-      console.error("Ошибка при получении заказа:", error);
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    res.status(200).json(data.data);
-  } else {
-    res.status(405).json({ message: "Method not allowed" });
+    console.log("Сформирован telegramUrl:", telegramUrl);
+    res.status(200).json({ orderId, telegramUrl });
+  } catch (error) {
+    console.error("Ошибка при сохранении заказа:", error);
+    res
+      .status(500)
+      .json({ error: "Не удалось сохранить заказ", details: error.message });
   }
 }
