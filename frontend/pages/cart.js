@@ -63,19 +63,7 @@ export default function CartPage() {
     };
 
     try {
-      const res = await fetch("/api/store-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Не удалось сохранить заказ");
-      }
-      const data = await res.json();
-      console.log("Ответ от API:", data); // Для отладки
-
-      // Генерация сообщения для отправки в Telegram
+      // Создаём сообщение для Telegram
       const message =
         `Здравствуйте, я ${name}, телефон: ${phone}, email: ${email}\n` +
         `Состав заказа:\n${cart
@@ -88,22 +76,40 @@ export default function CartPage() {
           .join("\n")}\n` +
         `Пункт выдачи: ${delivery.office}, способ доставки: ${delivery.method}\n` +
         `Итоговая сумма: ${finalTotal}₽\n` +
-        `Заказ #${data.orderId}. Пожалуйста, подтвердите заказ.`;
+        `Заказ #${orderData.createdAt}. Пожалуйста, подтвердите заказ.`;
 
-      // Ссылка на Telegram с параметром text
-      const telegramUrl = `https://t.me/${
-        process.env.SELLER_TELEGRAM_USERNAME
-      }?text=${encodeURIComponent(message)}`;
+      // Токен бота и ID чата
+      const botToken = "8344483874:AAFC5fn5m7FrQVtTMcMsfhu3-8hurBBsMRw"; // Токен, который ты получишь от BotFather
+      const chatId = "968299888"; // Твой chat_id в Telegram (можно получить с помощью Bot API)
 
-      // Проверяем, если пользователь на iPhone, и добавляем уведомление, если нужно
-      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        alert(
-          "Если форма не заполнилась, попробуйте вручную отправить сообщение."
+      // Отправляем запрос в Telegram API для отправки сообщения
+      const response = await fetch(
+        `https://api.telegram.org/bot${botToken}/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.ok) {
+        console.log("Сообщение успешно отправлено в Telegram");
+        window.location.href = `/order-confirmed?orderId=${orderData.createdAt}`;
+      } else {
+        console.error(
+          "Ошибка при отправке сообщения в Telegram:",
+          data.description
+        );
+        setError(
+          "Не удалось отправить сообщение в Telegram. Попробуйте позже."
         );
       }
-
-      // Переход по ссылке в Telegram
-      window.location.href = telegramUrl;
     } catch (err) {
       console.error("Ошибка при сохранении заказа:", err);
       setError(err.message || "Не удалось сохранить заказ. Попробуйте позже.");
