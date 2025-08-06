@@ -20,6 +20,13 @@ export default function CartPage() {
     method: "Неизвестный метод",
   });
 
+  useEffect(() => {
+    console.log(
+      "Текущее состояние delivery:",
+      JSON.stringify(delivery, null, 2)
+    );
+  }, [delivery]);
+
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const finalTotal =
     total +
@@ -56,27 +63,20 @@ export default function CartPage() {
     };
 
     try {
-      // Создаём сообщение для Telegram
-      const message =
-        `Новый заказ от ${name}, телефон: ${phone}, email: ${email}\n` +
-        `Состав заказа:\n${cart
-          .map(
-            (item) =>
-              `${item.qty} × ${item.title} (${item.selectedSize}) = ${
-                item.price * item.qty
-              }₽`
-          )
-          .join("\n")}\n` +
-        `Пункт выдачи: ${delivery.office}, способ доставки: ${delivery.method}\n` +
-        `Итоговая сумма: ${finalTotal}₽`;
-
-      // Создаём ссылку на Telegram с данными о заказе
-      const telegramUrl = `https://t.me/${
-        process.env.SELLER_TELEGRAM_USERNAME
-      }?text=${encodeURIComponent(message)}`;
-
-      // Редирект на Telegram
-      window.location.href = telegramUrl;
+      const res = await fetch("/api/store-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Не удалось сохранить заказ");
+      }
+      const data = await res.json();
+      console.log("Ответ от API:", data); // Для отладки
+      window.location.href = `/order-confirmed?orderId=${
+        data.orderId
+      }&telegramUrl=${encodeURIComponent(data.telegramUrl)}`;
     } catch (err) {
       console.error("Ошибка при сохранении заказа:", err);
       setError(err.message || "Не удалось сохранить заказ. Попробуйте позже.");

@@ -33,7 +33,8 @@ export default async function handler(req, res) {
       createdAt: new Date().toISOString(),
     };
 
-    // Сохраняем заказ в Vercel Blob
+    // Сохраняем в Vercel Blob
+    console.log("Сохранение заказа:", orderId, "Данные:", orderData);
     const blob = await put(
       `orders/${orderId}.json`,
       JSON.stringify(orderData),
@@ -41,6 +42,7 @@ export default async function handler(req, res) {
         access: "public",
       }
     );
+    console.log("Заказ сохранен:", blob);
 
     // Формируем состав заказа
     const orderItems = cart
@@ -66,14 +68,13 @@ export default async function handler(req, res) {
         `Заказ #${orderId}. Пожалуйста, подтвердите заказ.`
     );
 
-    // Проверка длины URL
+    // Проверяем длину URL
     const sellerUsername = process.env.SELLER_TELEGRAM_USERNAME || "@Nikkkoris";
     const cleanUsername = sellerUsername.startsWith("@")
       ? sellerUsername.slice(1)
       : sellerUsername;
     let telegramUrl = `https://t.me/${cleanUsername}?text=${message}`;
 
-    // Проверка на превышение длины URL
     if (telegramUrl.length > 2000) {
       const shortMessage = encodeURIComponent(
         `Здравствуйте, я ${customerName}, заказ #${orderId}. Подробности заказа на сайте.`
@@ -81,6 +82,7 @@ export default async function handler(req, res) {
       telegramUrl = `https://t.me/${cleanUsername}?text=${shortMessage}`;
     }
 
+    console.log("Сформирован telegramUrl:", telegramUrl);
     res.status(200).json({ orderId, telegramUrl });
   } catch (error) {
     console.error("Ошибка при сохранении заказа:", error);

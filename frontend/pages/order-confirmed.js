@@ -4,70 +4,108 @@ import styles from "../styles/order-confirmed.module.css";
 
 export default function OrderConfirmed() {
   const router = useRouter();
-  const { orderId, telegramUrl } = router.query; // Получаем данные из query строки URL
+  const { orderId, telegramUrl } = router.query;
   const [orderData, setOrderData] = useState(null);
   const [error, setError] = useState("");
 
-  // Функция для редиректа в Telegram
-  const redirectToTelegram = () => {
-    if (telegramUrl) {
-      window.location.href = telegramUrl;
-    } else {
-      setError("Ошибка: ссылка на Telegram не была передана.");
-    }
-  };
-
   useEffect(() => {
     if (orderId) {
-      // Запросим данные о заказе, если это необходимо
-      fetch(`/api/get-order?orderId=${orderId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.error) {
-            setError("Не удалось получить данные о заказе.");
-          } else {
-            setOrderData(data);
+      const fetchOrder = async () => {
+        try {
+          console.log("Запрос данных заказа для orderId:", orderId);
+          const res = await fetch(`/api/get-order/${orderId}`);
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(
+              errorData.error || "Не удалось загрузить данные заказа"
+            );
           }
-        })
-        .catch(() =>
-          setError("Произошла ошибка при получении данных о заказе.")
-        );
+          const data = await res.json();
+          console.log("Данные заказа:", data);
+          setOrderData(data);
+        } catch (err) {
+          console.error("Ошибка при загрузке заказа:", err);
+          setError(
+            "Не удалось загрузить данные заказа. Пожалуйста, используйте orderId для связи с менеджером."
+          );
+        }
+      };
+      fetchOrder();
+    } else {
+      setError("orderId не указан. Пожалуйста, свяжитесь с нами.");
     }
   }, [orderId]);
 
   return (
     <div className={styles.container}>
       <h1>Заказ успешно создан</h1>
+      <p>
+        Ваш заказ #{orderId || "не указан"} успешно сохранен! Мы благодарим вас
+        за покупку.
+      </p>
+
+      <p className={styles.notice}>
+        Уважаемые клиенты, из-за временных технических трудностей с нашим
+        провайдером оплаты мы используем прямую оплату через Telegram.
+        Пожалуйста, свяжитесь с нашим менеджером, нажав на кнопку ниже, чтобы
+        завершить оформление заказа. Приносим извинения за доставленные
+        неудобства и благодарим за ваше понимание!
+      </p>
+
+      {error && <p className={styles.error}>{error}</p>}
+
       {orderData ? (
-        <>
+        <div className={styles.orderDetails}>
+          <h2>Детали заказа #{orderData.orderId}</h2>
           <p>
-            Ваш заказ #{orderId || "не указан"} успешно сохранен! Мы благодарим
-            вас за покупку.
+            <strong>Клиент:</strong> {orderData.customerName}
           </p>
-
-          <p className={styles.notice}>
-            Уважаемые клиенты, из-за временных технических трудностей со стороны
-            провайдера оплаты мы временно используем прямую оплату через
-            Telegram. Пожалуйста, свяжитесь с продавцом, нажав на кнопку ниже,
-            чтобы завершить оформление заказа. Приносим извинения за
-            доставленные неудобства и благодарим за ваше понимание!
-          </p>
-
-          <h2>Инструкция:</h2>
           <p>
-            1. Нажмите на кнопку ниже, чтобы перейти в чат с продавцом в
-            Telegram.
+            <strong>Телефон:</strong> {orderData.customerPhone}
           </p>
-          <p>2. Отправьте данные о заказе продавцу.</p>
-          <p>3. Продавец свяжется с вами напрямую и оформит заказ.</p>
-
-          <button className={styles.button} onClick={redirectToTelegram}>
-            Перейти в Telegram
-          </button>
-        </>
+          <p>
+            <strong>Email:</strong> {orderData.customerEmail}
+          </p>
+          <p>
+            <strong>Пункт выдачи:</strong> {orderData.deliveryOffice}
+          </p>
+          <p>
+            <strong>Способ доставки:</strong> {orderData.deliveryMethod}
+          </p>
+          <h3>Состав заказа:</h3>
+          <ul>
+            {orderData.cart.map((item) => (
+              <li key={`${item.id}-${item.selectedSize}`}>
+                {item.qty} × {item.title} ({item.selectedSize}) ={" "}
+                {item.price * item.qty}₽
+              </li>
+            ))}
+          </ul>
+          <p>
+            <strong>Итоговая сумма:</strong>{" "}
+            {orderData.cart.reduce(
+              (sum, item) => sum + item.price * item.qty,
+              0
+            ) + orderData.deliveryPrice}
+            ₽
+          </p>
+        </div>
       ) : (
-        <p>{error || "Загрузка данных о заказе..."}</p>
+        <p>Загрузка данных заказа...</p>
       )}
+
+      <p>
+        Нажмите кнопку ниже, чтобы связаться с нашим менеджером в Telegram и
+        завершить оформление:
+      </p>
+      <a
+        href={telegramUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.button}
+      >
+        Отправить сообщение в Telegram
+      </a>
     </div>
   );
 }
