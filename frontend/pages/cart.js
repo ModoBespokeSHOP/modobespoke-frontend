@@ -39,24 +39,15 @@ export default function CartPage() {
 
   const handlePay = async () => {
     setError("");
-    console.log("handlePay вызван, данные:", {
-      name,
-      phone,
-      email,
-      cart,
-      deliveryOffice: delivery.office,
-      deliveryPrice: delivery.price,
-      deliveryMethod: delivery.method,
-    });
-
+    setLoading(true);
     if (!name.trim() || !phone.trim() || !email.trim()) {
       setError("Пожалуйста, введите ФИО, телефон и email");
-      console.error("Ошибка валидации: отсутствуют ФИО, телефон или email");
+      setLoading(false);
       return;
     }
     if (!isDeliveryValid) {
       setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
-      console.error("Ошибка валидации: ПВЗ не выбран");
+      setLoading(false);
       return;
     }
 
@@ -69,37 +60,23 @@ export default function CartPage() {
       deliveryPrice: delivery.price,
       deliveryMethod: delivery.method,
     };
-    console.log(
-      "orderData перед отправкой:",
-      JSON.stringify(orderData, null, 2)
-    );
-    localStorage.setItem("lastOrder", JSON.stringify(orderData));
 
-    setLoading(true);
     try {
-      const res = await fetch("/api/create-payment", {
+      const res = await fetch("/api/store-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       });
-
-      const data = await res.json();
-      console.log(
-        "Ответ от /api/create-payment:",
-        JSON.stringify(data, null, 2)
-      );
-
       if (!res.ok) {
-        throw new Error(data.message || `Ошибка оплаты: статус ${res.status}`);
+        throw new Error("Не удалось сохранить заказ");
       }
-
-      window.location.href = data.confirmation_url;
+      const data = await res.json();
+      const orderId = data.orderId;
+      const botUsername = "ModoBespokeBot";
+      window.location.href = `https://t.me/${botUsername}?start=${orderId}`;
     } catch (err) {
-      console.error("Ошибка в handlePay:", {
-        message: err.message,
-        stack: err.stack,
-      });
-      setError(err.message || "Неизвестная ошибка оплаты");
+      console.error("Ошибка при сохранении заказа:", err);
+      setError("Не удалось сохранить заказ. Попробуйте позже.");
     } finally {
       setLoading(false);
     }
@@ -225,6 +202,7 @@ export default function CartPage() {
           </div>
 
           <button
+            type="button"
             className={styles.payBtn}
             onClick={handlePay}
             disabled={loading || cart.length === 0 || !isDeliveryValid}
