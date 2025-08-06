@@ -19,13 +19,40 @@
   border-radius: 8px;
 }
 
+/* Заголовок секции товаров и кнопка очистки */
+.itemsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 /* Заголовок секции товаров (по умолчанию скрыт) */
 .itemsTitle {
   display: none;
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 12px;
   color: #333;
+}
+
+.clearBtn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: opacity 0.2s ease;
+}
+
+.clearBtn:hover {
+  background: #3f3f3f;
+}
+
+.clearBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Одна карточка товара */
@@ -38,8 +65,8 @@
 
 .itemImage {
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
   border-radius: 4px;
 }
@@ -92,27 +119,6 @@
   cursor: pointer;
 }
 
-/* Обёртка кнопки очистки, чтобы «прилипать» к низу */
-.clearWrapper {
-  margin-top: auto;
-  text-align: left;
-}
-
-.clearBtn {
-  padding: 12px 20px;
-  font-size: 14px;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  color: #333;
-  transition: background 0.2s ease;
-}
-
-.clearBtn:hover {
-  background: #f0f0f0;
-}
-
 /* === Правая колонка: форма и итоги === */
 .cartSummary {
   flex: 1;
@@ -159,19 +165,6 @@
 
 .formInput:focus {
   border-color: #000;
-}
-
-.deliveryInfo {
-  margin-top: 8px;
-  padding: 12px;
-  background: #f9f9f9;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-}
-
-.deliveryInfo p {
-  margin: 4px 0;
 }
 
 .breakdown {
@@ -277,20 +270,42 @@
     padding: 16px;
     margin-top: 70px;
   }
+
   /* Показываем заголовок «Ваш заказ» только на мобильных */
   .itemsTitle {
     display: block;
-    margin-top: 16px;
+    margin: 0;
   }
+
+  /* Адаптация заголовка и кнопки очистки */
+  .itemsHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  /* Кнопка очистки корзины */
+  .clearBtn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    transition: opacity 0.2s ease;
+  }
+
   /* Меняем порядок: сначала список товаров, потом блок оформления */
   .cartItems {
     order: 1;
     padding: 16px;
-    padding-top: 32px;
+    padding-top: 16px;
     border: 1px solid #e0e0e0;
-    border-top: 1px solid #e0e0e0;
     border-radius: 8px;
   }
+
   .cartSummary {
     order: 2;
     width: 100%;
@@ -303,11 +318,13 @@
     padding: 12px 0;
     border-bottom: 1px solid #eee;
   }
+
   .itemImage {
     width: 100%;
     height: auto;
     border-radius: 4px;
   }
+
   .itemDetails {
     margin-left: 0;
     margin-top: 8px;
@@ -323,7 +340,17 @@
   }
 
   .itemQty {
-    justify-content: flex-start;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .itemQty button {
+    flex: 1;
+    width: 100%;
+    max-width: 120px;
+    height: 36px;
+    font-size: 20px;
+    border-radius: 6px;
   }
 
   .removeBtn {
@@ -336,8 +363,7 @@
     padding: 12px;
   }
 
-  .payBtn,
-  .clearBtn {
+  .payBtn {
     width: 100%;
     text-align: center;
   }
@@ -352,9 +378,5 @@
 
   .summaryTotal {
     font-size: 20px;
-  }
-
-  .deliveryInfo {
-    font-size: 16px;
   }
 }

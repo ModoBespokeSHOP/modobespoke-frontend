@@ -10,7 +10,7 @@ export default function CartPage() {
     useContext(CartContext);
 
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+7");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,18 +34,63 @@ export default function CartPage() {
       ? delivery.price
       : 0);
 
-  const isDeliveryValid =
-    delivery.office && delivery.office !== "Адрес не указан";
+  // Форматирование телефона
+  const formatPhone = (value) => {
+    const digits = value.replace(/[^\d+]/g, "");
+    let phoneNumber = digits.startsWith("+7")
+      ? digits
+      : "+7" + digits.replace(/^\+?/, "");
+    phoneNumber = phoneNumber.slice(0, 12);
+    const match = phoneNumber.match(
+      /^\+7(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/
+    );
+    if (match) {
+      const formatted = `+7${match[1] ? ` (${match[1]}` : ""}${
+        match[2] ? `) ${match[2]}` : ""
+      }${match[3] ? `-${match[3]}` : ""}${match[4] ? `-${match[4]}` : ""}`;
+      return formatted;
+    }
+    return phoneNumber;
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    setPhone(formatPhone(value));
+  };
+
+  const handlePhoneFocus = () => {
+    if (!phone || phone === "+") {
+      setPhone("+7");
+    }
+  };
+
+  // Проверка валидности формы
+  const isFormValid = () => {
+    return (
+      name.trim() !== "" &&
+      email.trim() !== "" &&
+      email.includes("@") &&
+      delivery.office &&
+      delivery.office !== "Адрес не указан" &&
+      delivery.method !== "Неизвестный метод" &&
+      cart.length > 0
+    );
+  };
 
   const handlePay = async () => {
     setError("");
     setLoading(true);
-    if (!name.trim() || !phone.trim() || !email.trim()) {
-      setError("Пожалуйста, введите ФИО, телефон и email");
+    if (!name.trim() || !email.trim()) {
+      setError("Пожалуйста, введите ФИО и email");
       setLoading(false);
       return;
     }
-    if (!isDeliveryValid) {
+    if (!email.includes("@")) {
+      setError("Пожалуйста, введите корректный email");
+      setLoading(false);
+      return;
+    }
+    if (!delivery.office || delivery.office === "Адрес не указан") {
       setError("Пожалуйста, выберите пункт выдачи заказа через СДЭК");
       setLoading(false);
       return;
@@ -54,7 +99,7 @@ export default function CartPage() {
     const orderData = {
       cart,
       customerName: name,
-      customerPhone: phone,
+      customerPhone: phone.replace(/[^\d+]/g, ""),
       customerEmail: email,
       deliveryOffice: delivery.office,
       deliveryPrice: delivery.price,
@@ -73,10 +118,22 @@ export default function CartPage() {
         throw new Error(errorData.error || "Не удалось сохранить заказ");
       }
       const data = await res.json();
-      console.log("Ответ от API:", data); // Для отладки
-      window.location.href = `/order-confirmed?orderId=${
-        data.orderId
-      }&telegramUrl=${encodeURIComponent(data.telegramUrl)}`;
+      console.log("Ответ от API:", data);
+      // Очищаем корзину после успешного сохранения заказа
+      clearCart();
+      const query = new URLSearchParams({
+        orderId: data.orderId,
+        telegramUrl: data.telegramUrl,
+        customerName: name,
+        customerPhone: phone.replace(/[^\d+]/g, ""),
+        customerEmail: email,
+        deliveryOffice: delivery.office,
+        deliveryPrice: delivery.price.toString(),
+        deliveryMethod: delivery.method,
+        cart: JSON.stringify(cart),
+        finalTotal: finalTotal.toString(),
+      }).toString();
+      window.location.href = `/order-confirmed?${query}`;
     } catch (err) {
       console.error("Ошибка при сохранении заказа:", err);
       setError(err.message || "Не удалось сохранить заказ. Попробуйте позже.");
@@ -92,48 +149,64 @@ export default function CartPage() {
       </Head>
       <main className={styles.cartContainer}>
         <div className={styles.cartItems}>
-          <h2 className={styles.itemsTitle}>Ваш заказ</h2>
+          <div className={styles.itemsHeader}>
+            <h2 className={styles.itemsTitle}>Ваш заказ</h2>
+          </div>
           {cart.length === 0 ? (
             <p>Ваша корзина пуста.</p>
           ) : (
-            cart.map((item) => (
-              <div
-                key={`${item.id}-${item.selectedSize}`}
-                className={styles.cartItem}
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  width={80}
-                  height={80}
-                  className={styles.itemImage}
-                />
-                <div className={styles.itemDetails}>
-                  <div className={styles.itemTitle}>{item.title}</div>
-                  <div className={styles.itemMeta}>
-                    Размер: {item.selectedSize}
-                  </div>
-                  <div className={styles.itemQty}>
-                    <button
-                      onClick={() => decreaseQty(item.id, item.selectedSize)}
-                    >
-                      −
-                    </button>
-                    <span>{item.qty}</span>
-                    <button onClick={() => addToCart(item, 1)}>+</button>
-                  </div>
-                  <div className={styles.itemPrice}>
-                    {item.price * item.qty}₽
-                  </div>
-                </div>
-                <button
-                  className={styles.removeBtn}
-                  onClick={() => removeFromCart(item.id, item.selectedSize)}
+            <>
+              {cart.map((item) => (
+                <div
+                  key={`${item.id}-${item.selectedSize}`}
+                  className={styles.cartItem}
                 >
-                  ×
-                </button>
-              </div>
-            ))
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={200}
+                    height={200}
+                    sizes="(max-width: 640px) 200px, 80px"
+                    style={{ objectFit: "cover" }}
+                    className={styles.itemImage}
+                  />
+                  <div className={styles.itemDetails}>
+                    <div className={styles.itemInfo}>
+                      <div className={styles.itemTitle}>{item.title}</div>
+                      <div className={styles.itemMeta}>
+                        Размер: {item.selectedSize}
+                      </div>
+                      <div className={styles.itemPrice}>
+                        {item.price * item.qty}₽
+                      </div>
+                    </div>
+                    <div className={styles.itemQty}>
+                      <button
+                        onClick={() => decreaseQty(item.id, item.selectedSize)}
+                      >
+                        −
+                      </button>
+                      <span>{item.qty}</span>
+                      <button onClick={() => addToCart(item, 1)}>+</button>
+                    </div>
+                  </div>
+                  <button
+                    className={styles.removeBtn}
+                    onClick={() => removeFromCart(item.id, item.selectedSize)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className={styles.clearBtn}
+                onClick={clearCart}
+                disabled={cart.length === 0}
+              >
+                Очистить корзину
+              </button>
+            </>
           )}
         </div>
 
@@ -158,7 +231,10 @@ export default function CartPage() {
               className={styles.formInput}
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={handlePhoneChange}
+              onFocus={handlePhoneFocus}
+              placeholder="+7 (XXX) XXX-XX-XX"
+              autoComplete="off"
             />
           </div>
 
@@ -177,9 +253,9 @@ export default function CartPage() {
               Выберите пункт выдачи (СДЭК):
             </label>
             <CDEKWIDGET setDelivery={setDelivery} />
-            {!isDeliveryValid && (
+            {!delivery.office || delivery.office === "Адрес не указан" ? (
               <p className={styles.error}>Пункт выдачи не выбран</p>
-            )}
+            ) : null}
           </div>
 
           <div className={styles.breakdown}>
@@ -192,7 +268,7 @@ export default function CartPage() {
                 {item.price * item.qty}₽
               </div>
             ))}
-            {isDeliveryValid && (
+            {delivery.office && delivery.office !== "Адрес не указан" && (
               <div className={styles.breakdownLine}>
                 Доставка (СДЭК, {delivery.method}): {delivery.price}₽
               </div>
@@ -208,17 +284,9 @@ export default function CartPage() {
             type="button"
             className={styles.payBtn}
             onClick={handlePay}
-            disabled={loading || cart.length === 0 || !isDeliveryValid}
+            disabled={loading || !isFormValid()}
           >
             {loading ? "Пожалуйста, подождите…" : "Оплатить"}
-          </button>
-
-          <button
-            className={styles.clearBtn}
-            onClick={clearCart}
-            disabled={cart.length === 0}
-          >
-            Очистить корзину
           </button>
         </div>
       </main>

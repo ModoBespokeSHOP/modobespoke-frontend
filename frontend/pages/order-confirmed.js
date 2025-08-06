@@ -1,46 +1,39 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "../styles/order-confirmed.module.css";
 
 export default function OrderConfirmed() {
   const router = useRouter();
-  const { orderId, telegramUrl } = router.query;
-  const [orderData, setOrderData] = useState(null);
-  const [error, setError] = useState("");
+  const {
+    orderId,
+    telegramUrl,
+    customerName,
+    customerPhone,
+    customerEmail,
+    deliveryOffice,
+    deliveryPrice,
+    deliveryMethod,
+    cart,
+    finalTotal,
+  } = router.query;
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (orderId) {
-      const fetchOrder = async () => {
-        try {
-          console.log("Запрос данных заказа для orderId:", orderId);
-          const res = await fetch(`/api/get-order/${orderId}`);
-          if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(
-              errorData.error || "Не удалось загрузить данные заказа"
-            );
-          }
-          const data = await res.json();
-          console.log("Данные заказа:", data);
-          setOrderData(data);
-        } catch (err) {
-          console.error("Ошибка при загрузке заказа:", err);
-          setError(
-            "Не удалось загрузить данные заказа. Пожалуйста, используйте orderId для связи с менеджером."
-          );
-        }
-      };
-      fetchOrder();
-    } else {
-      setError("orderId не указан. Пожалуйста, свяжитесь с нами.");
-    }
-  }, [orderId]);
 
   // Формируем полное сообщение для копирования
   const getFullMessage = () => {
-    if (!orderData) return "";
-    const orderItems = orderData.cart
+    if (
+      !orderId ||
+      !customerName ||
+      !customerPhone ||
+      !customerEmail ||
+      !cart
+    ) {
+      return `Здравствуйте, мой заказ #${
+        orderId || "не указан"
+      }. Пожалуйста, свяжитесь со мной для подтверждения и оплаты.`;
+    }
+
+    const parsedCart = JSON.parse(cart || "[]");
+    const orderItems = parsedCart
       .map(
         (item) =>
           `${item.qty} × ${item.title} (${item.selectedSize}) = ${
@@ -48,15 +41,13 @@ export default function OrderConfirmed() {
           }₽`
       )
       .join("\n");
-    const total =
-      orderData.cart.reduce((sum, item) => sum + item.price * item.qty, 0) +
-      orderData.deliveryPrice;
+
     return (
-      `Здравствуйте, я ${orderData.customerName}, телефон: ${orderData.customerPhone}, email: ${orderData.customerEmail}\n` +
+      `Здравствуйте, я ${customerName}, телефон: ${customerPhone}, email: ${customerEmail}\n` +
       `Состав заказа:\n${orderItems}\n` +
-      `Пункт выдачи: ${orderData.deliveryOffice}, способ доставки: ${orderData.deliveryMethod}\n` +
-      `Итоговая сумма: ${total}₽\n` +
-      `Заказ #${orderData.orderId}. Пожалуйста, подтвердите заказ.`
+      `Пункт выдачи: ${deliveryOffice}, способ доставки: ${deliveryMethod}\n` +
+      `Итоговая сумма: ${finalTotal}₽\n` +
+      `Заказ #${orderId}. Пожалуйста, подтвердите заказ.`
     );
   };
 
@@ -75,68 +66,50 @@ export default function OrderConfirmed() {
         за покупку.
       </p>
 
-      <p className={styles.notice}>
-        Уважаемые клиенты, из-за временных технических трудностей с нашим
-        провайдером оплаты мы используем прямую оплату через Telegram. Нажмите
-        на кнопку ниже, чтобы открыть чат с нашим менеджером. Если сообщение не
-        отобразилось (особенно на iOS), скопируйте детали заказа ниже и вставьте
-        их в чат Telegram. Приносим извинения за доставленные неудобства и
-        благодарим за ваше понимание!
-      </p>
+      <div className={styles.notice}>
+        <p>
+          Уважаемые клиенты, из-за временных технических трудностей с нашим
+          провайдером оплаты мы используем прямую оплату через Telegram. Чтобы
+          завершить оформление заказа, выполните следующие шаги:
+        </p>
+        <ol className={styles.instructions}>
+          <li>
+            Нажмите кнопку "Скопировать сообщение" ниже, чтобы скопировать
+            полную информацию о заказе.
+          </li>
+          <li>
+            Нажмите кнопку "Открыть Telegram", чтобы перейти в чат с продавцом
+            (@catrigees). Поле ввода в Telegram будет пустым.
+          </li>
+          <li>
+            В чате Telegram удерживайте поле ввода и выберите "Вставить" (на ПК:
+            Ctrl+V или правый клик → Вставить), чтобы вставить скопированное
+            сообщение.
+          </li>
+          <li>
+            Отправьте сообщение. Наш менеджер свяжется с вами для подтверждения
+            и оплаты.
+          </li>
+        </ol>
+        <p>
+          Если в Telegram автоматически появляется текст, очистите поле перед
+          вставкой скопированного сообщения. Приносим извинения за неудобства и
+          благодарим за ваше понимание!
+        </p>
+      </div>
 
-      {error && <p className={styles.error}>{error}</p>}
+      <button onClick={handleCopy} className={styles.copyButton}>
+        {copied ? "Скопировано!" : "Скопировать сообщение"}
+      </button>
 
-      {orderData ? (
-        <div className={styles.orderDetails}>
-          <h2>Детали заказа #{orderData.orderId}</h2>
-          <p>
-            <strong>Клиент:</strong> {orderData.customerName}
-          </p>
-          <p>
-            <strong>Телефон:</strong> {orderData.customerPhone}
-          </p>
-          <p>
-            <strong>Email:</strong> {orderData.customerEmail}
-          </p>
-          <p>
-            <strong>Пункт выдачи:</strong> {orderData.deliveryOffice}
-          </p>
-          <p>
-            <strong>Способ доставки:</strong> {orderData.deliveryMethod}
-          </p>
-          <h3>Состав заказа:</h3>
-          <ul>
-            {orderData.cart.map((item) => (
-              <li key={`${item.id}-${item.selectedSize}`}>
-                {item.qty} × {item.title} ({item.selectedSize}) ={" "}
-                {item.price * item.qty}₽
-              </li>
-            ))}
-          </ul>
-          <p>
-            <strong>Итоговая сумма:</strong>{" "}
-            {orderData.cart.reduce(
-              (sum, item) => sum + item.price * item.qty,
-              0
-            ) + orderData.deliveryPrice}
-            ₽
-          </p>
-          <button onClick={handleCopy} className={styles.copyButton}>
-            {copied ? "Скопировано!" : "Скопировать детали заказа"}
-          </button>
-        </div>
-      ) : (
-        <p>Загрузка данных заказа...</p>
-      )}
-
-      <p>Нажмите кнопку ниже, чтобы открыть чат с менеджером в Telegram:</p>
+      <p>Нажмите кнопку ниже, чтобы открыть чат с продавцом в Telegram:</p>
       <a
         href={telegramUrl}
         target="_blank"
         rel="noopener noreferrer"
         className={styles.button}
       >
-        Отправить сообщение в Telegram
+        Открыть Telegram
       </a>
     </div>
   );
