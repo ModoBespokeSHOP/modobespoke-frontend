@@ -7,6 +7,7 @@ export default function OrderConfirmed() {
   const { orderId, telegramUrl } = router.query;
   const [orderData, setOrderData] = useState(null);
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (orderId) {
@@ -36,6 +37,36 @@ export default function OrderConfirmed() {
     }
   }, [orderId]);
 
+  // Формируем полное сообщение для копирования
+  const getFullMessage = () => {
+    if (!orderData) return "";
+    const orderItems = orderData.cart
+      .map(
+        (item) =>
+          `${item.qty} × ${item.title} (${item.selectedSize}) = ${
+            item.price * item.qty
+          }₽`
+      )
+      .join("\n");
+    const total =
+      orderData.cart.reduce((sum, item) => sum + item.price * item.qty, 0) +
+      orderData.deliveryPrice;
+    return (
+      `Здравствуйте, я ${orderData.customerName}, телефон: ${orderData.customerPhone}, email: ${orderData.customerEmail}\n` +
+      `Состав заказа:\n${orderItems}\n` +
+      `Пункт выдачи: ${orderData.deliveryOffice}, способ доставки: ${orderData.deliveryMethod}\n` +
+      `Итоговая сумма: ${total}₽\n` +
+      `Заказ #${orderData.orderId}. Пожалуйста, подтвердите заказ.`
+    );
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(getFullMessage()).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <div className={styles.container}>
       <h1>Заказ успешно создан</h1>
@@ -46,10 +77,11 @@ export default function OrderConfirmed() {
 
       <p className={styles.notice}>
         Уважаемые клиенты, из-за временных технических трудностей с нашим
-        провайдером оплаты мы используем прямую оплату через Telegram.
-        Пожалуйста, свяжитесь с нашим менеджером, нажав на кнопку ниже, чтобы
-        завершить оформление заказа. Приносим извинения за доставленные
-        неудобства и благодарим за ваше понимание!
+        провайдером оплаты мы используем прямую оплату через Telegram. Нажмите
+        на кнопку ниже, чтобы открыть чат с нашим менеджером. Если сообщение не
+        отобразилось (особенно на iOS), скопируйте детали заказа ниже и вставьте
+        их в чат Telegram. Приносим извинения за доставленные неудобства и
+        благодарим за ваше понимание!
       </p>
 
       {error && <p className={styles.error}>{error}</p>}
@@ -89,15 +121,15 @@ export default function OrderConfirmed() {
             ) + orderData.deliveryPrice}
             ₽
           </p>
+          <button onClick={handleCopy} className={styles.copyButton}>
+            {copied ? "Скопировано!" : "Скопировать детали заказа"}
+          </button>
         </div>
       ) : (
         <p>Загрузка данных заказа...</p>
       )}
 
-      <p>
-        Нажмите кнопку ниже, чтобы связаться с нашим менеджером в Telegram и
-        завершить оформление:
-      </p>
+      <p>Нажмите кнопку ниже, чтобы открыть чат с менеджером в Telegram:</p>
       <a
         href={telegramUrl}
         target="_blank"

@@ -44,43 +44,15 @@ export default async function handler(req, res) {
     );
     console.log("Заказ сохранен:", blob);
 
-    // Формируем состав заказа
-    const orderItems = cart
-      .map(
-        (item) =>
-          `${item.qty} × ${item.title} (${item.selectedSize}) = ${
-            item.price * item.qty
-          }₽`
-      )
-      .join("\n");
+    // Формируем минимальное сообщение для Telegram (только orderId)
+    const message = encodeURIComponent(`Заказ #${orderId}`);
 
-    // Вычисляем итоговую сумму
-    const total =
-      cart.reduce((sum, item) => sum + item.price * item.qty, 0) +
-      deliveryPrice;
-
-    // Формируем подробное сообщение для Telegram
-    const message = encodeURIComponent(
-      `Здравствуйте, я ${customerName}, телефон: ${customerPhone}, email: ${customerEmail}\n` +
-        `Состав заказа:\n${orderItems}\n` +
-        `Пункт выдачи: ${deliveryOffice}, способ доставки: ${deliveryMethod}\n` +
-        `Итоговая сумма: ${total}₽\n` +
-        `Заказ #${orderId}. Пожалуйста, подтвердите заказ.`
-    );
-
-    // Проверяем длину URL
+    // Формируем telegramUrl
     const sellerUsername = process.env.SELLER_TELEGRAM_USERNAME || "@Nikkkoris";
     const cleanUsername = sellerUsername.startsWith("@")
       ? sellerUsername.slice(1)
       : sellerUsername;
-    let telegramUrl = `https://t.me/${cleanUsername}?text=${message}`;
-
-    if (telegramUrl.length > 2000) {
-      const shortMessage = encodeURIComponent(
-        `Здравствуйте, я ${customerName}, заказ #${orderId}. Подробности заказа на сайте.`
-      );
-      telegramUrl = `https://t.me/${cleanUsername}?text=${shortMessage}`;
-    }
+    const telegramUrl = `https://t.me/${cleanUsername}?text=${message}`;
 
     console.log("Сформирован telegramUrl:", telegramUrl);
     res.status(200).json({ orderId, telegramUrl });
