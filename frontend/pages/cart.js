@@ -20,13 +20,6 @@ export default function CartPage() {
     method: "Неизвестный метод",
   });
 
-  useEffect(() => {
-    console.log(
-      "Текущее состояние delivery:",
-      JSON.stringify(delivery, null, 2)
-    );
-  }, [delivery]);
-
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const finalTotal =
     total +
@@ -65,7 +58,7 @@ export default function CartPage() {
     try {
       // Создаём сообщение для Telegram
       const message =
-        `Здравствуйте, я ${name}, телефон: ${phone}, email: ${email}\n` +
+        `Новый заказ от ${name}, телефон: ${phone}, email: ${email}\n` +
         `Состав заказа:\n${cart
           .map(
             (item) =>
@@ -75,41 +68,15 @@ export default function CartPage() {
           )
           .join("\n")}\n` +
         `Пункт выдачи: ${delivery.office}, способ доставки: ${delivery.method}\n` +
-        `Итоговая сумма: ${finalTotal}₽\n` +
-        `Заказ #${orderData.createdAt}. Пожалуйста, подтвердите заказ.`;
+        `Итоговая сумма: ${finalTotal}₽`;
 
-      // Токен бота и ID чата
-      const botToken = "8344483874:AAFC5fn5m7FrQVtTMcMsfhu3-8hurBBsMRw"; // Токен, который ты получишь от BotFather
-      const chatId = "968299888"; // Твой chat_id в Telegram (можно получить с помощью Bot API)
+      // Создаём ссылку на Telegram с данными о заказе
+      const telegramUrl = `https://t.me/${
+        process.env.SELLER_TELEGRAM_USERNAME
+      }?text=${encodeURIComponent(message)}`;
 
-      // Отправляем запрос в Telegram API для отправки сообщения
-      const response = await fetch(
-        `https://api.telegram.org/bot${botToken}/sendMessage`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: message,
-          }),
-        }
-      );
-
-      const data = await response.json();
-      if (data.ok) {
-        console.log("Сообщение успешно отправлено в Telegram");
-        window.location.href = `/order-confirmed?orderId=${orderData.createdAt}`;
-      } else {
-        console.error(
-          "Ошибка при отправке сообщения в Telegram:",
-          data.description
-        );
-        setError(
-          "Не удалось отправить сообщение в Telegram. Попробуйте позже."
-        );
-      }
+      // Редирект на Telegram
+      window.location.href = telegramUrl;
     } catch (err) {
       console.error("Ошибка при сохранении заказа:", err);
       setError(err.message || "Не удалось сохранить заказ. Попробуйте позже.");
