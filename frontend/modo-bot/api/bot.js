@@ -1,12 +1,24 @@
 const TelegramBot = require("node-telegram-bot-api");
 const fetch = require("node-fetch");
 
-// Замени на свой токен от @BotFather
 const BOT_TOKEN = "8344483874:AAFC5fn5m7FrQVtTMcMsfhu3-8hurBBsMRw";
-// Замени на свой Telegram chat_id
 const SELLER_CHAT_ID = "968299888";
+const bot = new TelegramBot(BOT_TOKEN);
 
-const bot = new TelegramBot(BOT_TOKEN, { polling: true });
+// Обработчик для Vercel Serverless Functions
+export default async function handler(req, res) {
+  try {
+    if (req.method === "POST") {
+      await bot.processUpdate(req.body);
+      res.status(200).json({ ok: true });
+    } else {
+      res.status(405).json({ error: "Method not allowed" });
+    }
+  } catch (e) {
+    console.error("Ошибка:", e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 
 bot.onText(/\/start (.+)/, async (msg, match) => {
   const chatId = msg.chat.id;
@@ -14,7 +26,7 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
 
   try {
     const response = await fetch(
-      `https://your-website.com/api/store-order?id=${orderId}`
+      `https://modobespoke.shop/api/store-order?id=${orderId}`
     );
     if (response.ok) {
       const orderData = await response.json();
@@ -51,6 +63,7 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
       );
     }
   } catch (e) {
+    console.error("Ошибка при получении данных заказа:", e);
     bot.sendMessage(chatId, "Ошибка при получении данных заказа.");
   }
 });
@@ -61,4 +74,6 @@ bot.onText(/\/reply_(\d+) (.+)/, (msg, match) => {
   bot.sendMessage(targetChatId, message);
 });
 
-console.log("Бот запущен!");
+// Установка вебхука (выполняется один раз при деплое)
+const VERCEL_URL = process.env.VERCEL_URL || "https://<your-vercel-bot-domain>";
+bot.setWebHook(`${VERCEL_URL}/api/bot`);
