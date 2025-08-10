@@ -24,11 +24,7 @@ export default function AdminPage() {
   const [products, setProducts] = useState([]);
   const [message, setMessage] = useState("");
 
-  // --- Promocode state ---
-  const [promocode, setPromocode] = useState("");
-  const [discount, setDiscount] = useState(0);
-
-  // --- Form state ---
+  // --- Form state for products ---
   const [form, setForm] = useState({
     id: null,
     title: "",
@@ -42,17 +38,36 @@ export default function AdminPage() {
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // --- Promo codes state ---
+  const [promocodes, setPromocodes] = useState([]);
+  const [promoForm, setPromoForm] = useState({
+    id: null,
+    code: "",
+    type: "percent", // 'percent' or 'fixed'
+    value: "",
+  });
+  const [promoMessage, setPromoMessage] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+
   // --- Modal state for delete confirmation ---
   const [toDeleteId, setToDeleteId] = useState(null);
+  const [deleteType, setDeleteType] = useState(null); // 'product' or 'promo'
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch products once authorized
+  // Fetch products and promocodes once authorized
   useEffect(() => {
     if (!authorized) return;
 
     fetch("/api/products")
       .then((r) => r.json())
       .then((data) => setProducts(Array.isArray(data) ? data : data.data || []))
+      .catch(console.error);
+
+    fetch("/api/promocodes")
+      .then((r) => r.json())
+      .then((data) =>
+        setPromocodes(Array.isArray(data) ? data : data.data || [])
+      )
       .catch(console.error);
   }, [authorized]);
 
@@ -190,44 +205,93 @@ export default function AdminPage() {
     setMessage("Товар удалён");
   }
 
-  function openDeleteModal(id) {
+  // Handlers for promo codes
+  function handlePromoChange(e) {
+    const { name, value } = e.target;
+    setPromoForm((f) => ({ ...f, [name]: value }));
+  }
+
+  async function handlePublishPromo(e) {
+    e.preventDefault();
+    setPromoLoading(true);
+    setPromoMessage("");
+    try {
+      const newPromo = {
+        id: promoForm.id ?? Date.now(),
+        code: promoForm.code.toUpperCase(),
+        type: promoForm.type,
+        value: Number(promoForm.value),
+      };
+      if (isNaN(newPromo.value) || newPromo.value <= 0) {
+        throw new Error("Некорректное значение скидки");
+      }
+      const updated = promoForm.id
+        ? promocodes.map((p) => (p.id === promoForm.id ? newPromo : p))
+        : [...promocodes, newPromo];
+      const save = await fetch("/api/promocodes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      if (!save.ok)
+        throw new Error((await save.json()).message || "Save failed");
+      setPromocodes(updated);
+      setPromoForm({
+        id: null,
+        code: "",
+        type: "percent",
+        value: "",
+      });
+      setPromoMessage("Промокод сохранён");
+    } catch (err) {
+      console.error(err);
+      setPromoMessage("Ошибка: " + err.message);
+    } finally {
+      setPromoLoading(false);
+    }
+  }
+
+  function handleEditPromo(p) {
+    setPromoForm({
+      id: p.id,
+      code: p.code,
+      type: p.type,
+      value: p.value,
+    });
+    setPromoMessage("");
+  }
+
+  async function handleDeletePromo(id) {
+    const updated = promocodes.filter((p) => p.id !== id);
+    await fetch("/api/promocodes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+    setPromocodes(updated);
+    setPromoMessage("Промокод удалён");
+  }
+
+  function openDeleteModal(id, type) {
     setToDeleteId(id);
+    setDeleteType(type);
     setIsModalOpen(true);
   }
 
   function closeDeleteModal() {
     setToDeleteId(null);
+    setDeleteType(null);
     setIsModalOpen(false);
   }
 
   async function confirmDelete() {
-    await handleDeleteProduct(toDeleteId);
+    if (deleteType === "product") {
+      await handleDeleteProduct(toDeleteId);
+    } else if (deleteType === "promo") {
+      await handleDeletePromo(toDeleteId);
+    }
     closeDeleteModal();
   }
-
-  // --- Promocode Handling ---
-  const handlePromocodeSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const newPromocode = { code: promocode, discount };
-
-      const res = await fetch("/api/promocodes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPromocode),
-      });
-
-      if (!res.ok) {
-        throw new Error("Ошибка при добавлении промокода");
-      }
-
-      setMessage("Промокод добавлен");
-      setPromocode("");
-      setDiscount(0);
-    } catch (err) {
-      setMessage("Ошибка: " + err.message);
-    }
-  };
 
   // --- Render login if not authorized ---
   if (!authorized) {
@@ -276,7 +340,10 @@ export default function AdminPage() {
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <p>Вы уверены, что хотите удалить этот товар?</p>
+            <p>
+              Вы уверены, что хотите удалить этот{" "}
+              {deleteType === "product" ? "товар" : "промокод"}?
+            </p>
             <div className={styles.modalButtons}>
               <button
                 className={styles.modalBtnCancel}
@@ -297,33 +364,8 @@ export default function AdminPage() {
 
       <div className={styles.container}>
         <h1 className={styles.heading}>Панель администратора</h1>
-
-        {/* Добавление промокода */}
-        <form onSubmit={handlePromocodeSubmit}>
-          <h2>Добавить промокод</h2>
-          {message && <div className={styles.error}>{message}</div>}
-          <label>
-            Код промокода
-            <input
-              type="text"
-              value={promocode}
-              onChange={(e) => setPromocode(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            Скидка (%)
-            <input
-              type="number"
-              value={discount}
-              onChange={(e) => setDiscount(e.target.value)}
-              required
-            />
-          </label>
-          <button type="submit">Добавить промокод</button>
-        </form>
-
         <div className={styles.panel}>
+          <h2>Управление товарами</h2>
           <form className={styles.form} onSubmit={handlePublish}>
             {message && <div className={styles.error}>{message}</div>}
             <label>
@@ -420,7 +462,80 @@ export default function AdminPage() {
                   </button>
                   <button
                     className={styles.deleteBtn}
-                    onClick={() => openDeleteModal(p.id)}
+                    onClick={() => openDeleteModal(p.id, "product")}
+                  >
+                    Удал.
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          <h2>Управление промокодами</h2>
+          <form className={styles.form} onSubmit={handlePublishPromo}>
+            {promoMessage && <div className={styles.error}>{promoMessage}</div>}
+            <label>
+              Код (верхний регистр автоматически)
+              <input
+                type="text"
+                name="code"
+                value={promoForm.code}
+                onChange={handlePromoChange}
+                required
+              />
+            </label>
+            <label>
+              Тип скидки
+              <select
+                name="type"
+                value={promoForm.type}
+                onChange={handlePromoChange}
+              >
+                <option value="percent">Процент (%)</option>
+                <option value="fixed">Фиксированная сумма (₽)</option>
+              </select>
+            </label>
+            <label>
+              Значение скидки
+              <input
+                type="number"
+                name="value"
+                value={promoForm.value}
+                onChange={handlePromoChange}
+                required
+              />
+            </label>
+            <button type="submit" disabled={promoLoading}>
+              {promoLoading
+                ? "Сохраняем…"
+                : promoForm.id
+                ? "Обновить промокод"
+                : "Добавить промокод"}
+            </button>
+          </form>
+
+          <div className={styles.list}>
+            <h2>Список промокодов</h2>
+            {promocodes.length === 0 ? (
+              <p>Ничего нет</p>
+            ) : (
+              promocodes.map((p) => (
+                <div key={p.id} className={styles.listItem}>
+                  <div>
+                    <strong>{p.code}</strong>
+                    <div>
+                      {p.value} {p.type === "percent" ? "%" : "₽"}
+                    </div>
+                  </div>
+                  <button
+                    className={styles.editBtn}
+                    onClick={() => handleEditPromo(p)}
+                  >
+                    Ред.
+                  </button>
+                  <button
+                    className={styles.deleteBtn}
+                    onClick={() => openDeleteModal(p.id, "promo")}
                   >
                     Удал.
                   </button>

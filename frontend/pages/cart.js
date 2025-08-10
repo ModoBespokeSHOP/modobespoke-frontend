@@ -12,6 +12,11 @@ export default function CartPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("+7");
   const [email, setEmail] = useState("");
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState(0);
+  const [discountType, setDiscountType] = useState(null); // 'percent' or 'fixed'
+  const [discountValue, setDiscountValue] = useState(0);
+  const [promoError, setPromoError] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [delivery, setDelivery] = useState({
@@ -19,11 +24,6 @@ export default function CartPage() {
     price: 0,
     method: "Неизвестный метод",
   });
-
-  // Для промокода
-  const [promocode, setPromocode] = useState("");
-  const [promocodeDiscount, setPromocodeDiscount] = useState(0);
-  const [promocodeError, setPromocodeError] = useState("");
 
   useEffect(() => {
     console.log(
@@ -33,12 +33,23 @@ export default function CartPage() {
   }, [delivery]);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  const calculateDiscount = (subtotal, type, value) => {
+    if (type === "percent") {
+      return subtotal * (value / 100);
+    } else if (type === "fixed") {
+      return value;
+    }
+    return 0;
+  };
+
+  const discount = calculateDiscount(total, discountType, discountValue);
+  const discountedTotal = total - discount;
   const finalTotal =
-    total +
+    discountedTotal +
     (delivery.office && delivery.office !== "Адрес не указан"
       ? delivery.price
-      : 0) -
-    (total * promocodeDiscount) / 100;
+      : 0);
 
   // Форматирование телефона
   const formatPhone = (value) => {
@@ -51,8 +62,8 @@ export default function CartPage() {
       /^\+7(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/
     );
     if (match) {
-      const formatted = `+7${match[1] ? `(${match[1]})` : ""}${
-        match[2] ? ` ${match[2]}` : ""
+      const formatted = `+7${match[1] ? ` (${match[1]}` : ""}${
+        match[2] ? `) ${match[2]}` : ""
       }${match[3] ? `-${match[3]}` : ""}${match[4] ? `-${match[4]}` : ""}`;
       return formatted;
     }
@@ -70,6 +81,35 @@ export default function CartPage() {
     }
   };
 
+  const handleApplyPromo = async () => {
+    setPromoError("");
+    setAppliedDiscount(0);
+    setDiscountType(null);
+    setDiscountValue(0);
+
+    if (!promoCode.trim()) {
+      setPromoError("Введите промокод");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `/api/validate-promo?code=${encodeURIComponent(promoCode)}`
+      );
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Неверный промокод");
+      }
+      const { type, value } = await res.json();
+      setDiscountType(type);
+      setDiscountValue(value);
+      setAppliedDiscount(calculateDiscount(total, type, value));
+    } catch (err) {
+      setPromoError(err.message || "Неверный промокод");
+    }
+  };
+
+  // Проверка валидности формы
   const isFormValid = () => {
     return (
       name.trim() !== "" &&
@@ -80,24 +120,6 @@ export default function CartPage() {
       delivery.method !== "Неизвестный метод" &&
       cart.length > 0
     );
-  };
-
-  const handlePromocodeSubmit = async () => {
-    try {
-      const res = await fetch("/api/promocodes");
-      const promocodes = await res.json();
-      const foundPromo = promocodes.find((p) => p.code === promocode);
-
-      if (foundPromo) {
-        setPromocodeDiscount(foundPromo.discount);
-        setPromocodeError("");
-      } else {
-        setPromocodeDiscount(0);
-        setPromocodeError("Неверный промокод");
-      }
-    } catch (err) {
-      setPromocodeError("Ошибка при проверке промокода");
-    }
   };
 
   const handlePay = async () => {
@@ -127,6 +149,8 @@ export default function CartPage() {
       deliveryOffice: delivery.office,
       deliveryPrice: delivery.price,
       deliveryMethod: delivery.method,
+      promoCode: promoCode,
+      discount: discount,
       createdAt: new Date().toISOString(),
     };
 
@@ -142,6 +166,7 @@ export default function CartPage() {
       }
       const data = await res.json();
       console.log("Ответ от API:", data);
+      // Очищаем корзину после успешного сохранения заказа
       clearCart();
       const query = new URLSearchParams({
         orderId: data.orderId,
@@ -153,6 +178,8 @@ export default function CartPage() {
         deliveryPrice: delivery.price.toString(),
         deliveryMethod: delivery.method,
         cart: JSON.stringify(cart),
+        promoCode: promoCode,
+        discount: discount.toString(),
         finalTotal: finalTotal.toString(),
       }).toString();
       window.location.href = `/order-confirmed?${query}`;
@@ -236,27 +263,6 @@ export default function CartPage() {
           <h2 className={styles.summaryTitle}>Оформление заказа</h2>
 
           {error && <div className={styles.error}>{error}</div>}
-          {promocodeError && (
-            <div className={styles.error}>{promocodeError}</div>
-          )}
-
-          <div className={styles.formGroup}>
-            <label className={styles.formLabel}>Промокод</label>
-            <input
-              className={styles.formInput}
-              type="text"
-              value={promocode}
-              onChange={(e) => setPromocode(e.target.value)}
-              placeholder="Введите промокод"
-            />
-            <button
-              type="button"
-              onClick={handlePromocodeSubmit}
-              disabled={!promocode}
-            >
-              Применить
-            </button>
-          </div>
 
           <div className={styles.formGroup}>
             <label className={styles.formLabel}>ФИО</label>
@@ -292,6 +298,33 @@ export default function CartPage() {
           </div>
 
           <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Промокод</label>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <input
+                className={styles.formInput}
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                placeholder="Введите промокод"
+              />
+              <button
+                type="button"
+                onClick={handleApplyPromo}
+                className={styles.applyBtn}
+              >
+                Применить
+              </button>
+            </div>
+            {promoError && <p className={styles.error}>{promoError}</p>}
+            {discount > 0 && (
+              <p className={styles.success}>
+                Скидка применена: -{discount}₽{" "}
+                {discountType === "percent" ? `(${discountValue}%)` : ""}
+              </p>
+            )}
+          </div>
+
+          <div className={styles.formGroup}>
             <label className={styles.formLabel}>
               Выберите пункт выдачи (СДЭК):
             </label>
@@ -311,6 +344,12 @@ export default function CartPage() {
                 {item.price * item.qty}₽
               </div>
             ))}
+            {discount > 0 && (
+              <div className={styles.breakdownLine}>
+                Скидка по промокоду ({promoCode}): -{discount}₽{" "}
+                {discountType === "percent" ? `(${discountValue}%)` : ""}
+              </div>
+            )}
             {delivery.office && delivery.office !== "Адрес не указан" && (
               <div className={styles.breakdownLine}>
                 Доставка (СДЭК, {delivery.method}): {delivery.price}₽

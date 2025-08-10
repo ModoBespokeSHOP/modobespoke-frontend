@@ -1,6 +1,14 @@
 [
   {
-    "code": "SALE",
-    "discount": "10"
+    "id": 1754864787629,
+    "code": "MODO500",
+    "type": "fixed",
+    "value": 500
+  },
+  {
+    "id": 1754864800345,
+    "code": "MODO10",
+    "type": "percent",
+    "value": 10
   }
 ]
