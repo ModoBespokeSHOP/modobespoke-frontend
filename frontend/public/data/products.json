@@ -101,5 +101,20 @@
       "L",
       "XL"
     ]
+  },
+  {
+    "id": 1754822973174,
+    "title": "платье ROSEMARY",
+    "shortSpecs": {
+      "color": "черный",
+      "material": "умягченный лен",
+      "pattern": "без рисунка"
+    },
+    "description": "впервые отшито 2018 ",
+    "price": 8500,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1754822972/hqeojkqbln6cnbrxygbk.jpg",
+    "sizes": [
+      "S"
+    ]
   }
 ]
