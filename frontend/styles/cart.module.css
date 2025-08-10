@@ -26,7 +26,26 @@
   align-items: center;
   margin-bottom: 12px;
 }
+/* === Кнопка для применения промокода === */
+.applyBtn {
+  padding: 10px 16px;
+  font-size: 14px;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
 
+.applyBtn:hover {
+  background: #218838;
+}
+
+.applyBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
 /* Заголовок секции товаров (по умолчанию скрыт) */
 .itemsTitle {
   display: none;

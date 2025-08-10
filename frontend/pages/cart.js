@@ -20,6 +20,11 @@ export default function CartPage() {
     method: "Неизвестный метод",
   });
 
+  // Для промокода
+  const [promocode, setPromocode] = useState("");
+  const [promocodeDiscount, setPromocodeDiscount] = useState(0);
+  const [promocodeError, setPromocodeError] = useState("");
+
   useEffect(() => {
     console.log(
       "Текущее состояние delivery:",
@@ -32,7 +37,8 @@ export default function CartPage() {
     total +
     (delivery.office && delivery.office !== "Адрес не указан"
       ? delivery.price
-      : 0);
+      : 0) -
+    (total * promocodeDiscount) / 100;
 
   // Форматирование телефона
   const formatPhone = (value) => {
@@ -45,8 +51,8 @@ export default function CartPage() {
       /^\+7(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/
     );
     if (match) {
-      const formatted = `+7${match[1] ? ` (${match[1]}` : ""}${
-        match[2] ? `) ${match[2]}` : ""
+      const formatted = `+7${match[1] ? `(${match[1]})` : ""}${
+        match[2] ? ` ${match[2]}` : ""
       }${match[3] ? `-${match[3]}` : ""}${match[4] ? `-${match[4]}` : ""}`;
       return formatted;
     }
@@ -64,7 +70,6 @@ export default function CartPage() {
     }
   };
 
-  // Проверка валидности формы
   const isFormValid = () => {
     return (
       name.trim() !== "" &&
@@ -75,6 +80,24 @@ export default function CartPage() {
       delivery.method !== "Неизвестный метод" &&
       cart.length > 0
     );
+  };
+
+  const handlePromocodeSubmit = async () => {
+    try {
+      const res = await fetch("/api/promocodes");
+      const promocodes = await res.json();
+      const foundPromo = promocodes.find((p) => p.code === promocode);
+
+      if (foundPromo) {
+        setPromocodeDiscount(foundPromo.discount);
+        setPromocodeError("");
+      } else {
+        setPromocodeDiscount(0);
+        setPromocodeError("Неверный промокод");
+      }
+    } catch (err) {
+      setPromocodeError("Ошибка при проверке промокода");
+    }
   };
 
   const handlePay = async () => {
@@ -119,7 +142,6 @@ export default function CartPage() {
       }
       const data = await res.json();
       console.log("Ответ от API:", data);
-      // Очищаем корзину после успешного сохранения заказа
       clearCart();
       const query = new URLSearchParams({
         orderId: data.orderId,
@@ -214,6 +236,27 @@ export default function CartPage() {
           <h2 className={styles.summaryTitle}>Оформление заказа</h2>
 
           {error && <div className={styles.error}>{error}</div>}
+          {promocodeError && (
+            <div className={styles.error}>{promocodeError}</div>
+          )}
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Промокод</label>
+            <input
+              className={styles.formInput}
+              type="text"
+              value={promocode}
+              onChange={(e) => setPromocode(e.target.value)}
+              placeholder="Введите промокод"
+            />
+            <button
+              type="button"
+              onClick={handlePromocodeSubmit}
+              disabled={!promocode}
+            >
+              Применить
+            </button>
+          </div>
 
           <div className={styles.formGroup}>
             <label className={styles.formLabel}>ФИО</label>

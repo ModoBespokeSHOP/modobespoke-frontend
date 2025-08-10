@@ -24,6 +24,10 @@ export default function AdminPage() {
   const [products, setProducts] = useState([]);
   const [message, setMessage] = useState("");
 
+  // --- Promocode state ---
+  const [promocode, setPromocode] = useState("");
+  const [discount, setDiscount] = useState(0);
+
   // --- Form state ---
   const [form, setForm] = useState({
     id: null,
@@ -201,6 +205,30 @@ export default function AdminPage() {
     closeDeleteModal();
   }
 
+  // --- Promocode Handling ---
+  const handlePromocodeSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const newPromocode = { code: promocode, discount };
+
+      const res = await fetch("/api/promocodes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newPromocode),
+      });
+
+      if (!res.ok) {
+        throw new Error("Ошибка при добавлении промокода");
+      }
+
+      setMessage("Промокод добавлен");
+      setPromocode("");
+      setDiscount(0);
+    } catch (err) {
+      setMessage("Ошибка: " + err.message);
+    }
+  };
+
   // --- Render login if not authorized ---
   if (!authorized) {
     return (
@@ -269,6 +297,32 @@ export default function AdminPage() {
 
       <div className={styles.container}>
         <h1 className={styles.heading}>Панель администратора</h1>
+
+        {/* Добавление промокода */}
+        <form onSubmit={handlePromocodeSubmit}>
+          <h2>Добавить промокод</h2>
+          {message && <div className={styles.error}>{message}</div>}
+          <label>
+            Код промокода
+            <input
+              type="text"
+              value={promocode}
+              onChange={(e) => setPromocode(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Скидка (%)
+            <input
+              type="number"
+              value={discount}
+              onChange={(e) => setDiscount(e.target.value)}
+              required
+            />
+          </label>
+          <button type="submit">Добавить промокод</button>
+        </form>
+
         <div className={styles.panel}>
           <form className={styles.form} onSubmit={handlePublish}>
             {message && <div className={styles.error}>{message}</div>}
