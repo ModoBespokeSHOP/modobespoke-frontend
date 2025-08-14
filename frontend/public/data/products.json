@@ -34,21 +34,6 @@
     ]
   },
   {
-    "id": 1750867771865,
-    "title": "Шляпа",
-    "shortSpecs": {
-      "pattern": "-",
-      "material": "солома",
-      "color": "бежевый"
-    },
-    "description": "модная шляпа для вашего лета",
-    "price": 1999,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg",
-    "sizes": [
-      "M"
-    ]
-  },
-  {
     "id": 1751300533811,
     "title": "Тест",
     "shortSpecs": {
