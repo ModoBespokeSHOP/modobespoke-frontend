@@ -116,5 +116,17 @@
     "sizes": [
       "S"
     ]
+  },
+  {
+    "id": 1755174937525,
+    "title": "куртка WORCKER’S JACKET",
+    "shortSpecs": {
+      "color": "",
+      "material": "хлопковый джинс "
+    },
+    "description": "",
+    "price": 9000,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1755174936/u3gopkwwl3by55gwakek.jpg",
+    "sizes": []
   }
 ]
