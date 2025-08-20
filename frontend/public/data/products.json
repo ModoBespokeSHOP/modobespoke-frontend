@@ -1,22 +1,5 @@
 [
   {
-    "id": 1750768955449,
-    "title": "Платье Летнее",
-    "shortSpecs": {
-      "color": "белый",
-      "material": "штора",
-      "pattern": "-"
-    },
-    "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
-    "price": 18999,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750768949/jbezl55zftfohkcku2nr.jpg",
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
-  },
-  {
     "id": 1750792832807,
     "title": "Блузка Светлая",
     "shortSpecs": {
