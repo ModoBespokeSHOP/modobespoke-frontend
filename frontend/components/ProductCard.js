@@ -1,4 +1,4 @@
-/* frontend/components/Product.js */
+/* frontend/components/ProductCard.js */
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./ProductCard.module.css";
@@ -23,15 +23,16 @@ export default function ProductCard({ product = {}, onAddToCart }) {
   return (
     <>
       <div className={styles.card} onClick={handleOpen}>
-        <Image
-          className={styles.cardImage}
-          src={product.image}
-          alt={product.title}
-          layout="responsive"
-          width={300}
-          height={300}
-          objectFit="contain"
-        />
+        <div className={styles.imageContainer}>
+          <Image
+            className={styles.cardImage}
+            src={product.image}
+            alt={product.title}
+            fill
+            sizes="100vw"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
         <div className={styles.cardInfo}>
           <h3 className={styles.cardTitle}>{product.title}</h3>
           <p className={styles.cardPrice}>{product.price} ₽</p>

@@ -84,25 +84,6 @@
     ]
   },
   {
-    "id": 1754522684151,
-    "title": "Тест",
-    "shortSpecs": {
-      "color": "нвоый",
-      "material": "вава",
-      "pattern": "ыфвфыв"
-    },
-    "description": "обоба",
-    "price": 4999,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1754522682/pqwpqlh5rfbbenxiatk2.jpg",
-    "sizes": [
-      "XS",
-      "S",
-      "M",
-      "L",
-      "XL"
-    ]
-  },
-  {
     "id": 1754822973174,
     "title": "платье ROSEMARY",
     "shortSpecs": {

@@ -13,8 +13,14 @@
   transform: scale(1.01);
 }
 
-.cardImage {
+.imageContainer {
+  position: relative;
   width: 100%;
+  aspect-ratio: 2 / 3; /* 2:3 портретный формат, подходящий для платьев; можно изменить на 1 / 1 для квадрата или другой */
+  overflow: hidden;
+}
+
+.cardImage {
   display: block;
 }
 
