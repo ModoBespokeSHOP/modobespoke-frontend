@@ -9,5 +9,17 @@
     "sizes": [
       "XS"
     ]
+  },
+  {
+    "id": 1756975624360,
+    "title": "Шляпа",
+    "shortSpecs": {},
+    "description": "",
+    "price": 2,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1756975622/pdilx5ce5vnpgppx0nf4.jpg",
+    "sizes": [
+      "XS",
+      "M"
+    ]
   }
 ]
