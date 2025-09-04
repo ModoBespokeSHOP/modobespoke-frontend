@@ -1,70 +1,35 @@
 [
   {
-    "id": 1750768955449,
-    "title": "Платье Летнее",
+    "id": 1755174937525,
+    "title": "куртка WORCKER’S JACKET",
     "shortSpecs": {
-      "color": "белый",
-      "material": "штора",
-      "pattern": "-"
+      "color": "",
+      "material": "хлопковый джинс "
     },
-    "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
-    "price": 18999,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750768949/jbezl55zftfohkcku2nr.jpg",
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
+    "description": "",
+    "price": 9000,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1755174936/u3gopkwwl3by55gwakek.jpg",
+    "sizes": []
   },
   {
-    "id": 1750792832807,
-    "title": "Блузка Светлая",
+    "id": 1755687688964,
+    "title": "платье [ Lolita 2.0 ] ",
     "shortSpecs": {
-      "color": "белый",
-      "material": "ткань",
-      "pattern": "-"
+      "color": "из ассортимента",
+      "material": "атласная вискоза ",
+      "pattern": "принт - мелкие цветы "
     },
-    "description": "некоторое интересное описание чтобы заполнить пространство примерно вот такого размера может чуть больше",
-    "price": 3999,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750792805/x9zmldolzliovmhgztqf.jpg",
+    "description": "Платье средней длины с двумя ярусами легких воланов и длинной лентой - бантом. \nВыполнено из невесомой шелковой вискозы – натуральный материал без примеси синтетики, что является ценностью бренда. \nПлатье представлено в двух размерных рядах S-M и L-XL. \n\nДля долговечности изделий рекомендуется соблюдать следующие правила:\nСтирка при температуре воды до 30 градусов с использованием деликатного моющего средства.\nНе отжимать ткань.\nПосле стирки тщательно прополоскать в холодной воде.\nСушить вдали от источников тепла.\nГладить только с изнаночной стороны на минимальной температуре без отпаривания.\nХранить изделия из атласной ткани в сухом, прохладном и хорошо проветриваемом месте.\n",
+    "price": 10500,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1755687688/yruk46qunboty45zjhge.jpg",
     "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
-  },
-  {
-    "id": 1750867771865,
-    "title": "Шляпа",
-    "shortSpecs": {
-      "pattern": "-",
-      "material": "солома",
-      "color": "бежевый"
-    },
-    "description": "модная шляпа для вашего лета",
-    "price": 1999,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1750867750/wekqd6nmxihzh0plmm71.jpg",
-    "sizes": [
-      "M"
-    ]
-  },
-  {
-    "id": 1751300533811,
-    "title": "Тест",
-    "shortSpecs": {
-      "color": "голубой",
-      "material": "ткань",
-      "pattern": "-"
-    },
-    "description": "провкерка в четверг четвёртого числа в четры на трово бла бла на хлопковых полях",
-    "price": 7999,
-    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1751300532/e3wzr1c5ypyztzmdngq7.jpg",
-    "sizes": [
+      "XS",
       "S",
       "M"
     ]
   },
   {
+<<<<<<< HEAD
     "id": 1751372216229,
     "title": "Платье Кармалье",
     "shortSpecs": {
@@ -97,5 +62,14 @@
     "sizes": [
       "S"
     ]
+=======
+    "id": 1755688471747,
+    "title": "миро",
+    "shortSpecs": {},
+    "description": "",
+    "price": 556,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1755688471/ubcmqwq0gxi9x06ekztr.jpg",
+    "sizes": []
+>>>>>>> e4eb16d15b017d1d633b3c689939ffcd9484443f
   }
 ]
