@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": 1757018148890,
+    "title": "Blanche",
+    "shortSpecs": {
+      "color": "красеый"
+    },
+    "description": "легкое",
+    "price": 6500,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1757018148/qjntjhn17uk2s745done.jpg",
+    "sizes": [
+      "S"
+    ]
+  }
+]
