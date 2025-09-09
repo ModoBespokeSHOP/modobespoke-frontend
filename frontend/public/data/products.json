@@ -11,5 +11,22 @@
     "sizes": [
       "S"
     ]
+  },
+  {
+    "id": 1757413087916,
+    "title": "платье ROSEMARY maxi",
+    "shortSpecs": {
+      "color": "черный",
+      "material": "умягченный оршанский лен",
+      "pattern": "однотонный "
+    },
+    "description": "прот",
+    "price": 8500,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1757413087/xddus0eeq7hs0jezak6t.jpg",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   }
 ]
