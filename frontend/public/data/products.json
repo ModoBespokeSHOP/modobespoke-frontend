@@ -61,5 +61,20 @@
       "S",
       "L"
     ]
+  },
+  {
+    "id": 1757415102122,
+    "title": "юбка [ Селяночка ]",
+    "shortSpecs": {
+      "color": "молочно - белый",
+      "material": "хлопок "
+    },
+    "description": "",
+    "price": 6900,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1757415101/fqcbch5munkkazn24rhh.jpg",
+    "sizes": [
+      "S",
+      "L"
+    ]
   }
 ]
