@@ -76,5 +76,20 @@
       "S",
       "L"
     ]
+  },
+  {
+    "id": 1757416540560,
+    "title": "кимоно [ Восточный экспресс ]",
+    "shortSpecs": {
+      "color": "горячий песок",
+      "material": "премиум вискоза",
+      "pattern": "восточный орнамент"
+    },
+    "description": "оип",
+    "price": 11200,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1757416539/hxesizfaripe4skafnf4.jpg",
+    "sizes": [
+      "M"
+    ]
   }
 ]
