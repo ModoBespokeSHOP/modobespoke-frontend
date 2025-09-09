@@ -45,5 +45,21 @@
       "M",
       "L"
     ]
+  },
+  {
+    "id": 1757413556408,
+    "title": "винтажная рубашка MONTANA",
+    "shortSpecs": {
+      "color": "деним",
+      "material": "сорочечный джинс",
+      "pattern": "однотонный"
+    },
+    "description": "ипаи",
+    "price": 6900,
+    "image": "https://res.cloudinary.com/dtmzw1wea/image/upload/v1757413555/ffcbv23esxc932vefwq3.jpg",
+    "sizes": [
+      "S",
+      "L"
+    ]
   }
 ]
