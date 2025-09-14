@@ -1,10 +1,10 @@
-/* === components/ProductGrid.module.css === */
+/* components/ProductGrid.module.css */
 .grid {
   display: grid;
   /* три колонки равной ширины */
   grid-template-columns: repeat(3, 1fr);
   /* промежутки между карточками, можно переопределять */
-  gap: var(--grid-gap, 12px);
+  gap: var(--grid-gap, 4px);
   /* ограничиваем максимальную ширину и центрируем */
   max-width: var(--grid-max-width, 1200px);
   margin: 0 auto;
@@ -14,7 +14,7 @@
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 4px;
     padding: 0 0px;
   }
 

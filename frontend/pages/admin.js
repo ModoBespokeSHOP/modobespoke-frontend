@@ -1,3 +1,4 @@
+// pages/admin.js
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -31,11 +32,11 @@ export default function AdminPage() {
     shortSpecs: {},
     description: "",
     price: "",
-    image: "",
+    images: [], // Массив URLs
     sizes: [],
-    _file: null,
+    _files: [], // Массив новых файлов для загрузки
   });
-  const [preview, setPreview] = useState("");
+  const [previews, setPreviews] = useState([]); // Массив {src: string, type: 'existing' | 'new'}
   const [loading, setLoading] = useState(false);
 
   // --- Promo codes state ---
@@ -111,11 +112,33 @@ export default function AdminPage() {
       };
     });
   }
-  function handleFile(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    setForm((f) => ({ ...f, _file: file }));
-    setPreview(URL.createObjectURL(file));
+  function handleFiles(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const newFiles = [...form._files, ...files];
+    setForm((f) => ({ ...f, _files: newFiles }));
+    const newPreviews = files.map((file) => ({
+      src: URL.createObjectURL(file),
+      type: "new",
+    }));
+    setPreviews((p) => [...p, ...newPreviews]);
+  }
+
+  function handleDeletePreview(idx) {
+    const item = previews[idx];
+    if (item.type === "existing") {
+      const newImages = form.images.filter((url) => url !== item.src);
+      setForm((f) => ({ ...f, images: newImages }));
+    } else {
+      // Calculate index in _files: idx - number of existing
+      const existingCount = previews.filter(
+        (p) => p.type === "existing"
+      ).length;
+      const fileIdx = idx - existingCount;
+      const newFiles = form._files.filter((_, i) => i !== fileIdx);
+      setForm((f) => ({ ...f, _files: newFiles }));
+    }
+    setPreviews((p) => p.filter((_, i) => i !== idx));
   }
 
   async function handlePublish(e) {
@@ -123,21 +146,23 @@ export default function AdminPage() {
     setLoading(true);
     setMessage("");
     try {
-      let imageUrl = form.image;
-      if (form._file) {
-        const fd = new FormData();
-        fd.append("file", form._file);
-        fd.append(
-          "upload_preset",
-          process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
-        );
-        const res = await fetch(
-          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-          { method: "POST", body: fd }
-        );
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error?.message || "Upload failed");
-        imageUrl = json.secure_url;
+      let imageUrls = [...form.images]; // Существующие URLs
+      if (form._files.length > 0) {
+        for (const file of form._files) {
+          const fd = new FormData();
+          fd.append("file", file);
+          fd.append(
+            "upload_preset",
+            process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+          );
+          const res = await fetch(
+            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            { method: "POST", body: fd }
+          );
+          const json = await res.json();
+          if (!res.ok) throw new Error(json.error?.message || "Upload failed");
+          imageUrls.push(json.secure_url);
+        }
       }
       const newProduct = {
         id: form.id ?? Date.now(),
@@ -145,7 +170,7 @@ export default function AdminPage() {
         shortSpecs: form.shortSpecs,
         description: form.description,
         price: Number(form.price),
-        image: imageUrl,
+        images: imageUrls, // Массив
         sizes: form.sizes,
       };
       const updated = form.id
@@ -165,11 +190,11 @@ export default function AdminPage() {
         shortSpecs: {},
         description: "",
         price: "",
-        image: "",
+        images: [],
         sizes: [],
-        _file: null,
+        _files: [],
       });
-      setPreview("");
+      setPreviews([]);
       setMessage("Товар сохранён");
     } catch (err) {
       console.error(err);
@@ -180,17 +205,18 @@ export default function AdminPage() {
   }
 
   function handleEdit(p) {
+    const images = p.images || (p.image ? [p.image] : []);
     setForm({
       id: p.id,
       title: p.title,
       shortSpecs: p.shortSpecs || {},
       description: p.description,
       price: p.price,
-      image: p.image,
+      images: images, // Совместимость со старыми данными
       sizes: p.sizes || [],
-      _file: null,
+      _files: [],
     });
-    setPreview(p.image);
+    setPreviews(images.map((url) => ({ src: url, type: "existing" })));
     setMessage("");
   }
 
@@ -425,12 +451,32 @@ export default function AdminPage() {
               </div>
             </div>
             <label>
-              Изображение
-              <input type="file" accept="image/*" onChange={handleFile} />
+              Изображения (можно несколько)
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFiles}
+              />
             </label>
-            {preview && (
+            {previews.length > 0 && (
               <div className={styles.previewWrapper}>
-                <img src={preview} className={styles.preview} alt="preview" />
+                {previews.map((prev, idx) => (
+                  <div key={idx} className={styles.previewItem}>
+                    <img
+                      src={prev.src}
+                      className={styles.preview}
+                      alt={`preview ${idx}`}
+                    />
+                    <button
+                      type="button"
+                      className={styles.deleteImageBtn}
+                      onClick={() => handleDeletePreview(idx)}
+                    >
+                      x
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
             <button type="submit" disabled={loading}>
@@ -449,7 +495,7 @@ export default function AdminPage() {
             ) : (
               products.map((p) => (
                 <div key={p.id} className={styles.listItem}>
-                  <img src={p.image} alt={p.title} />
+                  <img src={p.images?.[0] || p.image} alt={p.title} />
                   <div>
                     <strong>{p.title}</strong>
                     <div>{p.price}₽</div>

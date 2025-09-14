@@ -1,3 +1,4 @@
+/* components/ProductCard.module.css */
 /* === ProductCard.Module.css Карточка товара (Секция) === */
 .card {
   background: #fff;
@@ -30,15 +31,19 @@
 
 .cardTitle {
   margin: 0;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: bold;
   color: #333;
+  letter-spacing: 0;
+  line-height: 1.2;
 }
 
 .cardPrice {
-  margin: 4px 0 0;
-  font-size: 16px;
-  font-weight: bold;
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
 }
 
 /* === Модалка === */
@@ -312,5 +317,71 @@
     padding: 12px;
     font-size: 16px;
     margin-top: 6px;
+  }
+}
+
+/* Карусель в модалке */
+.modalImage {
+  position: relative; /* Для позиционирования кнопок */
+}
+
+.prevBtn,
+.nextBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border: none;
+  font-size: 32px;
+  padding: 10px 20px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.prevBtn {
+  left: 10px;
+}
+
+.nextBtn {
+  right: 10px;
+}
+
+.dotsContainer {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.dot.active {
+  background: #fff;
+}
+
+@media (max-width: 768px) {
+  .prevBtn,
+  .nextBtn {
+    font-size: 28px;
+    padding: 8px 16px;
+  }
+
+  .dotsContainer {
+    bottom: 5px;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
   }
 }

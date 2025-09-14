@@ -24,6 +24,11 @@ export default function Home() {
         const normalized = arr.map((item) => ({
           ...item,
           sizes: Array.isArray(item.sizes) ? item.sizes : [],
+          images: Array.isArray(item.images)
+            ? item.images
+            : item.image
+            ? [item.image]
+            : [], // Совместимость
         }));
         setProducts(normalized);
       })

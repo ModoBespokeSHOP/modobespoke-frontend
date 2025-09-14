@@ -1,4 +1,4 @@
-/* frontend/components/ProductCard.js */
+// components/ProductCard.js
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./ProductCard.module.css";
@@ -12,6 +12,9 @@ const SPEC_LABELS = {
 export default function ProductCard({ product = {}, onAddToCart }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); // Для карусели
+
+  const images = product.images || (product.image ? [product.image] : []); // Совместимость
 
   const handleOpen = () => setIsModalOpen(true);
   const handleClose = () => setIsModalOpen(false);
@@ -20,13 +23,25 @@ export default function ProductCard({ product = {}, onAddToCart }) {
     handleClose();
   };
 
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+  };
+
+  const handleDotClick = (index) => {
+    setCurrentImageIndex(index);
+  };
+
   return (
     <>
       <div className={styles.card} onClick={handleOpen}>
         <div className={styles.imageContainer}>
           <Image
             className={styles.cardImage}
-            src={product.image}
+            src={images[0] || "/placeholder.jpg"} // Первое фото
             alt={product.title}
             fill
             sizes="100vw"
@@ -51,11 +66,32 @@ export default function ProductCard({ product = {}, onAddToCart }) {
 
             <div className={styles.modalImage}>
               <Image
-                src={product.image}
-                alt={product.title}
+                src={images[currentImageIndex]}
+                alt={`${product.title} ${currentImageIndex + 1}`}
                 layout="fill"
                 objectFit="cover"
               />
+              {images.length > 1 && (
+                <>
+                  <button className={styles.prevBtn} onClick={handlePrevImage}>
+                    ‹
+                  </button>
+                  <button className={styles.nextBtn} onClick={handleNextImage}>
+                    ›
+                  </button>
+                  <div className={styles.dotsContainer}>
+                    {images.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`${styles.dot} ${
+                          index === currentImageIndex ? styles.active : ""
+                        }`}
+                        onClick={() => handleDotClick(index)}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className={styles.modalDetails}>
