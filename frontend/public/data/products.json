@@ -1,1 +1,21 @@
-[]
+[
+  {
+    "id": 1757878550426,
+    "title": "куртка WJ",
+    "shortSpecs": {
+      "color": "хаки",
+      "material": "хлопок"
+    },
+    "description": "тпа",
+    "price": 9000,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1757878537/zyfk054g52z6zz0n9tga.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1757878549/rm3fp18hev8ubistldlv.jpg"
+    ],
+    "sizes": [
+      "S",
+      "L",
+      "M"
+    ]
+  }
+]
