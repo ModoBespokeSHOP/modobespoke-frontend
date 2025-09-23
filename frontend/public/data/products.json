@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": 1758641129524,
+    "title": "Платье",
+    "shortSpecs": {
+      "color": "тест",
+      "material": "тест",
+      "pattern": "тест"
+    },
+    "description": "тест",
+    "price": 4000,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758641128/rdhy7hwt0eyyy9iavput.jpg"
+    ],
+    "sizes": [
+      "XS"
+    ]
+  }
+]

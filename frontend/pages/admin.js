@@ -62,14 +62,20 @@ export default function AdminPage() {
     fetch("/api/products")
       .then((r) => r.json())
       .then((data) => setProducts(Array.isArray(data) ? data : data.data || []))
-      .catch(console.error);
+      .catch((err) => {
+        console.error("Ошибка загрузки продуктов:", err);
+        setMessage("Ошибка загрузки продуктов: " + err.message);
+      });
 
     fetch("/api/promocodes")
       .then((r) => r.json())
       .then((data) =>
         setPromocodes(Array.isArray(data) ? data : data.data || [])
       )
-      .catch(console.error);
+      .catch((err) => {
+        console.error("Ошибка загрузки промокодов:", err);
+        setPromoMessage("Ошибка загрузки промокодов: " + err.message);
+      });
   }, [authorized]);
 
   // Handlers for auth
@@ -83,10 +89,14 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Ошибка авторизации");
+      }
       setAuthorized(true);
-    } catch {
-      setAuthError("Неверный пароль");
+    } catch (err) {
+      console.error("Ошибка авторизации:", err);
+      setAuthError(err.message || "Неверный пароль");
     } finally {
       setLoadingAuth(false);
     }
@@ -137,6 +147,7 @@ export default function AdminPage() {
       const fileIdx = idx - existingCount;
       const newFiles = form._files.filter((_, i) => i !== fileIdx);
       setForm((f) => ({ ...f, _files: newFiles }));
+      URL.revokeObjectURL(item.src); // Освобождаем память
     }
     setPreviews((p) => p.filter((_, i) => i !== idx));
   }
@@ -160,7 +171,10 @@ export default function AdminPage() {
             { method: "POST", body: fd }
           );
           const json = await res.json();
-          if (!res.ok) throw new Error(json.error?.message || "Upload failed");
+          if (!res.ok)
+            throw new Error(
+              json.error?.message || "Ошибка загрузки изображения"
+            );
           imageUrls.push(json.secure_url);
         }
       }
@@ -181,8 +195,10 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updated),
       });
-      if (!save.ok)
-        throw new Error((await save.json()).message || "Save failed");
+      if (!save.ok) {
+        const errorData = await save.json();
+        throw new Error(errorData.message || "Ошибка сохранения");
+      }
       setProducts(updated);
       setForm({
         id: null,
@@ -194,11 +210,20 @@ export default function AdminPage() {
         sizes: [],
         _files: [],
       });
+      // Освобождаем все previews
+      previews.forEach((prev) => {
+        if (prev.type === "new") URL.revokeObjectURL(prev.src);
+      });
       setPreviews([]);
       setMessage("Товар сохранён");
     } catch (err) {
-      console.error(err);
-      setMessage("Ошибка: " + err.message);
+      console.error("Полная ошибка в handlePublish:", err);
+      setMessage(
+        "Ошибка: " +
+          (err.message || "Неизвестная ошибка") +
+          ". Детали: " +
+          JSON.stringify(err)
+      );
     } finally {
       setLoading(false);
     }
@@ -221,14 +246,23 @@ export default function AdminPage() {
   }
 
   async function handleDeleteProduct(id) {
-    const updated = products.filter((p) => p.id !== id);
-    await fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-    setProducts(updated);
-    setMessage("Товар удалён");
+    try {
+      const updated = products.filter((p) => p.id !== id);
+      const save = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      if (!save.ok) {
+        const errorData = await save.json();
+        throw new Error(errorData.message || "Ошибка удаления");
+      }
+      setProducts(updated);
+      setMessage("Товар удалён");
+    } catch (err) {
+      console.error("Ошибка удаления продукта:", err);
+      setMessage("Ошибка удаления: " + err.message);
+    }
   }
 
   // Handlers for promo codes
@@ -259,8 +293,10 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updated),
       });
-      if (!save.ok)
-        throw new Error((await save.json()).message || "Save failed");
+      if (!save.ok) {
+        const errorData = await save.json();
+        throw new Error(errorData.message || "Ошибка сохранения");
+      }
       setPromocodes(updated);
       setPromoForm({
         id: null,
@@ -270,8 +306,13 @@ export default function AdminPage() {
       });
       setPromoMessage("Промокод сохранён");
     } catch (err) {
-      console.error(err);
-      setPromoMessage("Ошибка: " + err.message);
+      console.error("Полная ошибка в handlePublishPromo:", err);
+      setPromoMessage(
+        "Ошибка: " +
+          (err.message || "Неизвестная ошибка") +
+          ". Детали: " +
+          JSON.stringify(err)
+      );
     } finally {
       setPromoLoading(false);
     }
@@ -288,14 +329,23 @@ export default function AdminPage() {
   }
 
   async function handleDeletePromo(id) {
-    const updated = promocodes.filter((p) => p.id !== id);
-    await fetch("/api/promocodes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-    setPromocodes(updated);
-    setPromoMessage("Промокод удалён");
+    try {
+      const updated = promocodes.filter((p) => p.id !== id);
+      const save = await fetch("/api/promocodes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      if (!save.ok) {
+        const errorData = await save.json();
+        throw new Error(errorData.message || "Ошибка удаления");
+      }
+      setPromocodes(updated);
+      setPromoMessage("Промокод удалён");
+    } catch (err) {
+      console.error("Ошибка удаления промокода:", err);
+      setPromoMessage("Ошибка удаления: " + err.message);
+    }
   }
 
   function openDeleteModal(id, type) {

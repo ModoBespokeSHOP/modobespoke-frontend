@@ -1,13 +1,14 @@
+// /api/products.js
 import fs from "node:fs";
 import path from "node:path";
 
 export default async function handler(req, res) {
-  // в продакшене (NODE_ENV=production на Vercel) читаем/пишем в GitHub, иначе — локально
+  // В продакшене (NODE_ENV=production на Vercel) читаем/пишем в GitHub, иначе — локально
   const isProd =
     process.env.NODE_ENV === "production" &&
     Boolean(process.env.GITHUB_TOKEN && process.env.GITHUB_REPO);
 
-  // На Vercel у вас корневая директория — это frontend/, так что public находится прямо под cwd
+  // Локальный путь к файлу
   const dataFile = path.join(process.cwd(), "public", "data", "products.json");
 
   if (req.method === "GET") {
@@ -16,9 +17,9 @@ export default async function handler(req, res) {
 
       if (isProd) {
         const token = process.env.GITHUB_TOKEN;
-        const repo = process.env.GITHUB_REPO; // "ModoBespokeSHOP/modobespoke-frontend"
+        const repo = process.env.GITHUB_REPO; // e.g., "ModoBespokeSHOP/modobespoke-frontend"
         const branch = process.env.GITHUB_BRANCH || "main";
-        // Здесь добавляем префикс frontend/ к пути
+        // Путь в репо с префиксом frontend/
         const apiUrl = `https://api.github.com/repos/${repo}/contents/frontend/public/data/products.json?ref=${branch}`;
 
         const apiRes = await fetch(apiUrl, {
@@ -28,13 +29,17 @@ export default async function handler(req, res) {
 
         if (!apiRes.ok) {
           console.error("GitHub GET error:", apiData);
-          throw new Error("Не удалось получить products.json из GitHub");
+          throw new Error(
+            `Не удалось получить products.json из GitHub: ${
+              apiData.message || "Неизвестная ошибка"
+            }`
+          );
         }
 
         const buffer = Buffer.from(apiData.content, "base64");
         products = JSON.parse(buffer.toString("utf-8"));
       } else {
-        // локальное чтение
+        // Локальное чтение
         const raw = fs.readFileSync(dataFile, "utf-8");
         products = JSON.parse(raw);
       }
@@ -44,7 +49,7 @@ export default async function handler(req, res) {
       console.error("GET /api/products error:", err);
       return res
         .status(500)
-        .json({ message: "Ошибка при чтении списка товаров" });
+        .json({ message: `Ошибка при чтении списка товаров: ${err.message}` });
     }
   }
 
@@ -57,7 +62,7 @@ export default async function handler(req, res) {
     }
 
     if (!isProd) {
-      // локально записываем в public/data
+      // Локально записываем в public/data
       try {
         fs.writeFileSync(dataFile, JSON.stringify(updated, null, 2), "utf-8");
         return res
@@ -67,11 +72,11 @@ export default async function handler(req, res) {
         console.error("POST /api/products write error:", err);
         return res
           .status(500)
-          .json({ message: "Ошибка записи локального файла" });
+          .json({ message: `Ошибка записи локального файла: ${err.message}` });
       }
     }
 
-    // в проде — коммитим файл в GitHub
+    // В проде — коммитим файл в GitHub
     try {
       const token = process.env.GITHUB_TOKEN;
       const repo = process.env.GITHUB_REPO;
@@ -85,7 +90,11 @@ export default async function handler(req, res) {
       const getData = await getRes.json();
       if (!getRes.ok) {
         console.error("GitHub GET SHA error:", getData);
-        throw new Error("Не удалось получить SHA файла");
+        throw new Error(
+          `Не удалось получить SHA файла: ${
+            getData.message || "Неизвестная ошибка"
+          }`
+        );
       }
       const sha = getData.sha;
 
@@ -109,9 +118,11 @@ export default async function handler(req, res) {
 
       if (!putRes.ok) {
         console.error("GitHub PUT error:", putData);
-        return res
-          .status(500)
-          .json({ message: "Ошибка при коммите изменений в GitHub" });
+        throw new Error(
+          `Ошибка при коммите изменений в GitHub: ${
+            putData.message || "Неизвестная ошибка"
+          }`
+        );
       }
 
       return res
@@ -121,11 +132,11 @@ export default async function handler(req, res) {
       console.error("POST /api/products GitHub error:", err);
       return res
         .status(500)
-        .json({ message: "Ошибка при сохранении в GitHub" });
+        .json({ message: `Ошибка при сохранении в GitHub: ${err.message}` });
     }
   }
 
-  // другие методы не поддерживаются
+  // Другие методы не поддерживаются
   res.setHeader("Allow", ["GET", "POST"]);
   res.status(405).end(`Method ${req.method} Not Allowed`);
 }
