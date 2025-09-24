@@ -162,5 +162,27 @@
       "S",
       "M"
     ]
+  },
+  {
+    "id": 1758718452225,
+    "title": "платье [ Сто дел и одно свидание ]",
+    "shortSpecs": {
+      "color": "цветы на молочном",
+      "material": "100% плательный хлопок"
+    },
+    "description": "ро",
+    "price": 7300,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718439/ajnt9gmpi9xkxypekeef.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718442/jyrseznxxo7kegl9wda0.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718446/xd1tzvdj0qpwx0rlpsq7.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718449/sq7jdcxjwk9edyclx6xj.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718451/ti5ektyslwxzxnpb00yp.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   }
 ]
