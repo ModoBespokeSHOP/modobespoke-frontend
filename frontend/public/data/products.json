@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": 1758714386755,
+    "title": "курка Worker's Jacket",
+    "shortSpecs": {
+      "color": " темно-синий",
+      "material": "хлопок,вискоза"
+    },
+    "description": "курка средней длины",
+    "price": 9000,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758714383/xzp7pifpb5unj5qxwuhm.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
+  }
+]
