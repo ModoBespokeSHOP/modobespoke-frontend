@@ -143,5 +143,24 @@
       "S",
       "M"
     ]
+  },
+  {
+    "id": 1758718310812,
+    "title": "платье Tango",
+    "shortSpecs": {
+      "color": "черный, белый, принт",
+      "material": "100% вискозный креп "
+    },
+    "description": "пр",
+    "price": 6950,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718305/hvcwe1a51d2dlgsdpbsj.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718307/gbhsiclda5nk1sc0berh.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718309/kkvkwyg5ckyihgagxwx4.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
