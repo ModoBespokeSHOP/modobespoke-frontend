@@ -65,5 +65,26 @@
       "S",
       "L"
     ]
+  },
+  {
+    "id": 1758717020127,
+    "title": "платье Rosemary maxi",
+    "shortSpecs": {
+      "color": "черный, шоколад, пыльная роза, чернильный, графит",
+      "material": "100% умягченный оршанский лён"
+    },
+    "description": "Легендарное платье, ставшее в 2020 году визиткой бренда. Уникальное, натуральное, отшиваемое из самых лучших материалов - самого мягкого белорусского льна с втавковй в воротничке из тонкого хлопкового кружева. ",
+    "price": 8500,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716903/erzv4kirlmupf8cigdvb.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716986/i1vvq3imeqwv8ozwxikj.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717019/rtr5nekmefqpqjvsdmfm.png"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ]
   }
 ]
