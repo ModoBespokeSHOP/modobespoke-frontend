@@ -106,5 +106,23 @@
       "L",
       "XL"
     ]
+  },
+  {
+    "id": 1758717911393,
+    "title": "платья Rosemary family look",
+    "shortSpecs": {
+      "color": "черный",
+      "material": "100% умягченный оршанский лён"
+    },
+    "description": "ро",
+    "price": 9500,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717910/zamm5tkjw49kfhdwdhaq.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   }
 ]
