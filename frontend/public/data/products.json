@@ -45,5 +45,25 @@
       "M",
       "L"
     ]
+  },
+  {
+    "id": 1758716249129,
+    "title": "рубашка Montana ",
+    "shortSpecs": {
+      "color": "голубой, хаки, комбинированный",
+      "material": "100% хлопок"
+    },
+    "description": "Винтажная рубашка из 100% хлопкового рубашечного джинса. Сложный крой и контрастная отстрочка придают рубашке уникальность. ",
+    "price": 6900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716243/bmhhytlk5gnozdhpzchh.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716244/avii0hlotongt2mtiwsj.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716246/h5sadcmot7ow22yaphba.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716248/eksr8aipr4sqcl7jo0wa.jpg"
+    ],
+    "sizes": [
+      "S",
+      "L"
+    ]
   }
 ]
