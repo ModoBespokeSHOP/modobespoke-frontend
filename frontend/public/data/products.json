@@ -21,5 +21,29 @@
       "M",
       "L"
     ]
+  },
+  {
+    "id": 1758715783756,
+    "title": "жакет Авантюристка",
+    "shortSpecs": {
+      "color": "белый, черный, лео",
+      "material": "100% хлопковый бархат"
+    },
+    "description": "Приталенный жакет с баской с пуговицами на ножке и воздушными петлями. Жакет плотно прилегает к телу, подчеркивая талию. Глубокий фигурный вырез, подчеркивает красоту шеи и ключиц. ",
+    "price": 7300,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715763/vhtnopznjixk7kfjs43d.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715768/jdoj3kl99nrcfggj1w9h.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715773/qsqc4f4v2jp0kjc3n6ua.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715775/kub0v2mumx2y3xqf5fvq.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715778/zneyrzx2jp9rwjyhoaor.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715780/iqgqxpvcyk7qx978exyt.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715783/loeehpz9udormhynweug.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   }
 ]
