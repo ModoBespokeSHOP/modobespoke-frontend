@@ -117,7 +117,9 @@
     "description": "ро",
     "price": 9500,
     "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717910/zamm5tkjw49kfhdwdhaq.jpg"
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717910/zamm5tkjw49kfhdwdhaq.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717962/bdmff3mdzplcjunsi3to.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717964/q7ti6iu7rlrmft25g92s.jpg"
     ],
     "sizes": [
       "S",
