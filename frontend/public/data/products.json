@@ -285,5 +285,25 @@
       "S",
       "M"
     ]
+  },
+  {
+    "id": 1758799813750,
+    "title": "платье [Ушла по-английски]",
+    "shortSpecs": {
+      "color": "черный",
+      "material": "100% хлопковый трикотаж ( плотный ))"
+    },
+    "description": "ро",
+    "price": 6900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799809/oamwfak3zuruu0yl2ywy.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799810/qpass4yjtic1m1y3vx4i.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799812/bvsldrgknipstfm4ha5y.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799812/t0suhfhyk41qnhy6iwwc.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
