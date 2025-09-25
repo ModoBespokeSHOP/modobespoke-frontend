@@ -268,5 +268,22 @@
       "M",
       "L"
     ]
+  },
+  {
+    "id": 1758799709188,
+    "title": "платье",
+    "shortSpecs": {},
+    "description": "",
+    "price": 6750,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799701/a7q8hpafs1rsxvrowl57.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799704/bbtqwot8i6wtdf5cisrz.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799707/h72pun6lqwpou72naij3.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799708/cpz8arkzfn884apudqil.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
