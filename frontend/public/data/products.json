@@ -305,5 +305,24 @@
       "S",
       "M"
     ]
+  },
+  {
+    "id": 1758799933089,
+    "title": "платье-майка",
+    "shortSpecs": {
+      "color": "серый меланж",
+      "material": "100% хлопковый трикотаж"
+    },
+    "description": "мр",
+    "price": 5900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799930/vjtkmkblmpbtx1zgn7z3.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799931/zanhbfums51cvohfybmc.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799932/f7tmp5lommu0lkh8fnnz.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
