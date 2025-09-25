@@ -265,5 +265,26 @@
       "M",
       "L"
     ]
+  },
+  {
+    "id": 1758799537385,
+    "title": "платье Blanche",
+    "shortSpecs": {
+      "color": "в ассортименте",
+      "material": "100% хлопок, 100% вискоза"
+    },
+    "description": "рро",
+    "price": 6900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799533/g6wmqaki9351r4xbyt36.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799534/of3ehzwuggiqbxdz1i7q.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799535/kvgupnqm6jovst6yxzy9.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799536/mll2311wlnula0k2o3nz.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   }
 ]
