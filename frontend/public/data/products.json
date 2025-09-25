@@ -224,5 +224,25 @@
       "S",
       "M"
     ]
+  },
+  {
+    "id": 1758798796926,
+    "title": "платье Fiji",
+    "shortSpecs": {
+      "color": "черный, белый, голубой, пыльная роза, фуксия, персик",
+      "material": "100% умягченный оршанский лён"
+    },
+    "description": "Платье свободного кроя в размере onesize",
+    "price": 7900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798792/ntc1i73j8kku0gf63bhh.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798794/rjg4fwrkd7ep4szwydo7.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798796/igva6k4aym6w5uqpeinj.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   }
 ]
