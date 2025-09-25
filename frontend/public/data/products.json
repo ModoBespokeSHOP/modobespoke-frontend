@@ -183,5 +183,23 @@
       "M",
       "L"
     ]
+  },
+  {
+    "id": 1758796553770,
+    "title": "стеганая куртка",
+    "shortSpecs": {
+      "color": "молочный",
+      "pattern": "цветы, leo ",
+      "material": "основа - 100% теплый хлопок, шерстипон, подклад - 100% хлопок премиум"
+    },
+    "description": "стеганая",
+    "price": 11700,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758796552/aerrvkvrcyh6bhpssysi.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
