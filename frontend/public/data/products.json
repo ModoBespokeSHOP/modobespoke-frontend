@@ -324,5 +324,25 @@
       "S",
       "M"
     ]
+  },
+  {
+    "id": 1758800189897,
+    "title": "set платье-майка и кардиган",
+    "shortSpecs": {
+      "color": "серый меланж",
+      "material": "100% хлопковый трикотаж"
+    },
+    "description": "ири",
+    "price": 7900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758800181/eipqzfhx0kgvzrvnm7i4.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758800183/jehfvckiqrlgicj63dnu.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758800186/uchloyujxxqkus6dum7k.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758800189/co1elvs9qyemsux0llad.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
