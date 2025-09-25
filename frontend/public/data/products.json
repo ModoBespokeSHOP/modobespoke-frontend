@@ -201,5 +201,22 @@
       "S",
       "M"
     ]
+  },
+  {
+    "id": 1758796838295,
+    "title": "куртка ",
+    "shortSpecs": {
+      "color": "зеленый, сиреневый ",
+      "material": "эко мех под овчину"
+    },
+    "description": "пррт",
+    "price": 7900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758796837/ozvvwst5xe91ieiufuyf.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
