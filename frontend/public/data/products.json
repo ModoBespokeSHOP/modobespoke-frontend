@@ -324,5 +324,24 @@
       "S",
       "M"
     ]
+  },
+  {
+    "id": 1758801332424,
+    "title": "лонгслив Cosy",
+    "shortSpecs": {
+      "color": "молочный, серый меланж",
+      "material": "100% хлопковый трикотаж"
+    },
+    "description": "рр",
+    "price": 3900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801327/yqtqnv741dzwbjzrfedb.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801329/kyiozdcls6ilejwt0jp0.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801331/bptkmac7usm2b9heolbq.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
