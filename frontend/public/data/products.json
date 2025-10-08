@@ -1,24 +1,5 @@
 [
   {
-    "id": 1758716249129,
-    "title": "рубашка Montana ",
-    "shortSpecs": {
-      "color": "голубой, хаки, комбинированный",
-      "material": "100% хлопок"
-    },
-    "description": "Винтажная рубашка из 100% хлопкового рубашечного джинса. Сложный крой, контрастная отстрочка и металлические пуговицы под золото придают рубашке уникальность. ",
-    "price": 6900,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716244/avii0hlotongt2mtiwsj.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716246/h5sadcmot7ow22yaphba.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716248/eksr8aipr4sqcl7jo0wa.jpg"
-    ],
-    "sizes": [
-      "S",
-      "L"
-    ]
-  },
-  {
     "id": 1758714386755,
     "title": "курка Worker's Jacket",
     "shortSpecs": {
@@ -35,153 +16,7 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715337/vu5udwjgwwywqtszqers.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715342/f6aben0or8s9v6jimpai.jpg"
     ],
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
-  },
-  {
-    "id": 1758717020127,
-    "title": "платье Rosemary maxi",
-    "shortSpecs": {
-      "color": "черный, шоколад, пыльная роза, чернильный, графит",
-      "material": "100% умягченный оршанский лён"
-    },
-    "description": "Легендарное платье, ставшее в 2020 году визиткой бренда. Уникальное, натуральное, отшиваемое из самых лучших материалов - самого мягкого белорусского льна с вставкой в воротничке из тонкого хлопкового кружева. \n\nДлина платья ( по умолчанию ) - 120 см. При заказе Вы можете уточнить Вашу комфортную длину. Мы учтем ее при пошиве. ",
-    "price": 8500,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716903/erzv4kirlmupf8cigdvb.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716986/i1vvq3imeqwv8ozwxikj.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717019/rtr5nekmefqpqjvsdmfm.png"
-    ],
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ]
-  },
-  {
-    "id": 1758717353792,
-    "title": "платье Rosemary mini ",
-    "shortSpecs": {
-      "color": "черный, шоколад, пыльная роза, графит, чернильный",
-      "material": "100% умягченный оршанский лён"
-    },
-    "description": "",
-    "price": 7900,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717347/eqqslkfgkshslqt9mxnr.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717352/tgcnibdnxcp922ctshag.jpg"
-    ],
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ]
-  },
-  {
-    "id": 1758717911393,
-    "title": "платья Rosemary family look",
-    "shortSpecs": {
-      "color": "черный",
-      "material": "100% умягченный оршанский лён"
-    },
-    "description": "ро",
-    "price": 9500,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717910/zamm5tkjw49kfhdwdhaq.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717962/bdmff3mdzplcjunsi3to.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717964/q7ti6iu7rlrmft25g92s.jpg"
-    ],
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
-  },
-  {
-    "id": 1758718217112,
-    "title": "брюки палаццо [ Мягкая сила ]",
-    "shortSpecs": {
-      "color": "черный, терракот, молоко, нуга",
-      "material": "100% крапива ( ramie ) "
-    },
-    "description": "gh",
-    "price": 6900,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798820/rojhzgtrtlclx4m1okuv.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798821/ll2qgjix1slsz8oti0s1.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798822/e9ia0bd6qyvfrblcnjst.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798823/swkycticerimyyne6azv.jpg"
-    ],
-    "sizes": [
-      "S",
-      "M"
-    ]
-  },
-  {
-    "id": 1758718310812,
-    "title": "платье Tango",
-    "shortSpecs": {
-      "color": "черный, белый, принт",
-      "material": "100% вискозный креп "
-    },
-    "description": "пр",
-    "price": 6950,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718305/hvcwe1a51d2dlgsdpbsj.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718307/gbhsiclda5nk1sc0berh.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718309/kkvkwyg5ckyihgagxwx4.jpg"
-    ],
-    "sizes": [
-      "S",
-      "M"
-    ]
-  },
-  {
-    "id": 1758718452225,
-    "title": "платье [ Сто дел и одно свидание ]",
-    "shortSpecs": {
-      "color": "цветы на молочном",
-      "material": "100% плательный хлопок"
-    },
-    "description": "ро",
-    "price": 7300,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718439/ajnt9gmpi9xkxypekeef.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718442/jyrseznxxo7kegl9wda0.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718446/xd1tzvdj0qpwx0rlpsq7.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718449/sq7jdcxjwk9edyclx6xj.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718451/ti5ektyslwxzxnpb00yp.jpg"
-    ],
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
-  },
-  {
-    "id": 1758796553770,
-    "title": "стеганая куртка",
-    "shortSpecs": {
-      "color": "молочный",
-      "pattern": "цветы, leo ",
-      "material": "основа - 100% теплый хлопок, шерстипон, подклад - 100% хлопок премиум"
-    },
-    "description": "стеганая",
-    "price": 11700,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801185/h1xhvo7yq38mihzpdaov.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801193/htiqoqtkohm2mtmwniv1.png",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801196/yqo1ecaxq84ehfz0ntez.png"
-    ],
-    "sizes": [
-      "S",
-      "M"
-    ]
+    "sizes": ["S", "M", "L"]
   },
   {
     "id": 1758715783756,
@@ -201,11 +36,138 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715780/iqgqxpvcyk7qx978exyt.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715783/loeehpz9udormhynweug.jpg"
     ],
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
+    "sizes": ["S", "M", "L"]
+  },
+  {
+    "id": 1758716249129,
+    "title": "рубашка Montana ",
+    "shortSpecs": {
+      "color": "голубой, хаки, комбинированный",
+      "material": "100% хлопок"
+    },
+    "description": "Винтажная рубашка из 100% хлопкового рубашечного джинса. Сложный крой, контрастная отстрочка и металлические пуговицы под золото придают рубашке уникальность. ",
+    "price": 6900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716244/avii0hlotongt2mtiwsj.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716246/h5sadcmot7ow22yaphba.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716248/eksr8aipr4sqcl7jo0wa.jpg"
+    ],
+    "sizes": ["S", "L"]
+  },
+  {
+    "id": 1758717020127,
+    "title": "платье Rosemary maxi",
+    "shortSpecs": {
+      "color": "черный, шоколад, пыльная роза, чернильный, графит",
+      "material": "100% умягченный оршанский лён"
+    },
+    "description": "Легендарное платье, ставшее в 2020 году визиткой бренда. Уникальное, натуральное, отшиваемое из самых лучших материалов - самого мягкого белорусского льна с вставкой в воротничке из тонкого хлопкового кружева. \n\nДлина платья ( по умолчанию ) - 120 см. При заказе Вы можете уточнить Вашу комфортную длину. Мы учтем ее при пошиве. ",
+    "price": 8500,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716903/erzv4kirlmupf8cigdvb.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716986/i1vvq3imeqwv8ozwxikj.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717019/rtr5nekmefqpqjvsdmfm.png"
+    ],
+    "sizes": ["S", "M", "L", "XL"]
+  },
+  {
+    "id": 1758717353792,
+    "title": "платье Rosemary mini ",
+    "shortSpecs": {
+      "color": "черный, шоколад, пыльная роза, графит, чернильный",
+      "material": "100% умягченный оршанский лён"
+    },
+    "description": "",
+    "price": 7900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717347/eqqslkfgkshslqt9mxnr.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717352/tgcnibdnxcp922ctshag.jpg"
+    ],
+    "sizes": ["S", "M", "L", "XL"]
+  },
+  {
+    "id": 1758717911393,
+    "title": "платья Rosemary family look",
+    "shortSpecs": {
+      "color": "черный",
+      "material": "100% умягченный оршанский лён"
+    },
+    "description": "ро",
+    "price": 9500,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717910/zamm5tkjw49kfhdwdhaq.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717962/bdmff3mdzplcjunsi3to.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717964/q7ti6iu7rlrmft25g92s.jpg"
+    ],
+    "sizes": ["S", "M", "L"]
+  },
+  {
+    "id": 1758718217112,
+    "title": "брюки палаццо [ Мягкая сила ]",
+    "shortSpecs": {
+      "color": "черный, терракот, молоко, нуга",
+      "material": "100% крапива ( ramie ) "
+    },
+    "description": "gh",
+    "price": 6900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798820/rojhzgtrtlclx4m1okuv.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798821/ll2qgjix1slsz8oti0s1.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798822/e9ia0bd6qyvfrblcnjst.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798823/swkycticerimyyne6azv.jpg"
+    ],
+    "sizes": ["S", "M"]
+  },
+  {
+    "id": 1758718310812,
+    "title": "платье Tango",
+    "shortSpecs": {
+      "color": "черный, белый, принт",
+      "material": "100% вискозный креп "
+    },
+    "description": "пр",
+    "price": 6950,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718305/hvcwe1a51d2dlgsdpbsj.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718307/gbhsiclda5nk1sc0berh.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718309/kkvkwyg5ckyihgagxwx4.jpg"
+    ],
+    "sizes": ["S", "M"]
+  },
+  {
+    "id": 1758718452225,
+    "title": "платье [ Сто дел и одно свидание ]",
+    "shortSpecs": {
+      "color": "цветы на молочном",
+      "material": "100% плательный хлопок"
+    },
+    "description": "ро",
+    "price": 7300,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718439/ajnt9gmpi9xkxypekeef.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718442/jyrseznxxo7kegl9wda0.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718446/xd1tzvdj0qpwx0rlpsq7.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718449/sq7jdcxjwk9edyclx6xj.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718451/ti5ektyslwxzxnpb00yp.jpg"
+    ],
+    "sizes": ["S", "M", "L"]
+  },
+  {
+    "id": 1758796553770,
+    "title": "стеганая куртка",
+    "shortSpecs": {
+      "color": "молочный",
+      "pattern": "цветы, leo ",
+      "material": "основа - 100% теплый хлопок, шерстипон, подклад - 100% хлопок премиум"
+    },
+    "description": "стеганая",
+    "price": 11700,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801185/h1xhvo7yq38mihzpdaov.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801193/htiqoqtkohm2mtmwniv1.png",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801196/yqo1ecaxq84ehfz0ntez.png"
+    ],
+    "sizes": ["S", "M"]
   },
   {
     "id": 1758796838295,
@@ -223,10 +185,7 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801233/byv4mgyprmgdnjcwusos.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801234/sexj6cumljnik5zpepgj.jpg"
     ],
-    "sizes": [
-      "S",
-      "M"
-    ]
+    "sizes": ["S", "M"]
   },
   {
     "id": 1758798796926,
@@ -242,11 +201,7 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798794/rjg4fwrkd7ep4szwydo7.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798796/igva6k4aym6w5uqpeinj.jpg"
     ],
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
+    "sizes": ["S", "M", "L"]
   },
   {
     "id": 1758799537385,
@@ -263,11 +218,21 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799535/kvgupnqm6jovst6yxzy9.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799536/mll2311wlnula0k2o3nz.jpg"
     ],
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ]
+    "sizes": ["S", "M", "L"]
+  },
+  {
+    "id": 1758799709188,
+    "title": "платье",
+    "shortSpecs": {},
+    "description": "",
+    "price": 6750,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799701/a7q8hpafs1rsxvrowl57.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799704/bbtqwot8i6wtdf5cisrz.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799707/h72pun6lqwpou72naij3.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799708/cpz8arkzfn884apudqil.jpg"
+    ],
+    "sizes": ["S", "M"]
   },
   {
     "id": 1758799813750,
@@ -284,46 +249,7 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799812/t0suhfhyk41qnhy6iwwc.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799853/azsvmxdmciigkglrr08a.jpg"
     ],
-    "sizes": [
-      "S",
-      "M"
-    ]
-  },
-  {
-    "id": 1758799709188,
-    "title": "платье",
-    "shortSpecs": {},
-    "description": "",
-    "price": 6750,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799701/a7q8hpafs1rsxvrowl57.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799704/bbtqwot8i6wtdf5cisrz.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799707/h72pun6lqwpou72naij3.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799708/cpz8arkzfn884apudqil.jpg"
-    ],
-    "sizes": [
-      "S",
-      "M"
-    ]
-  },
-  {
-    "id": 1758801332424,
-    "title": "лонгслив Cosy",
-    "shortSpecs": {
-      "color": "молочный, серый меланж",
-      "material": "100% хлопковый трикотаж"
-    },
-    "description": "рр",
-    "price": 3900,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801327/yqtqnv741dzwbjzrfedb.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801329/kyiozdcls6ilejwt0jp0.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801331/bptkmac7usm2b9heolbq.jpg"
-    ],
-    "sizes": [
-      "S",
-      "M"
-    ]
+    "sizes": ["S", "M"]
   },
   {
     "id": 1758799933089,
@@ -339,9 +265,22 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799931/zanhbfums51cvohfybmc.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799932/f7tmp5lommu0lkh8fnnz.jpg"
     ],
-    "sizes": [
-      "S",
-      "M"
-    ]
+    "sizes": ["S", "M"]
+  },
+  {
+    "id": 1758801332424,
+    "title": "лонгслив Cosy",
+    "shortSpecs": {
+      "color": "молочный, серый меланж",
+      "material": "100% хлопковый трикотаж"
+    },
+    "description": "рр",
+    "price": 3900,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801327/yqtqnv741dzwbjzrfedb.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801329/kyiozdcls6ilejwt0jp0.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801331/bptkmac7usm2b9heolbq.jpg"
+    ],
+    "sizes": ["S", "M"]
   }
 ]
