@@ -55,6 +55,15 @@ export default function AdminPage() {
   const [deleteType, setDeleteType] = useState(null); // 'product' or 'promo'
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // --- State for position inputs ---
+  const [positionInputs, setPositionInputs] = useState({}); // { productId: newPosition }
+
+  // --- Modal state for move confirmation ---
+  const [toMoveId, setToMoveId] = useState(null);
+  const [moveType, setMoveType] = useState(null); // 'up', 'down', 'set'
+  const [moveNewPos, setMoveNewPos] = useState(null);
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+
   // Fetch products and promocodes once authorized
   useEffect(() => {
     if (!authorized) return;
@@ -265,6 +274,112 @@ export default function AdminPage() {
     }
   }
 
+  // Функция для сохранения продуктов на сервер (общая, чтобы не дублировать код)
+  async function saveProducts(updatedProducts) {
+    try {
+      const save = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedProducts),
+      });
+      if (!save.ok) {
+        const errorData = await save.json();
+        throw new Error(errorData.message || "Ошибка сохранения порядка");
+      }
+      setProducts(updatedProducts);
+      setMessage("Порядок сохранён");
+      // Сбросить inputs после сохранения
+      setPositionInputs({});
+    } catch (err) {
+      console.error("Ошибка сохранения продуктов:", err);
+      setMessage("Ошибка сохранения: " + err.message);
+    }
+  }
+
+  // Открытие модалки для подтверждения перемещения
+  function openMoveModal(id, type, newPos = null) {
+    setToMoveId(id);
+    setMoveType(type);
+    setMoveNewPos(newPos);
+    setIsMoveModalOpen(true);
+  }
+
+  function closeMoveModal() {
+    setToMoveId(null);
+    setMoveType(null);
+    setMoveNewPos(null);
+    setIsMoveModalOpen(false);
+  }
+
+  async function confirmMove() {
+    const id = toMoveId;
+    const type = moveType;
+    const newPos = moveNewPos;
+
+    if (type === "up") {
+      await handleMoveUp(id);
+    } else if (type === "down") {
+      await handleMoveDown(id);
+    } else if (type === "set") {
+      await handleSetPosition(id, newPos);
+    }
+    closeMoveModal();
+  }
+
+  // Перемещение товара вверх (с подтверждением)
+  function prepareMoveUp(id) {
+    openMoveModal(id, "up");
+  }
+
+  // Перемещение товара вниз (с подтверждением)
+  function prepareMoveDown(id) {
+    openMoveModal(id, "down");
+  }
+
+  // Применение новой позиции (с подтверждением)
+  function prepareSetPosition(id) {
+    const newPos = parseInt(positionInputs[id], 10);
+    if (isNaN(newPos) || newPos < 1 || newPos > products.length) {
+      setMessage(
+        "Некорректная позиция. Должна быть от 1 до " + products.length
+      );
+      return;
+    }
+    openMoveModal(id, "set", newPos);
+  }
+
+  // Асинхронные функции перемещения (без модалки, вызываются после подтверждения)
+  async function handleMoveUp(id) {
+    const index = products.findIndex((p) => p.id === id);
+    if (index <= 0) return;
+    const updated = [...products];
+    [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+    await saveProducts(updated);
+  }
+
+  async function handleMoveDown(id) {
+    const index = products.findIndex((p) => p.id === id);
+    if (index >= products.length - 1) return;
+    const updated = [...products];
+    [updated[index], updated[index + 1]] = [updated[index + 1], updated[index]];
+    await saveProducts(updated);
+  }
+
+  async function handleSetPosition(id, newPos) {
+    const index = products.findIndex((p) => p.id === id);
+    if (index === newPos - 1) return;
+
+    const updated = [...products];
+    const [moved] = updated.splice(index, 1);
+    updated.splice(newPos - 1, 0, moved);
+    await saveProducts(updated);
+  }
+
+  // Handler для изменения позиции через input
+  function handlePositionChange(id, value) {
+    setPositionInputs((prev) => ({ ...prev, [id]: value }));
+  }
+
   // Handlers for promo codes
   function handlePromoChange(e) {
     const { name, value } = e.target;
@@ -438,6 +553,26 @@ export default function AdminPage() {
         </div>
       )}
 
+      {/* Move-confirmation modal */}
+      {isMoveModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <p>Вы уверены, что хотите переместить этот товар?</p>
+            <div className={styles.modalButtons}>
+              <button
+                className={styles.modalBtnCancel}
+                onClick={closeMoveModal}
+              >
+                Отмена
+              </button>
+              <button className={styles.modalBtnConfirm} onClick={confirmMove}>
+                Переместить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.container}>
         <h1 className={styles.heading}>Панель администратора</h1>
         <div className={styles.panel}>
@@ -543,7 +678,7 @@ export default function AdminPage() {
             {products.length === 0 ? (
               <p>Ничего нет</p>
             ) : (
-              products.map((p) => (
+              products.map((p, index) => (
                 <div key={p.id} className={styles.listItem}>
                   <img src={p.images?.[0] || p.image} alt={p.title} />
                   <div>
@@ -562,6 +697,40 @@ export default function AdminPage() {
                   >
                     Удал.
                   </button>
+                  <button
+                    className={styles.moveBtn}
+                    onClick={() => prepareMoveUp(p.id)}
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </button>
+                  <button
+                    className={styles.moveBtn}
+                    onClick={() => prepareMoveDown(p.id)}
+                    disabled={index === products.length - 1}
+                  >
+                    ↓
+                  </button>
+                  {/* Поле для ввода новой позиции */}
+                  <div className={styles.positionWrapper}>
+                    <input
+                      type="number"
+                      min="1"
+                      max={products.length}
+                      placeholder={`Поз. ${index + 1}`}
+                      value={positionInputs[p.id] || ""}
+                      onChange={(e) =>
+                        handlePositionChange(p.id, e.target.value)
+                      }
+                      className={styles.positionInput}
+                    />
+                    <button
+                      className={styles.setPosBtn}
+                      onClick={() => prepareSetPosition(p.id)}
+                    >
+                      Применить
+                    </button>
+                  </div>
                 </div>
               ))
             )}

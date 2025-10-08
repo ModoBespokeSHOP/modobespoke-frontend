@@ -75,6 +75,44 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+/* Стили для кнопок перемещения (↑ и ↓) */
+.moveBtn {
+  margin-left: 5px;
+  padding: 5px 10px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 14px;
+}
+/* Стили для поля ввода позиции */
+.positionInput {
+  width: 60px;
+  margin-left: 5px;
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Стили для кнопки "Применить" */
+.setPosBtn {
+  margin-left: 5px;
+  padding: 5px 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.setPosBtn:hover {
+  background: #0056b3;
+}
+.moveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .sizeBtn {
   padding: 8px 16px;
   border: 1px solid #000;
@@ -338,7 +376,31 @@
     gap: 16px;
     padding: 0 16px;
   }
+  .positionInput {
+    width: 100px; /* Ещё шире для удобства на таче */
+    font-size: 18px; /* Ещё больший шрифт для лучшей видимости */
+    padding: 8px;
+  }
 
+  .moveBtn,
+  .setPosBtn {
+    padding: 10px 15px; /* Ещё больше паддинг для пальцев */
+    font-size: 18px;
+    margin-top: 5px; /* Чтобы не сжималось в ряд, если экран узкий */
+  }
+
+  .listItem {
+    flex-wrap: wrap; /* Элементы переносятся на новую строку */
+    justify-content: space-between;
+    gap: 10px; /* Отступы между элементами */
+  }
+
+  .positionWrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+  }
   /* Форма и список товаров теперь во всю ширину */
   .form,
   .list {
