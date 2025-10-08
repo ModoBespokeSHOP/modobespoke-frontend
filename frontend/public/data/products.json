@@ -1,24 +1,5 @@
 [
   {
-    "id": 1758714386755,
-    "title": "курка Worker's Jacket",
-    "shortSpecs": {
-      "color": " песок, хаки, кэмел, бежевый персик, индиго, тиффани, красный терракот, темно-синий",
-      "material": "хлопок,вискоза"
-    },
-    "description": "Куртка средней длины из 100% хлопкового джинса с микроворсом, в качестве подкладки - 100% вискозный штапель. \nРекомендации по уходу: \n",
-    "price": 9000,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758714614/ikebfuldqncwtv8hb5do.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715328/njzjhthtxblxc2epg0y1.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715331/am5hrew92oa3o1yotjul.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715333/zhta7kbu6bwtk26jduu6.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715337/vu5udwjgwwywqtszqers.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715342/f6aben0or8s9v6jimpai.jpg"
-    ],
-    "sizes": ["S", "M", "L"]
-  },
-  {
     "id": 1758715783756,
     "title": "жакет Авантюристка",
     "shortSpecs": {
@@ -36,7 +17,34 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715780/iqgqxpvcyk7qx978exyt.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715783/loeehpz9udormhynweug.jpg"
     ],
-    "sizes": ["S", "M", "L"]
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": 1758714386755,
+    "title": "курка Worker's Jacket",
+    "shortSpecs": {
+      "color": " песок, хаки, кэмел, бежевый персик, индиго, тиффани, красный терракот, темно-синий",
+      "material": "хлопок,вискоза"
+    },
+    "description": "Куртка средней длины из 100% хлопкового джинса с микроворсом, в качестве подкладки - 100% вискозный штапель. \nРекомендации по уходу: \n",
+    "price": 9000,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758714614/ikebfuldqncwtv8hb5do.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715328/njzjhthtxblxc2epg0y1.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715331/am5hrew92oa3o1yotjul.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715333/zhta7kbu6bwtk26jduu6.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715337/vu5udwjgwwywqtszqers.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758715342/f6aben0or8s9v6jimpai.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   },
   {
     "id": 1758716249129,
@@ -52,7 +60,10 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716246/h5sadcmot7ow22yaphba.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716248/eksr8aipr4sqcl7jo0wa.jpg"
     ],
-    "sizes": ["S", "L"]
+    "sizes": [
+      "S",
+      "L"
+    ]
   },
   {
     "id": 1758717020127,
@@ -68,7 +79,12 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758716986/i1vvq3imeqwv8ozwxikj.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717019/rtr5nekmefqpqjvsdmfm.png"
     ],
-    "sizes": ["S", "M", "L", "XL"]
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ]
   },
   {
     "id": 1758717353792,
@@ -83,7 +99,12 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717347/eqqslkfgkshslqt9mxnr.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717352/tgcnibdnxcp922ctshag.jpg"
     ],
-    "sizes": ["S", "M", "L", "XL"]
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ]
   },
   {
     "id": 1758717911393,
@@ -99,7 +120,11 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717962/bdmff3mdzplcjunsi3to.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758717964/q7ti6iu7rlrmft25g92s.jpg"
     ],
-    "sizes": ["S", "M", "L"]
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   },
   {
     "id": 1758718217112,
@@ -116,7 +141,10 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798822/e9ia0bd6qyvfrblcnjst.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798823/swkycticerimyyne6azv.jpg"
     ],
-    "sizes": ["S", "M"]
+    "sizes": [
+      "S",
+      "M"
+    ]
   },
   {
     "id": 1758718310812,
@@ -132,7 +160,10 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718307/gbhsiclda5nk1sc0berh.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718309/kkvkwyg5ckyihgagxwx4.jpg"
     ],
-    "sizes": ["S", "M"]
+    "sizes": [
+      "S",
+      "M"
+    ]
   },
   {
     "id": 1758718452225,
@@ -150,7 +181,11 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718449/sq7jdcxjwk9edyclx6xj.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758718451/ti5ektyslwxzxnpb00yp.jpg"
     ],
-    "sizes": ["S", "M", "L"]
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   },
   {
     "id": 1758796553770,
@@ -167,7 +202,10 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801193/htiqoqtkohm2mtmwniv1.png",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801196/yqo1ecaxq84ehfz0ntez.png"
     ],
-    "sizes": ["S", "M"]
+    "sizes": [
+      "S",
+      "M"
+    ]
   },
   {
     "id": 1758796838295,
@@ -185,7 +223,10 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801233/byv4mgyprmgdnjcwusos.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801234/sexj6cumljnik5zpepgj.jpg"
     ],
-    "sizes": ["S", "M"]
+    "sizes": [
+      "S",
+      "M"
+    ]
   },
   {
     "id": 1758798796926,
@@ -201,7 +242,11 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798794/rjg4fwrkd7ep4szwydo7.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758798796/igva6k4aym6w5uqpeinj.jpg"
     ],
-    "sizes": ["S", "M", "L"]
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   },
   {
     "id": 1758799537385,
@@ -218,7 +263,11 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799535/kvgupnqm6jovst6yxzy9.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799536/mll2311wlnula0k2o3nz.jpg"
     ],
-    "sizes": ["S", "M", "L"]
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
   },
   {
     "id": 1758799709188,
@@ -232,7 +281,10 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799707/h72pun6lqwpou72naij3.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799708/cpz8arkzfn884apudqil.jpg"
     ],
-    "sizes": ["S", "M"]
+    "sizes": [
+      "S",
+      "M"
+    ]
   },
   {
     "id": 1758799813750,
@@ -249,7 +301,10 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799812/t0suhfhyk41qnhy6iwwc.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799853/azsvmxdmciigkglrr08a.jpg"
     ],
-    "sizes": ["S", "M"]
+    "sizes": [
+      "S",
+      "M"
+    ]
   },
   {
     "id": 1758799933089,
@@ -265,7 +320,10 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799931/zanhbfums51cvohfybmc.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758799932/f7tmp5lommu0lkh8fnnz.jpg"
     ],
-    "sizes": ["S", "M"]
+    "sizes": [
+      "S",
+      "M"
+    ]
   },
   {
     "id": 1758801332424,
@@ -281,6 +339,9 @@
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801329/kyiozdcls6ilejwt0jp0.jpg",
       "https://res.cloudinary.com/dtmzw1wea/image/upload/v1758801331/bptkmac7usm2b9heolbq.jpg"
     ],
-    "sizes": ["S", "M"]
+    "sizes": [
+      "S",
+      "M"
+    ]
   }
 ]
