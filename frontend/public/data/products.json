@@ -127,6 +127,24 @@
     ]
   },
   {
+    "id": 1762342201859,
+    "title": "кимоно Восточный экспресс",
+    "shortSpecs": {
+      "color": "горячий песок",
+      "material": "премиальный вискозный шелк",
+      "pattern": "восточный орнамент "
+    },
+    "description": "",
+    "price": 11500,
+    "images": [
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1762342167/ywgcaxqcnunetpa3utq0.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1762342177/msrcze6vnqrmvyw781qb.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1762342185/bidq215dsqumiwgwoiob.jpg",
+      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1762342201/qc2cnzcwcuyomlacy7ye.jpg"
+    ],
+    "sizes": []
+  },
+  {
     "id": 1758718217112,
     "title": "брюки палаццо [ Мягкая сила ]",
     "shortSpecs": {
@@ -343,23 +361,5 @@
       "S",
       "M"
     ]
-  },
-  {
-    "id": 1762342201859,
-    "title": "кимоно Восточный экспресс",
-    "shortSpecs": {
-      "color": "горячий песок",
-      "material": "премиальный вискозный шелк",
-      "pattern": "восточный орнамент "
-    },
-    "description": "",
-    "price": 11500,
-    "images": [
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1762342167/ywgcaxqcnunetpa3utq0.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1762342177/msrcze6vnqrmvyw781qb.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1762342185/bidq215dsqumiwgwoiob.jpg",
-      "https://res.cloudinary.com/dtmzw1wea/image/upload/v1762342201/qc2cnzcwcuyomlacy7ye.jpg"
-    ],
-    "sizes": []
   }
 ]
